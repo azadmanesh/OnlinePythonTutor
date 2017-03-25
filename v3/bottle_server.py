@@ -13,24 +13,29 @@
 # compatibility from 2.x to 3.x Ii was running from /v3/).
 
 from bottle import route, get, request, run, template, static_file
+from subprocess import call, check_call, CalledProcessError
 import StringIO # NB: don't use cStringIO since it doesn't support unicode!!!
 import json
 import pg_logger
 import urllib
 import urllib2
+import sys
 
 # dummy routes for testing only
 @route('/web_exec_<name:re:.+>.py')
 def web_exec(name):
+    print >> sys.stderr, '1'
     return 'OK'
 
 @route('/LIVE_exec_<name:re:.+>.py')
 def live_exec(name):
+    print >> sys.stderr, '2'
     return 'OK'
 
 
 @route('/<filepath:path>')
 def index(filepath):
+    print >> sys.stderr, '3'
     # special-case for testing name_lookup.py ...
     if 'name_lookup.py' in filepath:
         return json.dumps(dict(name='TEST NAME', email='TEST EMAIL'))
@@ -38,26 +43,49 @@ def index(filepath):
 
 @get('/exec')
 def get_exec():
-  out_s = StringIO.StringIO()
+  print >> sys.stderr, 'Hi from exec'
+  print >> sys.stderr, request.query.user_script
 
-  def json_finalizer(input_code, output_trace):
-    ret = dict(code=input_code, trace=output_trace)
-    json_output = json.dumps(ret, indent=None)
-    out_s.write(json_output)
+  source = request.query.user_script
+  javaTutorPlusWorkingDir = '/Users/reza/PhD/tools/OnlinePythonTutor/wd'
 
-  options = json.loads(request.query.options_json)
+  #We finst need to find the name of the class file to store it as a .java file
+  words = source.split()
 
-  pg_logger.exec_script_str_local(request.query.user_script,
-                                  request.query.raw_input_json,
-                                  options['cumulative_mode'],
-                                  options['heap_primitives'],
-                                  json_finalizer)
+  found = False
+  name = "Unknown"
+  for word in words:
+      if found :
+          name = word
+          break;
+      if word == 'class':
+          found = True
 
-  return out_s.getvalue()
+  if '{' in name:
+    name = name[:-1]
 
+  targetPath = javaTutorPlusWorkingDir + '/' + name + '.java';
+  print targetPath
+
+  tempFile = open(targetPath, 'w')
+  tempFile.write(source);
+  tempFile.close()
+
+  print targetPath
+
+  try:
+    check_call(["javac", "-g", targetPath])
+  except CalledProcessError as e:
+    print >>sys.stderr, "Compilation failed:", e
+
+  
+  call(["ant", "-f", "/Users/reza/tempInfoFlow/informationflowtracer", "run-javatutorplus", "-Darg0="+name])
+#  return static_file("test-trace2.json", root='.')
+  return static_file("data.json", root='/Users/reza/PhD/tools/OnlinePythonTutor/wd/')
 
 @get('/load_matrix_problem.py')
 def load_matrix_problem():
+  print >> sys.stderr, '5'
   prob_name = request.query.problem_name
   assert type(prob_name) in (str, unicode)
 
@@ -83,6 +111,7 @@ def load_matrix_problem():
 
 @get('/submit_matrix_problem.py')
 def submit_matrix_problem():
+  print >> sys.stderr, '6'
   user_code = request.query.submitted_code
   prob_name = request.query.problem_name
   assert type(prob_name) in (str, unicode)

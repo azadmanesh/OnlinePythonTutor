@@ -411,6 +411,7 @@ ExecutionVisualizer.prototype.render = function() {
 
   var codeDisplayHTML =
     '<div id="codeDisplayDiv">\
+       <div id="explanationDiv"></div>\
        <div id="langDisplayDiv"></div>\
        <div id="pyCodeOutputDiv"/>\
        <div id="editCodeLinkDiv"><a id="editBtn">Edit code</a>\
@@ -2518,6 +2519,11 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
   });
 
 
+  myViz.domRoot.find('#explanationDiv').html(curEntry.explanation);
+
+  //Text to speech
+  var msg = new SpeechSynthesisUtterance(curEntry.explanation);
+  window.speechSynthesis.speak(msg);
 
   // use d3 to render the heap by mapping curToplevelLayout into <table class="heapRow">
   // and <td class="toplevelHeapObject"> elements
