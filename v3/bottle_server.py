@@ -47,7 +47,7 @@ def get_exec():
   print >> sys.stderr, request.query.user_script
 
   source = request.query.user_script
-  javaTutorPlusWorkingDir = '/Users/reza/PhD/tools/OnlinePythonTutor/wd'
+  javaTutorPlusWorkingDir = '/Users/hauswirm/tools/OnlinePythonTutor/wd'
 
   #We finst need to find the name of the class file to store it as a .java file
   words = source.split()
@@ -79,9 +79,9 @@ def get_exec():
     print >>sys.stderr, "Compilation failed:", e
 
   
-  call(["ant", "-f", "/Users/reza/tempInfoFlow/informationflowtracer", "run-javatutorplus", "-Darg0="+name])
+  call(["ant", "-f", "/Users/hauswirm/tools/informationflowtracer", "run-javatutorplus", "-Darg0="+name])
 #  return static_file("test-trace2.json", root='.')
-  return static_file("data.json", root='/Users/reza/PhD/tools/OnlinePythonTutor/wd/')
+  return static_file("data.json", root='/Users/hauswirm/tools/OnlinePythonTutor/wd/')
 
 @get('/load_matrix_problem.py')
 def load_matrix_problem():
