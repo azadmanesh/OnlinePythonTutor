@@ -411,7 +411,6 @@ ExecutionVisualizer.prototype.render = function() {
 
   var codeDisplayHTML =
     '<div id="codeDisplayDiv">\
-       <div id="explanationDiv"></div>\
        <div id="langDisplayDiv"></div>\
        <div id="pyCodeOutputDiv"/>\
        <div id="editCodeLinkDiv"><a id="editBtn">Edit code</a>\
@@ -428,6 +427,7 @@ ExecutionVisualizer.prototype.render = function() {
          <button id="jmpStepFwd", type="button">Forward &gt;</button>\
          <button id="jmpLastInstr", type="button">Last &gt;&gt;</button>\
        </div>\
+ 	<div id="explanationDiv"></div>\
        <div id="rawUserInputDiv">\
          <span id="userInputPromptStr"/>\
          <input type="text" id="raw_input_textbox" size="30"/>\

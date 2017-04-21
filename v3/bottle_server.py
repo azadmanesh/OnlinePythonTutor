@@ -20,6 +20,9 @@ import pg_logger
 import urllib
 import urllib2
 import sys
+import os
+import shutil
+
 
 # dummy routes for testing only
 @route('/web_exec_<name:re:.+>.py')
@@ -41,13 +44,34 @@ def index(filepath):
         return json.dumps(dict(name='TEST NAME', email='TEST EMAIL'))
     return static_file(filepath, root='.')
 
+
+
 @get('/exec')
 def get_exec():
+  print >> sys.stderr, 'ID:' 
+  print >> sys.stderr, get_exec.id
+  get_exec.id+=1
   print >> sys.stderr, 'Hi from exec'
   print >> sys.stderr, request.query.user_script
 
   source = request.query.user_script
-  javaTutorPlusWorkingDir = '/Users/hauswirm/tools/OnlinePythonTutor/wd'
+  javaTutorPlusWorkingDir = '/Users/hauswirm/tools/OnlinePythonTutor/wd/'
+  currentTargetPath = javaTutorPlusWorkingDir +str(get_exec.id)
+
+
+  
+  if not os.path.exists(currentTargetPath):
+     print >> sys.stderr, 'Making dir'
+     os.makedirs(currentTargetPath)
+  else:   
+     print >> sys.stderr, 'removing contents'
+     for root, dirs, files in os.walk(currentTargetPath):
+        for f in files:
+          os.unlink(os.path.join(root, f))
+        for d in dirs:
+          shutil.rmtree(os.path.join(root, d))
+
+  
 
   #We finst need to find the name of the class file to store it as a .java file
   words = source.split()
@@ -64,24 +88,30 @@ def get_exec():
   if '{' in name:
     name = name[:-1]
 
-  targetPath = javaTutorPlusWorkingDir + '/' + name + '.java';
-  print targetPath
+  targetFilePath = currentTargetPath + '/' + name + '.java';
+  print targetFilePath
 
-  tempFile = open(targetPath, 'w')
+  
+  
+
+  tempFile = open(targetFilePath, 'w')
   tempFile.write(source);
   tempFile.close()
 
-  print targetPath
+  print targetFilePath
 
-  try:
-    check_call(["javac", "-g", targetPath])
-  except CalledProcessError as e:
-    print >>sys.stderr, "Compilation failed:", e
+
+
+  call(['java', '-jar', '/Users/hauswirm/tools/extendj/extendj.jar','-g', targetFilePath])
+#  try:
+#    check_call(['/bin/bash', '-i', '-c','extendj '+ targetFilePath])
+#  except CalledProcessError as e:
+#    print >>sys.stderr, "Compilation failed:", e
 
   
-  call(["ant", "-f", "/Users/hauswirm/tools/informationflowtracer", "run-javatutorplus", "-Darg0="+name])
+  call(["ant", "-f", "/Users/hauswirm/tools/informationflowtracer", "run-javatutorplus", "-Darg0="+name, "-Darg1="+str(get_exec.id),"-Darg2="+str(get_exec.id)])
 #  return static_file("test-trace2.json", root='.')
-  return static_file("data.json", root='/Users/hauswirm/tools/OnlinePythonTutor/wd/')
+  return static_file("data.json", root=currentTargetPath)
 
 @get('/load_matrix_problem.py')
 def load_matrix_problem():
@@ -108,6 +138,8 @@ def load_matrix_problem():
 
   return json.dumps(dict(code=cod, test=testCod))
 
+
+get_exec.id = 1
 
 @get('/submit_matrix_problem.py')
 def submit_matrix_problem():
