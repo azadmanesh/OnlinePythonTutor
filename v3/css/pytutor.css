@@ -917,4 +917,53 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
   font-size: 18pt;
 }
 
+.executedSource {
+    background-color: #ffed13;
+}
+
+.node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 3px;
+  }
+
+.node text { font: 12px sans-serif; }
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+  }
+  
+  /* Andrea Gallidabino: test with tree visualiser */
+ .treeVisualiser {
+  	position: absolute;
+  	text-align: center;
+  	background-color: white;
+  }
+  
+  .treeBackground {
+  	position: absolute;
+  	text-align: center;
+  	background-color: #ffed13;
+  	z-index: 1;
+  }
+  
+  .treeCircle {
+  	height: 15px;
+  	position: absolute;
+  	background-color: #1eff4f;
+  	border: 1px solid black;
+  	text-align: center;
+  	z-index: 2;
+  }
+
+.overlay {
+    position: absolute;
+    border: 1px solid red;
+    background: #dff;
+    margin: -1px;
+    z-index: -1;
+}
+
 /* END Java frontend by David Pritchard and Will Gwozdz */

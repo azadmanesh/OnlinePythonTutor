@@ -1100,8 +1100,8 @@ ExecutionVisualizer.prototype.findPrevBreakpoint = function() {
 
 ExecutionVisualizer.prototype.findNextBreakpoint = function() {
   var myViz = this;
+  
   var c = myViz.curInstr;
-
   if (myViz.sortedBreakpointsList.length == 0) {
     return -1;
   }
@@ -1132,12 +1132,13 @@ ExecutionVisualizer.prototype.findNextBreakpoint = function() {
 // returns true if action successfully taken
 ExecutionVisualizer.prototype.stepForward = function() {
   var myViz = this;
-
+  
   if (myViz.editAnnotationMode) {
     return;
   }
-
+  
   if (myViz.curInstr < myViz.curTrace.length - 1) {
+	  
     // if there is a next breakpoint, then jump to it ...
     if (myViz.sortedBreakpointsList.length > 0) {
       var nextBreakpoint = myViz.findNextBreakpoint();
@@ -1163,7 +1164,7 @@ ExecutionVisualizer.prototype.stepBack = function() {
   if (myViz.editAnnotationMode) {
     return;
   }
-
+    
   if (myViz.curInstr > 0) {
     // if there is a prev breakpoint, then jump to it ...
     if (myViz.sortedBreakpointsList.length > 0) {
@@ -1546,6 +1547,13 @@ ExecutionVisualizer.prototype.updateCurPrevLines = function() {
 // This function is called every time the display needs to be updated
 // smoothTransition is OPTIONAL!
 ExecutionVisualizer.prototype.updateOutput = function(smoothTransition) {
+	//revert any changes made to the previous line
+	if (this.prevLineNumber){
+		var cod = this.codeOutputLines[this.prevLineNumber - 1].text;
+		this.domRoot.find('#'+this.generateID('cod' + this.prevLineNumber)).
+		html(htmlspecialchars(cod));
+	}
+	
   if (this.params.hideCode) {
     this.updateOutputMini();
   }
@@ -2072,6 +2080,13 @@ ExecutionVisualizer.prototype.renderStep = function(step) {
   assert(0 <= step);
   assert(step < this.curTrace.length);
 
+//  var curEntry = this.curTrace[this.curInstr];
+//  var cod = this.codeOutputLines[curEntry.line-1].text;
+//  this.domRoot.find('#'+this.generateID('cod' + curEntry.line)).
+//  html(htmlspecialchars(cod));
+  
+  //revert any changes made by code highlighter feature
+  
   // ignore redundant calls
   if (this.curInstr == step) {
     return;
@@ -2477,6 +2492,75 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
   if (myViz.tabularView) {
     return; // return EARLY!!!
   }
+  
+  // ANDREA GALLIDABINO: test visualiser START  
+//compute children level\
+
+var treeVisualiserElement = document.getElementById('treeVisualiser')
+//var treeVisualiserbg = document.getElementById('treeBackground')
+var maxLevel = 0
+var levelHeight = 20
+var maxWidth = 0
+var minStart = undefined
+var codeLeftBase = 59 + 61.5;
+var treeBackgourdTopPadding = 5;
+var treeBackgourdLeftPadding = 5;
+var treeElementPadding = 3;
+for(var i = 0; i < curEntry.rangeValue.length; i++) { 
+	  curEntry.rangeValue[i].level = maxLevel;
+	  maxLevel++
+}
+
+treeVisualiserElement.innerHTML = '';
+//treeVisualiserbg.innerHTML = '';
+for(var i = 0; i < curEntry.rangeValue.length; i++) {
+	  
+	  var treeElement = document.createElement('div');
+	  treeElement.className += "treeCircle";
+	  treeElement.innerHTML = curEntry.rangeValue[i].value;
+	  
+	  var elementCharCount = curEntry.rangeValue[i].value.length
+	  
+	  var charFontWidth = 8.8;
+	  var widthChars = (curEntry.rangeValue[i].end - curEntry.rangeValue[i].start) + 1
+	  if(maxWidth < (widthChars * charFontWidth)) {
+		  maxWidth = widthChars * charFontWidth
+	  }
+	  
+	  treeElement.style.width = (Math.max(elementCharCount,widthChars))*charFontWidth + 'px'
+	  
+	  
+	  if(minStart == undefined || minStart > curEntry.rangeValue[i].start) {
+		  minStart = curEntry.rangeValue[i].start
+	  }
+//	  var positionLeft = curEntry.rangeValue[i].start + (widthChars / 2 )
+//	  var pixels = (positionLeft + 6) * 9 + 61.5 // 13 pixels =~ 10pt --- 61.5pixel = margin-left --- 6 character offset
+    
+	  var pixels = codeLeftBase + ((curEntry.rangeValue[i].start-1)*charFontWidth) - 2
+	  treeElement.style.left = pixels + 'px'
+	  
+	  var linePositionTop = 23+ 8 +((myViz.prevLineNumber - 1)*20) ; 
+	  var positionTop = linePositionTop;
+	  positionTop = positionTop - ((curEntry.rangeValue[i].level) * levelHeight)
+	  
+	  treeElement.style.top = positionTop + 'px'
+	  
+	  treeVisualiserElement.appendChild(treeElement);
+}
+
+var treeBg = document.createElement('div');
+treeBg.className += "treeBackground";
+treeBg.style.width = (maxWidth + (2*treeBackgourdLeftPadding) )+ 'px'
+treeBg.style.height = ((maxLevel)*levelHeight) + 6 + 'px'
+treeBg.style.top = (linePositionTop - ((maxLevel-1) * levelHeight) - treeBackgourdTopPadding ) + 'px'
+treeBg.style.left = ((minStart - 1) * charFontWidth + codeLeftBase)- treeBackgourdLeftPadding + 'px'
+treeVisualiserElement.appendChild(treeBg);
+//treeElement.innerHTML = curEntry.rangeValue[i].value;
+//
+//var treeBackground = document.getElementById('treeBackground')
+//treeBackground.className += "treeBackground"
+
+//ANDREA GALLIDABINO: test visualiser END
 
   myViz.resetJsPlumbManager(); // very important!!!
 
@@ -2520,11 +2604,84 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
 
 
   myViz.domRoot.find('#explanationDiv').html(curEntry.explanation);
+  
+  
+//  drawExample();
+  //TODO: Just for test!
+  if (myViz.curInstr > 0){
+//	  var rvs = curEntry.rangeValue;
+//	  var rangeValueSize = curEntry.rangeValue.length
+//	  var min = 0;
+//	  var max = 0;
+//	  for (i = 0; i < rangeValueSize; i++) {
+//		    var rv = curEntry.rangeValue[i];
+//		    var rvStart = rv.start;
+//		    var rvEnd = rv.end;
+//		    if (rvStart < min)
+//		    	min = rvStart;
+//		    
+//		    if (rvEnd > max)
+//		    	max = rvEnd;
+//	  }
+//	  
+//	  var lines = [];
+//	  for (i = 0; i <= rangeValueSize; i++) {
+//		var line = '';
+//		for (j = 0; j <= max + 1; j++){
+//			if (onBoundaryExcept(rvs, i, j)){
+//				line += '|';
+//			}else if (included(rvs, i, j)){
+//				line += '-';
+//			}else{
+//				line += "&nbsp;";
+//			}
+//		}
+//		line += '</br>';
+//		lines.push(line);
+//	  }
+//	  
+//	  var line_html = '';
+//	  
+//	  for (i = lines.length - 1; i >= 0; i--){
+//		  line_html += lines[i];
+//	  }
+//	  
+	  var cod = myViz.codeOutputLines[myViz.prevLineNumber - 1].text;
+	  var preExecutedCode = htmlspecialchars(cod.substring(0, curEntry.startIndex - 1));
+	  var executedCode = htmlspecialchars(cod.substring(curEntry.startIndex - 1 , curEntry.endIndex));
+	  var postExecutedCode = htmlspecialchars(cod.substring(curEntry.endIndex,cod.length));
+	  var td_html = "";
+	  td_html = td_html + preExecutedCode + '<span class="executedSource">'+executedCode +'</span>'+postExecutedCode;
+	  myViz.domRoot.find('#'+myViz.generateID('cod' + myViz.prevLineNumber)).
+	  html(td_html);
+	  
+//	  //MAZ: added temporarily 
+//	  $spans = myViz.domRoot.find('#'+myViz.generateID('cod' + myViz.prevLineNumber)).find('span');
+//	  $spans.each(function(){
+//	    var $span = $(this),
+//                $offset = $span.offset(),
+//                $overlay = $('<div class="overlay"/>');
+//
+//         $overlay
+//                .offset($offset)
+//                .css({
+//                    width: $span.innerWidth(),
+//                    height: $span.innerHeight()
+//                });
+//     
+//            $(document.body).append($overlay);
+//	   });
+  }
+  
+//  var offsetLeft = getOffset( document.getElementById('executedSource') ).left;
+//  alert("x is"+offsetLeft)
 
   //Text to speech
+  var synth = window.speechSynthesis;
   var msg = new SpeechSynthesisUtterance(curEntry.explanation);
-  window.speechSynthesis.speak(msg);
-
+  synth.cancel();
+  synth.speak(msg);
+  
   // use d3 to render the heap by mapping curToplevelLayout into <table class="heapRow">
   // and <td class="toplevelHeapObject"> elements
 
@@ -4583,6 +4740,148 @@ function traceQCheckMe(inputId, divId, answer) {
 function closeModal(divId) {
     $.modal.close()
     $("#"+divId).data("vis").stepForward();
+}
+
+function onBoundaryExcept(rv, cur, column){
+	if (cur < rv.length){
+		for (i = cur; i < rv.length; i++){
+			if (column == (rv[i].start -1) || column == (rv[i].end + 1))
+				return true;
+			else
+				return false;
+		}
+	}
+}
+
+
+function getOffset( el ) {
+    var _x = 0;
+    var _y = 0;
+    while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+        _x += el.offsetLeft - el.scrollLeft;
+        _y += el.offsetTop - el.scrollTop;
+        el = el.offsetParent;
+    }
+    return { top: _y, left: _x };
+}
+
+
+function drawExample() {
+	var treeData = [
+	                {
+	                  "name": "Top Level",
+	                  "parent": "null",
+	                  'characterPos': 1,
+	                  _depth: 1,
+	                  "children": [
+	                    {
+	                      "name": "Level 2: A",
+	                      "parent": "Top Level",
+	                      'characterPos': 2,
+	                      "_depth": 2,
+	                      "children": [
+	                        {
+	                          "name": "Son of A",
+	                          "parent": "Level 2: A",
+	                          "_depth": 3,
+	                          'characterPos': 3
+	                        },
+	                        {
+	                          "name": "Daughter of A",
+	                          "parent": "Level 2: A",
+
+	                          "_depth": 3,
+	                          'characterPos': 4
+	                        }
+	                      ]
+	                    },
+	                    {
+	                      "name": "Level 2: B",
+	                      "parent": "Top Level",
+	                      'characterPos': 5,
+	                      _depth: 5
+	                    }
+	                  ]
+	                }
+	              ];
+
+	              // ************** Generate the tree diagram  *****************
+	              var margin = {top: 40, right: 120, bottom: 20, left: 120},
+	                width = 960 - margin.right - margin.left,
+	                height = 500 - margin.top - margin.bottom;
+	                
+	              var i = 0;
+
+	              var tree = d3.layout.tree()
+	                .size([height, width]);
+
+	              var diagonal = d3.svg.diagonal()
+	                  .source(function(d) { 
+	                    return {"x":d.source.characterPos * 60, "y":d.source.y}; })            
+	                  .target(function(d) { 
+	                    return {"x":d.target.characterPos * 60, "y":d.target.y}; })
+	                // .projection(function(d) { 
+	                //   console.log(d.characterPos)
+	                //   return [d.x, d.y]; 
+	                // });
+
+	              var svg = d3.select("body").append("svg")
+	                .attr("width", width + margin.right + margin.left)
+	                .attr("height", height + margin.top + margin.bottom)
+	                .attr("position", "absolute")
+	                .append("g")
+	                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	              var root = treeData[0];
+
+
+	  // Compute the new tree layout.
+	  var nodes = tree.nodes(root).reverse(),
+	    links = tree.links(nodes);
+
+	  // Normalize for fixed-depth.
+	  nodes.forEach(function(d) { d.y = d._depth * 30; });
+
+	  // Declare the nodes…
+	  var node = svg.selectAll("g.node")
+	    .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+	  // Enter the nodes.
+	  var nodeEnter = node.enter().append("g")
+	    .attr("class", "node")
+	    .attr("transform", function(d) { 
+	      return "translate(" + (d.characterPos * 60) + "," + d.y + ")"; });
+
+	  nodeEnter.append("circle")
+	    .attr("r", 10)
+	    .style("fill", "#fff");
+
+	  nodeEnter.append("text")
+	    .attr("y", function(d) { 
+	      return d.children || d._children ? -18 : 18; })
+	    .attr("dy", ".35em")
+	    .attr("text-anchor", "middle")
+	    .text(function(d) { return d.name; })
+	    .style("fill-opacity", 1);
+
+	  // Declare the links…
+	  var link = svg.selectAll("path.link")
+	    .data(links, function(d) { return d.target.id; });
+
+	  // Enter the links.
+	  link.enter().insert("path", "g")
+	    .attr("class", "link")
+	    .attr("d", diagonal);
+
+	}
+
+function included(rv, cur, column){
+	if (cur > 0){
+		if (column > rv[cur - 1].start && column < rv[cur - 1].end)
+			return true;
+		else
+			return false;
+	}
 }
 
 

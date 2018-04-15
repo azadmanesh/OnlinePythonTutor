@@ -1211,6 +1211,9 @@ function updateAppDisplay(newAppMode) {
   }
 
   appMode = newAppMode; // global!
+  
+  document.getElementById('treeVisualiser').innerHTML='';
+  window.speechSynthesis.cancel();
 
   if (appMode === undefined || appMode == 'edit' ||
       !myVisualizer /* subtle -- if no visualizer, default to edit mode */) {

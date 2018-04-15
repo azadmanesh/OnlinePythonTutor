@@ -106,7 +106,7 @@ function executeCode(forceStartingInstr, forceRawInputLst) {
     rawInputLst = forceRawInputLst; // UGLY global across modules, FIXME
   }
 
-  var backend_script = langToBackendScript($('#pythonVersionSelector').val());
+  var backend_script = "exec";
   var backendOptionsObj = getBaseBackendOptionsObj();
 
   var startingInstruction = forceStartingInstr ? forceStartingInstr : 0;
@@ -492,6 +492,11 @@ var JAVA_EXAMPLES = {
   javaSyntheticLink: 'java-example-code/Synthetic.java',
 };
 
+var JTPLUS_EXAMPLES = {
+   jtplusIntLink: 'jtplus-example-code/IntExample.java',
+   jtplusBooleanLink: 'jtplus-example-code/BooleanExample.java'
+};
+
 var PY2_EXAMPLES = {
   tutorialExampleLink: "example-code/py_tutorial.txt",
   strtokExampleLink: "example-code/strtok.txt",
@@ -635,6 +640,9 @@ $(document).ready(function() {
           $('#pythonVersionSelector').val() !== '3') {
         lang = '2';
       }
+    } else if (JTPLUS_EXAMPLES[myId] != undefined){
+    	exFile = JTPLUS_EXAMPLES[myId];
+    	lang = 'java';
     } else {
       exFile = PY3_EXAMPLES[myId];
       assert(exFile !== undefined);

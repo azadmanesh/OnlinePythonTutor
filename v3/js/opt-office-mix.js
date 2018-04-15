@@ -165,6 +165,8 @@ function getAppStateWithTraceCache() {
 }
 
 function enterOPTEditCodeMode() {
+	alert("edit mode")
+	
   updateAppDisplayForMix('edit');
   $("#executeBtn").html("Visualize Execution").show();
   $("#executeBtn").attr('disabled', false);

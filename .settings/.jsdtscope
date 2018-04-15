@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="tests/frontend-regression-tests"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v1-v2"/>
+	<classpathentry excluding="js/|js/jquery-ui-1.11.4/external/jquery/|js/jquery-ui-1.11.4/|codeopticon/js/|js/togetherjs/togetherjs/|tests/frontend-tests/|**/node_modules/*|codeopticon/server/|js/togetherjs/|js/socket.io-client/|js/togetherjs/togetherjs/libs/|js-example-code/|codeopticon/jquery-ui-1.11.4.custom-cupertino/|screenshot-renderer/|js/togetherjs/togetherjs/libs/walkabout/|**/bower_components/*|js/ace/src-min-noconflict/|js/codemirror/|js/togetherjs/togetherjs/libs/whrandom/|opt_togetherjs/|**/*.min.js|office-mix-labshost/|js/togetherjs/togetherjs/libs/walkabout/lib/" kind="src" path="v3"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/codeopticon/jquery-ui-1.11.4.custom-cupertino"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/codeopticon/js"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/codeopticon/server"/>
+	<classpathentry excluding="togetherjs/togetherjs/libs/|codemirror/|togetherjs/togetherjs/libs/walkabout/lib/|**/node_modules/*|ace/src-min-noconflict/|togetherjs/togetherjs/libs/walkabout/|jquery-ui-1.11.4/|togetherjs/|**/bower_components/*|togetherjs/togetherjs/libs/whrandom/|socket.io-client/|jquery-ui-1.11.4/external/jquery/|togetherjs/togetherjs/|**/*.min.js" kind="src" path="v3/js"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js-example-code"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js/ace/src-min-noconflict"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js/codemirror"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|external/jquery/|**/*.min.js" kind="src" path="v3/js/jquery-ui-1.11.4"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js/jquery-ui-1.11.4/external/jquery"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js/socket.io-client"/>
+	<classpathentry excluding="togetherjs/|**/bower_components/*|togetherjs/libs/walkabout/lib/|**/node_modules/*|togetherjs/libs/whrandom/|**/*.min.js|togetherjs/libs/walkabout/|togetherjs/libs/" kind="src" path="v3/js/togetherjs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|libs/whrandom/|libs/walkabout/lib/|libs/|**/*.min.js|libs/walkabout/" kind="src" path="v3/js/togetherjs/togetherjs"/>
+	<classpathentry excluding="**/bower_components/*|walkabout/lib/|walkabout/|**/node_modules/*|**/*.min.js|whrandom/" kind="src" path="v3/js/togetherjs/togetherjs/libs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|lib/|**/*.min.js" kind="src" path="v3/js/togetherjs/togetherjs/libs/walkabout"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js/togetherjs/togetherjs/libs/walkabout/lib"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/js/togetherjs/togetherjs/libs/whrandom"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/office-mix-labshost"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/opt_togetherjs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/screenshot-renderer"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v3/tests/frontend-tests"/>
+	<classpathentry excluding="backends/javascript/v8-reference-code/src/|**/bower_components/*|**/node_modules/*|backends/javascript/|**/*.min.js|backends/javascript/tests/" kind="src" path="v4-cokapi"/>
+	<classpathentry excluding="v8-reference-code/src/|**/bower_components/*|**/node_modules/*|tests/|**/*.min.js" kind="src" path="v4-cokapi/backends/javascript"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v4-cokapi/backends/javascript/tests"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v4-cokapi/backends/javascript/v8-reference-code/src"/>
+	<classpathentry excluding="js/lib/socket.io-client/|js/lib/togetherjs/togetherjs/libs/|**/node_modules/*|js/lib/togetherjs/togetherjs/libs/whrandom/|example-code/js/|build/|js/lib/togetherjs/togetherjs/libs/walkabout/lib/|js/lib/|js/cruft/|js/lib/ace/src-min-noconflict/|**/bower_components/*|js/lib/jquery-ui-1.11.4/|js/lib/jquery-ui-1.11.4/external/jquery/|**/*.min.js|js/lib/togetherjs/unused/|js/lib/togetherjs/|js/lib/togetherjs/togetherjs/libs/walkabout/|js/lib/togetherjs/togetherjs/" kind="src" path="v5-unity"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/build"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/example-code/js"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/cruft"/>
+	<classpathentry excluding="togetherjs/togetherjs/libs/|togetherjs/togetherjs/libs/walkabout/lib/|**/node_modules/*|ace/src-min-noconflict/|togetherjs/togetherjs/libs/walkabout/|jquery-ui-1.11.4/|togetherjs/|**/bower_components/*|togetherjs/togetherjs/libs/whrandom/|togetherjs/unused/|socket.io-client/|jquery-ui-1.11.4/external/jquery/|togetherjs/togetherjs/|**/*.min.js" kind="src" path="v5-unity/js/lib"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/lib/ace/src-min-noconflict"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|external/jquery/|**/*.min.js" kind="src" path="v5-unity/js/lib/jquery-ui-1.11.4"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/lib/jquery-ui-1.11.4/external/jquery"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/lib/socket.io-client"/>
+	<classpathentry excluding="unused/|togetherjs/|**/bower_components/*|togetherjs/libs/walkabout/lib/|**/node_modules/*|togetherjs/libs/whrandom/|**/*.min.js|togetherjs/libs/|togetherjs/libs/walkabout/" kind="src" path="v5-unity/js/lib/togetherjs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|libs/whrandom/|libs/walkabout/lib/|libs/|**/*.min.js|libs/walkabout/" kind="src" path="v5-unity/js/lib/togetherjs/togetherjs"/>
+	<classpathentry excluding="**/bower_components/*|walkabout/|walkabout/lib/|**/node_modules/*|**/*.min.js|whrandom/" kind="src" path="v5-unity/js/lib/togetherjs/togetherjs/libs"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|lib/|**/*.min.js" kind="src" path="v5-unity/js/lib/togetherjs/togetherjs/libs/walkabout"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/lib/togetherjs/togetherjs/libs/walkabout/lib"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/lib/togetherjs/togetherjs/libs/whrandom"/>
+	<classpathentry excluding="**/bower_components/*|**/node_modules/*|**/*.min.js" kind="src" path="v5-unity/js/lib/togetherjs/unused"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

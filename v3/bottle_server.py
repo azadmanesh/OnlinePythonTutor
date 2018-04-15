@@ -102,15 +102,25 @@ def get_exec():
 
 
 
-  call(['java', '-jar', '/Users/hauswirm/tools/extendj/extendj.jar','-g', targetFilePath])
+#  call(['java', '-jar', '/Users/hauswirm/tools/extendj/extendj.jar','-g', targetFilePath])
 #  try:
 #    check_call(['/bin/bash', '-i', '-c','extendj '+ targetFilePath])
 #  except CalledProcessError as e:
 #    print >>sys.stderr, "Compilation failed:", e
 
+  blastOp='-Dblast=/Users/hauswirm/tools/informationflowtracer'
+  extendjOp='-Dextendj=/Users/hauswirm/tools/extendj/extendj.jar'
+  pythonTutorOp='-Dpython-tutor=/Users/hauswirm/tools/OnlinePythonTutor'
   
-  call(["ant", "-f", "/Users/hauswirm/tools/informationflowtracer", "run-javatutorplus", "-Darg0="+name, "-Darg1="+str(get_exec.id),"-Darg2="+str(get_exec.id)])
-#  return static_file("test-trace2.json", root='.')
+  extendjArgs = "-Dextendj-args='-d " + currentTargetPath + " " + targetFilePath+ "'";
+  print extendjArgs
+  fileNameArg = '-DfileName=' + name
+  print fileNameArg
+  requestIdArg = '-DrequestId=' + str(get_exec.id)
+  print requestIdArg
+  
+  call(["ant", "-f", "/Users/hauswirm/tools/java-tutor-plus", "run", extendjArgs, fileNameArg, requestIdArg, blastOp, extendjOp, pythonTutorOp])
+#  return static_file("test.json", root=javaTutorPlusWorkingDir)
   return static_file("data.json", root=currentTargetPath)
 
 @get('/load_matrix_problem.py')
