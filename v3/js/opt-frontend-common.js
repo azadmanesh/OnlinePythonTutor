@@ -227,7 +227,7 @@ var CPP_BLANK_TEMPLATE = 'int main() {\n\
 
 function setAceMode() {
   var selectorVal = $('#pythonVersionSelector').val();
-  var mod;
+  var mod = 'java';
   var tabSize = 2;
   var editorVal = $.trim(pyInputGetValue());
 
@@ -236,28 +236,28 @@ function setAceMode() {
     pyInputSetValue(editorVal);
   }
 
-  if (selectorVal === 'java') {
-    mod = 'java';
-    if (editorVal === '') {
-      pyInputSetValue(JAVA_BLANK_TEMPLATE);
-    }
-  } else if (selectorVal === 'js') {
-    mod = 'javascript';
-  } else if (selectorVal === 'ts') {
-    mod = 'typescript';
-  } else if (selectorVal === 'ruby') {
-    mod = 'ruby';
-  } else if (selectorVal === 'c' || selectorVal == 'cpp') {
-    mod = 'c_cpp';
-    if (editorVal === '') {
-      pyInputSetValue(CPP_BLANK_TEMPLATE);
-    }
-  } else {
-    mod = 'python';
-    tabSize = 4; // PEP8
-  }
+//  if (selectorVal === 'java') {
+//    mod = 'java';
+//    if (editorVal === '') {
+//      pyInputSetValue(JAVA_BLANK_TEMPLATE);
+//    }
+//  } else if (selectorVal === 'js') {
+//    mod = 'javascript';
+//  } else if (selectorVal === 'ts') {
+//    mod = 'typescript';
+//  } else if (selectorVal === 'ruby') {
+//    mod = 'ruby';
+//  } else if (selectorVal === 'c' || selectorVal == 'cpp') {
+//    mod = 'c_cpp';
+//    if (editorVal === '') {
+//      pyInputSetValue(CPP_BLANK_TEMPLATE);
+//    }
+//  } else {
+//    mod = 'python';
+//    tabSize = 4; // PEP8
+//  }
   assert(mod);
-
+  
   var s = pyInputAceEditor.getSession();
   s.setMode("ace/mode/" + mod);
   s.setTabSize(tabSize);
@@ -845,7 +845,7 @@ function genericOptFrontendReady() {
 
   if (useCodeMirror) {
     pyInputCodeMirror = CodeMirror(document.getElementById('codeInputPane'), {
-      mode: 'python',
+      mode: 'java',
       lineNumbers: true,
       tabSize: 4,
       indentUnit: 4,
@@ -915,6 +915,10 @@ function genericOptFrontendReady() {
     */
   }
 
+  // AZM: add test template
+	$.get(BLAST_OPT_TEST_TEMPLATE, function(dat) {
+		pyInputSetValue(dat);
+	})
 
   // first initialize options from HTML LocalStorage. very important
   // that this code runs first so that options get overridden by query
@@ -1030,7 +1034,8 @@ function genericOptFrontendReady() {
 
   $("#embedLinkDiv").hide();
   $("#executeBtn").attr('disabled', false);
-  $("#executeBtn").click(executeCodeFromScratch);
+  $("#executeBtn").click(dispatchExecute);
+  
 
   // for Versions 1 and 2, initialize here. But for version 3+, dynamically
   // generate a survey whenever the user successfully executes a piece of code
@@ -1330,6 +1335,24 @@ function updateAppDisplay(newAppMode) {
   logEventCodeopticon({type: 'updateAppDisplay', mode: appMode, appState: getAppState()});
 }
 
+function dispatchExecute() {
+	var inputType = document.getElementById('inputType').value;
+	
+	if (inputType == 'inlineTestPane')
+		return executeCodeFromScratch();
+	else if (inputType == 'jarFilePane')
+		return executeJarFile();
+	else 
+		return executeCustomTest();
+}
+
+function executeJarFile() {
+	alert("jar file logic not there yet!")
+}
+
+function executeCustomTest() {
+	alert("custom test logic not there yet!")
+}
 
 function executeCodeFromScratch() {
   // don't execute empty string:

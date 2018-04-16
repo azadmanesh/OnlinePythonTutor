@@ -966,4 +966,89 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
     z-index: -1;
 }
 
+/* AZM: CSS for the blast-opt-frontend */
+.inputTypeSelectionTabs {
+	overflow: hidden;
+    border: none;
+    background-color: rgba(0,0,0,.8);
+    width: 729px;
+    font-family: "SF Pro Text", "SF Pro Icons", "AOS Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    quotes: "“" "”";
+}
+
+.inputTypeSelectionTabs button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 14px;
+    line-height: 3.14286;
+    font-weight: 400;
+    letter-spacing: -.01em;
+    font-family: SF Pro Text,Myriad Set Pro,SF Pro Icons,Helvetica Neue,Helvetica,Arial,sans-serif;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+    padding: 0 10px;
+    height: 44px;
+    opacity: 1;
+    background: no-repeat;
+    text-decoration: none;
+    white-space: nowrap;
+    color:white;
+    quotes: "“" "”";
+}
+
+.inputTypeSelectionTabs button:hover {
+    color: #a8a8a8;
+}  
+
+.inputTypeSelectionTabs button.active {
+    background-color: #e6e4cc;
+    color:black;
+}
+
+.tabContent {
+	background-color: #e6e4cc;
+    display: none;
+    padding: 6px 12px;
+    animation: fadeEffect 1s; /* Fading effect takes 1 second */
+    width: 705px;
+    font-family: "SF Pro Text", "SF Pro Icons", "AOS Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 9pt;
+    quotes: "“" "”";
+}
+
+#inlineTestPane.tabContent {
+	display: block;
+}
+
+/* Go from zero to full opacity */
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.logo {
+	width: 250px;
+	vertical-align: middle;
+}
+
+.blast-logo {
+	width: 400px;
+	resize:both;
+}  
+
+.opt-logo {
+	float: right;
+	width: 110px;
+}
+
+.logoContainer {
+	width: 729px;
+}
 /* END Java frontend by David Pritchard and Will Gwozdz */

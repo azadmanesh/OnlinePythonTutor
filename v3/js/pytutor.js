@@ -5162,3 +5162,23 @@ ExecutionVisualizer.prototype.activateJavaFrontend = function() {
   };
 
 }
+
+function openInputTypePane(event, id) {
+	var i, tabContents, tabLinks;
+	
+	tabContents = document.getElementsByClassName("tabContent");
+	for (i=0; i<tabContents.length; i++) {
+		tabContents[i].style.display="none";
+	}
+	
+	tabLinks = document.getElementsByClassName("tabLinks");
+	for (i = 0; i < tabLinks.length; i++) {
+		tabLinks[i].className = tabLinks[i].className.replace(" active","");
+	}
+	
+	document.getElementById(id).style.display="block";
+	event.currentTarget.className += " active";
+	document.getElementById("inputType").value=id;
+}
+
+	

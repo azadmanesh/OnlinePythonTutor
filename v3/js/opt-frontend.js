@@ -459,6 +459,8 @@ var TS_EXAMPLES = {
   tsInheritanceExLink: 'ts-example-code/inheritance.ts',
 };
 
+var BLAST_OPT_TEST_TEMPLATE = 'blast-opt-code/Test.java' 
+
 var JAVA_EXAMPLES = {
   javaVarLink: 'java-example-code/Variables.java',
   javaCFLink: 'java-example-code/ControlFlow.java',
