@@ -11,4 +11,4 @@ v3/opt_togetherjs/*.json
 # for regression tests
 *.diff.png
 *.fail.png
-wd/
+v3/wd/
