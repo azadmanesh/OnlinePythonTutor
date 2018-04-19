@@ -1051,4 +1051,39 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 .logoContainer {
 	width: 729px;
 }
+
+.tempTable {
+	border = 1 solid black;
+	background-color: #e6e4cc;
+	width: 700px;
+}
+
+.eventViewer {
+	background-color: #e6e4cc;
+	width: 700px;
+	border-color: black;
+	border-width: 2px;
+	border-collapse: collapse;
+}
+
+.myColumn0 {
+	background-color: aqua;
+}
+
+.myColumn1 {
+	background-color: red;
+}
+
+.myColumn2 {
+	background-color: green;
+}
+
+.myColumn3 {
+	background-color: blue;
+}
+
+.myColumn4 {
+	background-color: yellow;
+}
+
 /* END Java frontend by David Pritchard and Will Gwozdz */

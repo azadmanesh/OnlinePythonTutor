@@ -23,6 +23,59 @@ import sys
 import os
 import shutil
 
+wd = 'wd'
+blast_opt_frontend = '/Users/reza/PhD/tools/OnlinePythonTutor/v3'
+junit_class_path = 'blast-opt-backend/lib/junit-4.11.jar:blast-opt-backend/lib/hamcrest-core-1.3.jar'
+blast_opt_controller = '/Users/reza/Documents/workspace2/blast-opt-controller' 
+
+inlined_test_class_name = 'InlinedTest'
+inlined_test_method_name = 'test'
+
+#AZM: Launching BLAST for different input cases
+def executeInlinedTest():
+    print "[execute]:\tInlined Test"
+    print request.query.user_script
+    
+    currentRelativeTargetPath = ''+ wd + '/' + 's' + request.query.session_uuid
+      
+    if not os.path.exists(currentRelativeTargetPath):
+        print >> sys.stderr, 'Making dir'
+        os.makedirs(currentRelativeTargetPath)
+    
+    targetFilePath = currentRelativeTargetPath + '/' + 'InlinedTest.java';
+    
+    tempFile = open(targetFilePath, 'w')
+    tempFile.write(request.query.user_script);
+    tempFile.close()
+    
+    classpath = junit_class_path
+    print 'classpath:\t' + classpath
+    
+    retcode = call(["javac", "-g","-cp", classpath, "-source", "7", "-target", "7", targetFilePath])
+    
+    if retcode != 0:
+        raise Exception("Compile error!")
+    
+    print 'test.class.name:\t' + inlined_test_class_name
+    print 'test.method.name:\t' + inlined_test_method_name
+    print 'target.wd:\t' + blast_opt_frontend+ '/' + currentRelativeTargetPath
+    
+    retcode = call(["ant", "-f", blast_opt_controller, 
+                                                    "run", 
+                                                    "-Dtest.class="+inlined_test_class_name,
+                                                    "-Dtest.method="+inlined_test_method_name,
+                                                    "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
+    print "opt-controller:\t" + str(retcode)
+    if retcode != 0:
+        raise Exception("Opt-controller failed in running the test!")
+    
+    return static_file("data.json", root=currentRelativeTargetPath)
+
+def executeJarFile():
+    print "executing jar file"
+    
+def executeCustomAddress():
+    print "executing custom address"
 
 # dummy routes for testing only
 @route('/web_exec_<name:re:.+>.py')
@@ -44,84 +97,26 @@ def index(filepath):
         return json.dumps(dict(name='TEST NAME', email='TEST EMAIL'))
     return static_file(filepath, root='.')
 
-
-
 @get('/exec')
 def get_exec():
-  print >> sys.stderr, 'ID:' 
-  print >> sys.stderr, get_exec.id
-  get_exec.id+=1
-  print >> sys.stderr, 'Hi from exec'
-  print >> sys.stderr, request.query.user_script
-
-  source = request.query.user_script
-  javaTutorPlusWorkingDir = '/Users/hauswirm/tools/OnlinePythonTutor/wd/'
-  currentTargetPath = javaTutorPlusWorkingDir +str(get_exec.id)
-
-
-  
-  if not os.path.exists(currentTargetPath):
-     print >> sys.stderr, 'Making dir'
-     os.makedirs(currentTargetPath)
-  else:   
-     print >> sys.stderr, 'removing contents'
-     for root, dirs, files in os.walk(currentTargetPath):
-        for f in files:
-          os.unlink(os.path.join(root, f))
-        for d in dirs:
-          shutil.rmtree(os.path.join(root, d))
-
-  
-
-  #We finst need to find the name of the class file to store it as a .java file
-  words = source.split()
-
-  found = False
-  name = "Unknown"
-  for word in words:
-      if found :
-          name = word
-          break;
-      if word == 'class':
-          found = True
-
-  if '{' in name:
-    name = name[:-1]
-
-  targetFilePath = currentTargetPath + '/' + name + '.java';
-  print targetFilePath
-
-  
-  
-
-  tempFile = open(targetFilePath, 'w')
-  tempFile.write(source);
-  tempFile.close()
-
-  print targetFilePath
-
-
-
-#  call(['java', '-jar', '/Users/hauswirm/tools/extendj/extendj.jar','-g', targetFilePath])
-#  try:
-#    check_call(['/bin/bash', '-i', '-c','extendj '+ targetFilePath])
-#  except CalledProcessError as e:
-#    print >>sys.stderr, "Compilation failed:", e
-
-  blastOp='-Dblast=/Users/hauswirm/tools/informationflowtracer'
-  extendjOp='-Dextendj=/Users/hauswirm/tools/extendj/extendj.jar'
-  pythonTutorOp='-Dpython-tutor=/Users/hauswirm/tools/OnlinePythonTutor'
-  
-  extendjArgs = "-Dextendj-args='-d " + currentTargetPath + " " + targetFilePath+ "'";
-  print extendjArgs
-  fileNameArg = '-DfileName=' + name
-  print fileNameArg
-  requestIdArg = '-DrequestId=' + str(get_exec.id)
-  print requestIdArg
-  
-  call(["ant", "-f", "/Users/hauswirm/tools/java-tutor-plus", "run", extendjArgs, fileNameArg, requestIdArg, blastOp, extendjOp, pythonTutorOp])
-#  return static_file("test.json", root=javaTutorPlusWorkingDir)
-  return static_file("data.json", root=currentTargetPath)
+    print "Hi from Python"
+    print >> sys.stderr, 'ID:' 
+    print "classpath:\t" + request.query.class_path
+    print >> sys.stderr, get_exec.id
+    print "sessionId:\t" + request.query.session_uuid
+    
+    input_type = request.query.input_type
+    if input_type == 'inlineTestPane':
+        return executeInlinedTest()
+    elif input_type == 'jarFilePane':
+        return executeJarFile()
+    elif input_type == 'customAddressPane':
+        return executeCustomAddress()
+    else:
+        raise Exception('Invalid input type specified!')   
+       
+    
+    
 
 @get('/load_matrix_problem.py')
 def load_matrix_problem():
@@ -186,3 +181,4 @@ if n_fail == 0:
 if __name__ == "__main__":
     #run(host='localhost', port=8080, reloader=True)
     run(host='0.0.0.0', port=8003, reloader=True) # make it externally visible - DANGER this is very insecure since there's no sandboxing!
+    

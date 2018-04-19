@@ -1034,7 +1034,7 @@ function genericOptFrontendReady() {
 
   $("#embedLinkDiv").hide();
   $("#executeBtn").attr('disabled', false);
-  $("#executeBtn").click(dispatchExecute);
+  $("#executeBtn").click(executeDispatch);
   
 
   // for Versions 1 and 2, initialize here. But for version 3+, dynamically
@@ -1335,7 +1335,7 @@ function updateAppDisplay(newAppMode) {
   logEventCodeopticon({type: 'updateAppDisplay', mode: appMode, appState: getAppState()});
 }
 
-function dispatchExecute() {
+function executeDispatch() {
 	var inputType = document.getElementById('inputType').value;
 	
 	if (inputType == 'inlineTestPane')
@@ -1347,11 +1347,11 @@ function dispatchExecute() {
 }
 
 function executeJarFile() {
-	alert("jar file logic not there yet!")
+	executeCode();
 }
 
 function executeCustomTest() {
-	alert("custom test logic not there yet!")
+	executeCode();
 }
 
 function executeCodeFromScratch() {
@@ -1732,7 +1732,12 @@ function executeCodeAndCreateViz(codeToExec,
     } else {
       // Python 2 or 3
       $.get(backendScript,
-            {user_script : codeToExec,
+            {
+    	  	 input_type : $('#inputType').val(),
+    	  	 class_path: $('#classpath').val(),
+    	  	 test_class_name: $('#testClassName').val(),
+    	  	 test_method_name: $('#testMethodName').val(),
+    	  	 user_script : codeToExec,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
              options_json: JSON.stringify(backendOptionsObj),
              user_uuid: supports_html5_storage() ? localStorage.getItem('opt_uuid') : undefined,

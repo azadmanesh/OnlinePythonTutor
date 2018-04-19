@@ -459,7 +459,7 @@ var TS_EXAMPLES = {
   tsInheritanceExLink: 'ts-example-code/inheritance.ts',
 };
 
-var BLAST_OPT_TEST_TEMPLATE = 'blast-opt-code/Test.java' 
+var BLAST_OPT_TEST_TEMPLATE = 'blast-opt-code/InlinedTest.java' 
 
 var JAVA_EXAMPLES = {
   javaVarLink: 'java-example-code/Variables.java',
@@ -600,6 +600,63 @@ var CPP_EXAMPLES = {
 
 
 $(document).ready(function() {
+	
+  //AZM: temporary testing code; to be removed later
+  var container = $("#eventViewerDiv");
+  var myData = [[1],
+	  			[1],
+	  			[1,2],
+	  			[1,2],
+	  			[1],
+	  			[1,2],
+	  			[1,2,3],
+	  			[1,2,3],
+	  			[1,2,4],
+	  			[1]];
+  
+  var maxDepth=3;
+  
+  var myTable = $('<table class="eventViewer"/>');
+  $.each(myData, function(rowIndex, r) {
+	 console.log("rowIndex:\t"+ rowIndex + ",\tr:\t"+r+"\n");
+	 var row = $('<tr/>');
+	 $.each(r, function(colIndex, c) {
+		 console.log("cols.size:\t"+ r.length)
+		 var td = $('<td/>');
+		 
+		 td.attr('width', 100 / r.length+'%')
+		    .attr('class','myColumn'+colIndex)
+		 	.text("column "+c);
+		 
+		 if (colIndex == r.length - 1) {		//add the colspan only to the last column
+			 td.attr('colspan', maxDepth - r.length + 1)
+		 } 
+		 
+		 row.append(td);
+		 console.log("colIndex:\t"+colIndex + ",\tc:\t"+c+"\n")
+	 })
+	 myTable.append(row);
+  });
+  
+  container.append(myTable);
+  
+  var table = container.
+				append($('<table>')
+				  .append($('<tr>')
+				        .append($('<td>')
+				            .append($('<img>')
+				                .attr('width', '700px')
+				                .text('Image cell')
+				                )
+				           )
+				          .append($('<td>')
+				            .append($('<p>')
+				                .text('hi')
+				                )
+				           )
+				      )
+				  );
+	
   setSurveyHTML();
 
   $("#hideHeaderLink").click(function() {

@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
  * Do not rename the method!
  * Do not add any further test!
  */
-public class Test {
+public class InlinedTest {
 	
 	@Test
 	public void test() {
