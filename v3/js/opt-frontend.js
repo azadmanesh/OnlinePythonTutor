@@ -599,6 +599,7 @@ var CPP_EXAMPLES = {
 }
 
 
+
 $(document).ready(function() {
 	
   //AZM: temporary testing code; to be removed later
@@ -624,9 +625,15 @@ $(document).ready(function() {
 		 console.log("cols.size:\t"+ r.length)
 		 var td = $('<td/>');
 		 
-		 td.attr('width', 100 / r.length+'%')
-		    .attr('class','myColumn'+colIndex)
-		 	.text("column "+c);
+		 td
+		 	.append($("<div>")
+		 		.attr('class', 'tooltip')
+		 		.append($("<span>")
+		 			.attr('class','tooltiptext')
+		 			.text('tooltip text')
+		 			)
+		 		)
+		 .attr('class', 'eventViewerColumn myColumn'+colIndex);
 		 
 		 if (colIndex == r.length - 1) {		//add the colspan only to the last column
 			 td.attr('colspan', maxDepth - r.length + 1)
@@ -640,6 +647,8 @@ $(document).ready(function() {
   
   container.append(myTable);
   
+  var tooltipSpan = document.getElementsByClassName('tooltiptext');
+
   var table = container.
 				append($('<table>')
 				  .append($('<tr>')
