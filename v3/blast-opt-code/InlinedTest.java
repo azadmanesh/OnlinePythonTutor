@@ -10,7 +10,11 @@ public class InlinedTest {
 	
 	@Test
 	public void test() {
-		//TODO: The test body goes here
+		int a = 12;
+		if (a < 200) {
+			a = 234;
+		}
+		int b = a;
 	}
 	
 }

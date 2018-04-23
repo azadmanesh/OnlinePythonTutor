@@ -591,7 +591,7 @@ ExecutionVisualizer.prototype.render = function() {
     } else if (this.params.lang === 'java') {
       this.domRoot.find('#langDisplayDiv').html('Java');
     } else if (this.params.lang === 'py2') {
-      this.domRoot.find('#langDisplayDiv').html('Python 2.7');
+      this.domRoot.find('#langDisplayDiv').html('Abstract Events');
     } else if (this.params.lang === 'py3') {
       this.domRoot.find('#langDisplayDiv').html('Python 3.3');
     } else if (this.params.lang === 'c') {
@@ -1322,33 +1322,56 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .data(this.codeOutputLines)
     .enter().append('tr')
     .selectAll('td')
-    .data(function(d, i){return [d, d] /* map full data item down both columns */;})
+    .data(function(d, i){return [d, d, d] /* map full data item down both columns */;})
     .enter().append('td')
     .attr('class', function(d, i) {
       if (i == 0) {
-        return 'lineNo';
+    	  return 'lineNo';
+      }
+      else if (i == 1){
+    	  return 'context';
       }
       else {
-        return 'cod';
+    	  return 'cod';
       }
     })
     .attr('id', function(d, i) {
       if (i == 0) {
         return 'lineNo' + d.lineNumber;
-      }
-      else {
+      } else if (i == 1) {
+    	return 'context' + d.lineNumber;  
+      } else {
         return myViz.generateID('cod' + d.lineNumber); // make globally unique (within the page)
       }
     })
     .html(function(d, i) {
       if (i == 0) {
         return d.lineNumber;
-      }
-      else {
+      } else if (i == 1) {
+    	return ""  
+      } else {
         return htmlspecialchars(d.text);
       }
     });
 
+  var controllers = [];
+  $.each(this.curTrace, function(i, te) {
+	  controllers.push(te.controllers)
+    });
+  
+  
+  var codeOutputD3 = this.domRootD3.selectAll('.context')
+  .append('div')
+  .attr('class', 'contextClass')
+  .data(controllers)
+  .selectAll('span')
+  .data(function(d , i) {
+	  return d})
+  .enter()
+  .append('span')
+  .html(function(d , i) {
+	  return d['index'];});
+  
   // create a left-most gutter td that spans ALL rows ...
   // (NB: valign="top" is CRUCIAL for this to work in IE)
   if (myViz.params.arrowLines) {
@@ -2496,65 +2519,65 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
   // ANDREA GALLIDABINO: test visualiser START  
 //compute children level\
 
-var treeVisualiserElement = document.getElementById('treeVisualiser')
-//var treeVisualiserbg = document.getElementById('treeBackground')
-var maxLevel = 0
-var levelHeight = 20
-var maxWidth = 0
-var minStart = undefined
-var codeLeftBase = 59 + 61.5;
-var treeBackgourdTopPadding = 5;
-var treeBackgourdLeftPadding = 5;
-var treeElementPadding = 3;
-for(var i = 0; i < curEntry.rangeValue.length; i++) { 
-	  curEntry.rangeValue[i].level = maxLevel;
-	  maxLevel++
-}
-
-treeVisualiserElement.innerHTML = '';
-//treeVisualiserbg.innerHTML = '';
-for(var i = 0; i < curEntry.rangeValue.length; i++) {
-	  
-	  var treeElement = document.createElement('div');
-	  treeElement.className += "treeCircle";
-	  treeElement.innerHTML = curEntry.rangeValue[i].value;
-	  
-	  var elementCharCount = curEntry.rangeValue[i].value.length
-	  
-	  var charFontWidth = 8.8;
-	  var widthChars = (curEntry.rangeValue[i].end - curEntry.rangeValue[i].start) + 1
-	  if(maxWidth < (widthChars * charFontWidth)) {
-		  maxWidth = widthChars * charFontWidth
-	  }
-	  
-	  treeElement.style.width = (Math.max(elementCharCount,widthChars))*charFontWidth + 'px'
-	  
-	  
-	  if(minStart == undefined || minStart > curEntry.rangeValue[i].start) {
-		  minStart = curEntry.rangeValue[i].start
-	  }
-//	  var positionLeft = curEntry.rangeValue[i].start + (widthChars / 2 )
-//	  var pixels = (positionLeft + 6) * 9 + 61.5 // 13 pixels =~ 10pt --- 61.5pixel = margin-left --- 6 character offset
-    
-	  var pixels = codeLeftBase + ((curEntry.rangeValue[i].start-1)*charFontWidth) - 2
-	  treeElement.style.left = pixels + 'px'
-	  
-	  var linePositionTop = 23+ 8 +((myViz.prevLineNumber - 1)*20) ; 
-	  var positionTop = linePositionTop;
-	  positionTop = positionTop - ((curEntry.rangeValue[i].level) * levelHeight)
-	  
-	  treeElement.style.top = positionTop + 'px'
-	  
-	  treeVisualiserElement.appendChild(treeElement);
-}
-
-var treeBg = document.createElement('div');
-treeBg.className += "treeBackground";
-treeBg.style.width = (maxWidth + (2*treeBackgourdLeftPadding) )+ 'px'
-treeBg.style.height = ((maxLevel)*levelHeight) + 6 + 'px'
-treeBg.style.top = (linePositionTop - ((maxLevel-1) * levelHeight) - treeBackgourdTopPadding ) + 'px'
-treeBg.style.left = ((minStart - 1) * charFontWidth + codeLeftBase)- treeBackgourdLeftPadding + 'px'
-treeVisualiserElement.appendChild(treeBg);
+//var treeVisualiserElement = document.getElementById('treeVisualiser')
+////var treeVisualiserbg = document.getElementById('treeBackground')
+//var maxLevel = 0
+//var levelHeight = 20
+//var maxWidth = 0
+//var minStart = undefined
+//var codeLeftBase = 59 + 61.5;
+//var treeBackgourdTopPadding = 5;
+//var treeBackgourdLeftPadding = 5;
+//var treeElementPadding = 3;
+//for(var i = 0; i < curEntry.rangeValue.length; i++) { 
+//	  curEntry.rangeValue[i].level = maxLevel;
+//	  maxLevel++
+//}
+//
+//treeVisualiserElement.innerHTML = '';
+////treeVisualiserbg.innerHTML = '';
+//for(var i = 0; i < curEntry.rangeValue.length; i++) {
+//	  
+//	  var treeElement = document.createElement('div');
+//	  treeElement.className += "treeCircle";
+//	  treeElement.innerHTML = curEntry.rangeValue[i].value;
+//	  
+//	  var elementCharCount = curEntry.rangeValue[i].value.length
+//	  
+//	  var charFontWidth = 8.8;
+//	  var widthChars = (curEntry.rangeValue[i].end - curEntry.rangeValue[i].start) + 1
+//	  if(maxWidth < (widthChars * charFontWidth)) {
+//		  maxWidth = widthChars * charFontWidth
+//	  }
+//	  
+//	  treeElement.style.width = (Math.max(elementCharCount,widthChars))*charFontWidth + 'px'
+//	  
+//	  
+//	  if(minStart == undefined || minStart > curEntry.rangeValue[i].start) {
+//		  minStart = curEntry.rangeValue[i].start
+//	  }
+////	  var positionLeft = curEntry.rangeValue[i].start + (widthChars / 2 )
+////	  var pixels = (positionLeft + 6) * 9 + 61.5 // 13 pixels =~ 10pt --- 61.5pixel = margin-left --- 6 character offset
+//    
+//	  var pixels = codeLeftBase + ((curEntry.rangeValue[i].start-1)*charFontWidth) - 2
+//	  treeElement.style.left = pixels + 'px'
+//	  
+//	  var linePositionTop = 23+ 8 +((myViz.prevLineNumber - 1)*20) ; 
+//	  var positionTop = linePositionTop;
+//	  positionTop = positionTop - ((curEntry.rangeValue[i].level) * levelHeight)
+//	  
+//	  treeElement.style.top = positionTop + 'px'
+//	  
+//	  treeVisualiserElement.appendChild(treeElement);
+//}
+//
+//var treeBg = document.createElement('div');
+//treeBg.className += "treeBackground";
+//treeBg.style.width = (maxWidth + (2*treeBackgourdLeftPadding) )+ 'px'
+//treeBg.style.height = ((maxLevel)*levelHeight) + 6 + 'px'
+//treeBg.style.top = (linePositionTop - ((maxLevel-1) * levelHeight) - treeBackgourdTopPadding ) + 'px'
+//treeBg.style.left = ((minStart - 1) * charFontWidth + codeLeftBase)- treeBackgourdLeftPadding + 'px'
+//treeVisualiserElement.appendChild(treeBg);
 //treeElement.innerHTML = curEntry.rangeValue[i].value;
 //
 //var treeBackground = document.getElementById('treeBackground')

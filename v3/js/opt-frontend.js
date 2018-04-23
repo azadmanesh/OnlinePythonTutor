@@ -648,23 +648,6 @@ $(document).ready(function() {
   container.append(myTable);
   
   var tooltipSpan = document.getElementsByClassName('tooltiptext');
-
-  var table = container.
-				append($('<table>')
-				  .append($('<tr>')
-				        .append($('<td>')
-				            .append($('<img>')
-				                .attr('width', '700px')
-				                .text('Image cell')
-				                )
-				           )
-				          .append($('<td>')
-				            .append($('<p>')
-				                .text('hi')
-				                )
-				           )
-				      )
-				  );
 	
   setSurveyHTML();
 
