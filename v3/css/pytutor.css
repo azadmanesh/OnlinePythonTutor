@@ -1112,5 +1112,23 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
     postion: fixed;
 }
 
+.pyCodeOutputTable {
+table-layout: fixed;
+}
+
+.context{
+	width: 50%;
+}
+.contextDiv {
+	display: inline-block;
+    width:100%;
+    height:100%;
+    border: 1px solid black;
+}
+
+.contextSpan {
+	display: inline-block;
+	border: 1px solid black;
+}
 
 /* END Java frontend by David Pritchard and Will Gwozdz */

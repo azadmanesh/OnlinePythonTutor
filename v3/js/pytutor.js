@@ -1317,6 +1317,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   // maps this.codeOutputLines to both table columns
   var codeOutputD3 = this.domRootD3.select('#pyCodeOutputDiv')
     .append('table')
+    .attr('class' , 'pyCodeOutputTable')
     .attr('id', 'pyCodeOutput')
     .selectAll('tr')
     .data(this.codeOutputLines)
@@ -1355,22 +1356,38 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     });
 
   var controllers = [];
+  var controllerLens = [];
   $.each(this.curTrace, function(i, te) {
 	  controllers.push(te.controllers)
+	  controllerLens.push(te.controllers.length);
     });
   
+  var maxDepth = Math.max.apply(Math, controllerLens);
   
   var codeOutputD3 = this.domRootD3.selectAll('.context')
   .append('div')
-  .attr('class', 'contextClass')
+  .attr('class', 'tooltip')
   .data(controllers)
   .selectAll('span')
   .data(function(d , i) {
-	  return d})
+	  var ret =  d;
+	  return ret;})
   .enter()
   .append('span')
-  .html(function(d , i) {
-	  return d['index'];});
+  .attr('class', function (d , i) {
+	  return 'contextSpan';
+	 })
+  .style('width', function (d , colIndex){
+	  var colNum = this.parentElement.__data__.length;
+	  if (colIndex == colNum - 1) {		//add spanning only for the last column
+			 return (100 - colIndex * (100 / maxDepth)) + '%';
+	  } else {
+		  return (100 / maxDepth) + '%'; 
+	  }
+	  })
+  .html(function (d , i) {
+	  return "hi";
+	  });
   
   // create a left-most gutter td that spans ALL rows ...
   // (NB: valign="top" is CRUCIAL for this to work in IE)
