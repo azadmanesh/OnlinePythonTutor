@@ -1389,8 +1389,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    .enter()
    .append('span')
    .attr('class', function (d , i) {
-           return 'tooltip';
-          })
+	   return 'tooltip myColumn'+i;
+   	})
    .style('width', function (d , colIndex){
            var colNum = this.parentElement.__data__.length;
            if (colIndex == colNum - 1) {         //add spanning only for the last column
@@ -1400,10 +1400,21 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
            }
            })
    .html(function (d , i) {
-           return "hi";
+           return "";
        });
   
-  this.domRootD3.selectAll('.contextDiv').data(controllers).selectAll('span').selectAll('span.tooltiptext').data(function(d,i){console.log(d);return [d]}).enter().append('span').attr('class','tooltiptext').html('hi')
+  this.domRootD3
+  .selectAll('.contextDiv')
+  .data(controllers)
+  .selectAll('span')
+  .selectAll('span.tooltiptext')
+  .data(function(d,i)
+		  {return [d]
+	})
+	.enter()
+	.append('span')
+	.attr('class','tooltiptext')
+	.html('hi')
   
   
 //  this.domRootD3.selectAll('.tooltip')

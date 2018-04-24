@@ -1071,11 +1071,11 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 }
 
 .myColumn0 {
-	background-color: #fff7db;
+	background-color: #b3c1ff;
 }
 
 .myColumn1 {
-	background-color: #b3c1ff;
+	background-color: #fff7db;
 }
 
 .myColumn2 {
@@ -1121,9 +1121,8 @@ table-layout: fixed;
 }
 .contextDiv {
 	display: inline-block;
-    width:100%;
+	width: 100%;
     height:100%;
-    border: 1px solid black;
 }
 
 .contextSpan {
