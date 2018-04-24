@@ -1422,9 +1422,9 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 		   console.log(i);
 
 		  if (d.index != -1)
-		  return myViz.curTrace[d.index].func_name; 
+		  return myViz.curTrace[d.index].synthesized_source; 
 	  else 
-		  return "hi"+i})
+		  return "[UNKONWN]"})
 
    
 //  this.domRootD3.selectAll('.contextDiv')
