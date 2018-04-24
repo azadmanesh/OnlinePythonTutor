@@ -616,38 +616,39 @@ $(document).ready(function() {
 	  			[1]];
   
   var maxDepth=3;
+    
   
-  var myTable = $('<table class="eventViewer"/>');
-  $.each(myData, function(rowIndex, r) {
-	 console.log("rowIndex:\t"+ rowIndex + ",\tr:\t"+r+"\n");
-	 var row = $('<tr/>');
-	 $.each(r, function(colIndex, c) {
-		 console.log("cols.size:\t"+ r.length)
-		 var td = $('<td/>');
-		 
-		 td
-		 	.append($("<div>")
-		 		.attr('class', 'tooltip')
-		 		.append($("<span>")
-		 			.attr('class','tooltiptext')
-		 			.text('tooltip text')
-		 			)
-		 		)
-		 .attr('class', 'eventViewerColumn myColumn'+colIndex);
-		 
-		 if (colIndex == r.length - 1) {		//add the colspan only to the last column
-			 td.attr('colspan', maxDepth - r.length + 1)
-		 } 
-		 
-		 row.append(td);
-		 console.log("colIndex:\t"+colIndex + ",\tc:\t"+c+"\n")
-	 })
-	 myTable.append(row);
-  });
-  
-  container.append(myTable);
-  
-  var tooltipSpan = document.getElementsByClassName('tooltiptext');
+//  var myTable = $('<table class="eventViewer"/>');
+//  $.each(myData, function(rowIndex, r) {
+//	 console.log("rowIndex:\t"+ rowIndex + ",\tr:\t"+r+"\n");
+//	 var row = $('<tr/>');
+//	 $.each(r, function(colIndex, c) {
+//		 console.log("cols.size:\t"+ r.length)
+//		 var td = $('<td/>');
+//		 
+//		 td
+//		 	.append($("<div>")
+//		 		.attr('class', 'tooltip')
+//		 		.append($("<span>")
+//		 			.attr('class','tooltiptext')
+//		 			.text('tooltip text')
+//		 			)
+//		 		)
+//		 .attr('class', 'eventViewerColumn myColumn'+colIndex);
+//		 
+//		 if (colIndex == r.length - 1) {		//add the colspan only to the last column
+//			 td.attr('colspan', maxDepth - r.length + 1)
+//		 } 
+//		 
+//		 row.append(td);
+//		 console.log("colIndex:\t"+colIndex + ",\tc:\t"+c+"\n")
+//	 })
+//	 myTable.append(row);
+//  });
+//  
+//  container.append(myTable);
+//  
+//  var tooltipSpan = document.getElementsByClassName('tooltiptext');
 	
   setSurveyHTML();
 

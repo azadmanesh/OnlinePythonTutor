@@ -1363,31 +1363,63 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     });
   
   var maxDepth = Math.max.apply(Math, controllerLens);
+ 
+//  var test = this.domRootD3.selectAll('.context')
+//  	.data(controllers)
+//  	.append('div')
+//  	.data(controllers, function(d , i) {
+//  		return d;
+//  	})
+//  	.selectAll('span')
+//  	.data(function(d , i) {
+//  		return d;
+//  	})
+//  	.enter()
+//  	.append('span')
+//  	.html('hi');
   
-  var codeOutputD3 = this.domRootD3.selectAll('.context')
-  .append('div')
-  .attr('class', 'tooltip')
-  .data(controllers)
-  .selectAll('span')
-  .data(function(d , i) {
-	  var ret =  d;
-	  return ret;})
-  .enter()
-  .append('span')
-  .attr('class', function (d , i) {
-	  return 'contextSpan';
-	 })
-  .style('width', function (d , colIndex){
-	  var colNum = this.parentElement.__data__.length;
-	  if (colIndex == colNum - 1) {		//add spanning only for the last column
-			 return (100 - colIndex * (100 / maxDepth)) + '%';
-	  } else {
-		  return (100 / maxDepth) + '%'; 
-	  }
-	  })
-  .html(function (d , i) {
-	  return "hi";
-	  });
+  this.domRootD3.selectAll('.context')
+   .append('div')
+   .attr('class', 'contextDiv')
+   .data(controllers)
+   .selectAll('span')
+   .data(function(d , i) {
+           var ret =  d;
+           return ret;})
+   .enter()
+   .append('span')
+   .attr('class', function (d , i) {
+           return 'tooltip';
+          })
+   .style('width', function (d , colIndex){
+           var colNum = this.parentElement.__data__.length;
+           if (colIndex == colNum - 1) {         //add spanning only for the last column
+                          return (100 - colIndex * (100 / maxDepth)) + '%';
+           } else {
+                   return (100 / maxDepth) + '%'; 
+           }
+           })
+   .html(function (d , i) {
+           return "hi";
+       });
+  
+  this.domRootD3.selectAll('.contextDiv').data(controllers).selectAll('span').selectAll('span.tooltiptext').data(function(d,i){console.log(d);return [d]}).enter().append('span').attr('class','tooltiptext').html('hi')
+  
+  
+//  this.domRootD3.selectAll('.tooltip')
+//  .data(controllers)
+//  .selectAll('span.tooltiptext')
+//  .data(function (d , i){
+//	  return d;
+//  })
+//  .enter()
+//  .append('span')
+//  .attr('class', function (d , i) {
+//          return 'tooltiptext';
+//         })
+//  .html(function (d , i) {
+//          return "hi";
+//      });
   
   // create a left-most gutter td that spans ALL rows ...
   // (NB: valign="top" is CRUCIAL for this to work in IE)
