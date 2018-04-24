@@ -1364,6 +1364,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   
   var maxDepth = Math.max.apply(Math, controllerLens);
  
+  
 //  var test = this.domRootD3.selectAll('.context')
 //  	.data(controllers)
 //  	.append('div')
@@ -1377,10 +1378,14 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 //  	.enter()
 //  	.append('span')
 //  	.html('hi');
-  
-  this.domRootD3.selectAll('.context')
+ 
+  /* add context columns */
+  var myDiv = this.domRootD3.selectAll('.context')
    .append('div')
    .attr('class', 'contextDiv')
+   
+  
+   myDiv 
    .data(controllers)
    .selectAll('span')
    .data(function(d , i) {
@@ -1389,6 +1394,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    .enter()
    .append('span')
    .attr('class', function (d , i) {
+	   console.log(d);
+	   console.log(i);
 	   return 'tooltip myColumn'+i;
    	})
    .style('width', function (d , colIndex){
@@ -1402,20 +1409,36 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    .html(function (d , i) {
            return "";
        });
+       
+  var toberemoved = 1;
+  console.log('Doing tooltip text now!!!')
   
-  this.domRootD3
-  .selectAll('.contextDiv')
-  .data(controllers)
-  .selectAll('span')
-  .selectAll('span.tooltiptext')
-  .data(function(d,i)
-		  {return [d]
-	})
-	.enter()
-	.append('span')
-	.attr('class','tooltiptext')
-	.html('hi')
-  
+  /*Add tooltip text */
+  this.domRootD3.selectAll('.tooltip')
+  .append('span')
+  .attr('class','tooltiptext')
+	.html(function(d,i){ 
+		   console.log(d);
+		   console.log(i);
+
+		  if (d.index != -1)
+		  return myViz.curTrace[d.index].func_name; 
+	  else 
+		  return "hi"+i})
+
+   
+//  this.domRootD3.selectAll('.contextDiv')
+//  .data(controllers)
+//  .selectAll('span.tooltiptext')
+//  .html(function(d,i){ 
+//	  if (d.index != -1)
+//		  return myViz.curTrace[d.index].func_name; 
+//	  else 
+//		  return ""}
+//  )  
+	  
+    
+	//this.domRootD3.selectAll('.contextDiv').data(controllers).selectAll('span.tooltiptext').html(function(d,i){console.log(this.curTrace); console.log(d)})
   
 //  this.domRootD3.selectAll('.tooltip')
 //  .data(controllers)
