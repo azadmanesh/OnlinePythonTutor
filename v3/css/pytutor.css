@@ -1058,37 +1058,6 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	width: 300px;
 }
 
-.eventViewerColumn {
-	height: 20px;
-}
-
-.eventViewer {
-	background-color: #e6e4cc;
-	width: 300px;
-	border-color: black;
-	border-width: 2px;
-	border-collapse: collapse;
-}
-
-.myColumn0 {
-	background-color: #b3c1ff;
-}
-
-.myColumn1 {
-	background-color: #fff7db;
-}
-
-.myColumn2 {
-	background-color: #aff6a8;
-}
-
-.myColumn3 {
-	background-color: #8ed7ff;
-}
-
-.myColumn4 {
-	background-color: #ffc83d;
-}
 
 .tooltip {
     

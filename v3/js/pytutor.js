@@ -2721,76 +2721,7 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
     }
   });
 
-
-  myViz.domRoot.find('#explanationDiv').html(curEntry.explanation);
   
-  
-//  drawExample();
-  //TODO: Just for test!
-  if (myViz.curInstr > 0){
-//	  var rvs = curEntry.rangeValue;
-//	  var rangeValueSize = curEntry.rangeValue.length
-//	  var min = 0;
-//	  var max = 0;
-//	  for (i = 0; i < rangeValueSize; i++) {
-//		    var rv = curEntry.rangeValue[i];
-//		    var rvStart = rv.start;
-//		    var rvEnd = rv.end;
-//		    if (rvStart < min)
-//		    	min = rvStart;
-//		    
-//		    if (rvEnd > max)
-//		    	max = rvEnd;
-//	  }
-//	  
-//	  var lines = [];
-//	  for (i = 0; i <= rangeValueSize; i++) {
-//		var line = '';
-//		for (j = 0; j <= max + 1; j++){
-//			if (onBoundaryExcept(rvs, i, j)){
-//				line += '|';
-//			}else if (included(rvs, i, j)){
-//				line += '-';
-//			}else{
-//				line += "&nbsp;";
-//			}
-//		}
-//		line += '</br>';
-//		lines.push(line);
-//	  }
-//	  
-//	  var line_html = '';
-//	  
-//	  for (i = lines.length - 1; i >= 0; i--){
-//		  line_html += lines[i];
-//	  }
-//	  
-	  var cod = myViz.codeOutputLines[myViz.prevLineNumber - 1].text;
-	  var preExecutedCode = htmlspecialchars(cod.substring(0, curEntry.startIndex - 1));
-	  var executedCode = htmlspecialchars(cod.substring(curEntry.startIndex - 1 , curEntry.endIndex));
-	  var postExecutedCode = htmlspecialchars(cod.substring(curEntry.endIndex,cod.length));
-	  var td_html = "";
-	  td_html = td_html + preExecutedCode + '<span class="executedSource">'+executedCode +'</span>'+postExecutedCode;
-	  myViz.domRoot.find('#'+myViz.generateID('cod' + myViz.prevLineNumber)).
-	  html(td_html);
-	  
-//	  //MAZ: added temporarily 
-//	  $spans = myViz.domRoot.find('#'+myViz.generateID('cod' + myViz.prevLineNumber)).find('span');
-//	  $spans.each(function(){
-//	    var $span = $(this),
-//                $offset = $span.offset(),
-//                $overlay = $('<div class="overlay"/>');
-//
-//         $overlay
-//                .offset($offset)
-//                .css({
-//                    width: $span.innerWidth(),
-//                    height: $span.innerHeight()
-//                });
-//     
-//            $(document.body).append($overlay);
-//	   });
-  }
   
 //  var offsetLeft = getOffset( document.getElementById('executedSource') ).left;
 //  alert("x is"+offsetLeft)
