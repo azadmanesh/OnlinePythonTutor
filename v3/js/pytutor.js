@@ -413,8 +413,9 @@ ExecutionVisualizer.prototype.render = function() {
     '<div id="codeDisplayDiv">\
        <div id="langDisplayDiv"></div>\
        <div id="pyCodeOutputDiv"/>\
-       <div id="editCodeLinkDiv"><a id="editBtn">Edit code</a>\
-       <span id="liveModeSpan" style="display: none;">| <a id="editLiveModeBtn" href="#">Live programming</a></a>\
+       <div id="editCodeLinkDiv">\
+ 	   <input type="checkbox" id="contextTypeCheck">Calling context</input> \
+	   <a id="editBtn">Edit code</a>\
        </div>\
        <div id="legendDiv"/>\
        <div id="executionSliderDocs"><font color="#e93f34">NEW!</font> Click on a line of code to set a breakpoint. Then use the Forward and Back buttons to jump there.</div>\
@@ -1364,6 +1365,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   
   var maxDepth = Math.max.apply(Math, controllerLens);
  
+  //cache it for future accesses, e.g.: in filtering calling context
+  this.controllers = {"set":controllers, 'maxDepth' : maxDepth}
   
 //  var test = this.domRootD3.selectAll('.context')
 //  	.data(controllers)
@@ -1418,7 +1421,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   
   /* specify unique class for each controller */
   $.each(myViz.curTrace, function (i, d){
-	  console.log('**' + i)
 	  var o = Math.round, r = Math.random, s = 200;
 		   var color = 'rgba(' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (r().toFixed(1)) + ')';
 	  $(".klass"+i).css("background-color", color);
@@ -5231,4 +5233,106 @@ function openInputTypePane(event, id) {
 	document.getElementById("inputType").value=id;
 }
 
+function showCallingContext() {
+	var root = this;
 	
+	//first update data
+	var oldDataSet = myVisualizer.domRootD3.selectAll('.contextDiv').data();
+	var newDataSet = []
+	$.each(oldDataSet, function(index, oldEventControllers) {
+		var newEventControllers = [];
+		$.each(oldEventControllers, function(i, controller) {
+			if (controller.invoke) {
+				newEventControllers.push(controller)
+			}
+		})
+		newDataSet.push(newEventControllers)
+	})
+
+	//find new max depth of contexts after removing non-invocation controllers
+	var controllerLens = [];
+	$.each(newDataSet, function(i, te) {
+		controllerLens.push(te.length);
+	});
+	var maxDepth = Math.max.apply(Math, controllerLens);
+
+	var newDiv = myVisualizer.domRootD3.selectAll('.context')
+	.data(newDataSet);
+
+	//remove extra cells containing non-invocation controllers
+	newDiv.selectAll('span.tooltip').data(function(d,i){return d}).exit().remove()
+
+	//update the size of columns 
+	newDiv.selectAll('span.tooltip').data(function(d,i){return d})
+	.style('width', function (d , colIndex){
+		var colNum = this.parentElement.__data__.length;
+		if (colIndex == colNum - 1) {         //add spanning only for the last column
+			return (100 - colIndex * (100 / maxDepth)) + '%';
+		} else {
+			return (100 / maxDepth) + '%'; 
+		}
+	});
+
+}	
+
+function showFullContext() {
+	//first update data
+	var newDataSet = myVisualizer.controllers["set"];
+    var maxDepth = myVisualizer.controllers["maxDepth"];
+
+	//find new max depth of contexts after removing non-invocation controllers
+	var newDiv = myVisualizer.domRootD3.selectAll('.contextDiv')
+	.data(newDataSet);
+
+	//update the size of columns 
+	var newSpans = newDiv.selectAll('span.tooltip').data(function(d,i){return d})
+		.style('width', function (d , colIndex){
+		var colNum = this.parentElement.__data__.length;
+		if (colIndex == colNum - 1) {         //add spanning only for the last column
+			return (100 - colIndex * (100 / maxDepth)) + '%';
+		} else {
+			return (100 / maxDepth) + '%'; 
+		}
+	})
+	
+	newSpans.exit().remove();
+	
+	var spansEnter = newSpans.enter()
+	.append('span')
+	.attr('class', function (d , i) {
+	   var suffix = '';
+	   if (d.index == -1){
+		   suffix = '_'
+	   } else {
+		   suffix = d.index;
+	   }
+	   return 'tooltip klass'+suffix;
+   	})
+   .style('width', function (d , colIndex){
+           var colNum = this.parentElement.__data__.length;
+           if (colIndex == colNum - 1) {         //add spanning only for the last column
+                          return (100 - colIndex * (100 / maxDepth)) + '%';
+           } else {
+                   return (100 / maxDepth) + '%'; 
+           }
+           })
+   .style('background-color', function (d, colIndex){
+	   var o = Math.round, r = Math.random, s = 200;
+	   var color = 'rgba(' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (r().toFixed(1)) + ')';
+	   return color;
+   })
+   .html(function (d , i) {
+           return "";
+       });
+	
+	
+//	/*Add tooltip text */
+	spansEnter
+	.append('span')
+	.attr('class','tooltiptext')
+	.html(function(d,i){ 
+		if (d.index != -1)
+			return myVisualizer.curTrace[d.index].synthesized_source; 
+		else 
+			return "[UNKONWN]"})
+}

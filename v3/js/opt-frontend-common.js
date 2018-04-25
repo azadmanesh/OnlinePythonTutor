@@ -1273,6 +1273,13 @@ function updateAppDisplay(newAppMode) {
 
     // customize edit button click functionality AFTER rendering (NB: awkward!)
     $('#pyOutputPane #editCodeLinkDiv').show();
+    $('#pyOutputPane #contextTypeCheck').on('change', function(e) {
+    	if (this.checked) {
+    		showCallingContext();
+    	} else {
+    		showFullContext();
+    	}
+    })
     $('#pyOutputPane #editBtn').click(function() {
       enterEditMode();
     });
