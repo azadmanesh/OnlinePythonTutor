@@ -1379,6 +1379,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 //  	.append('span')
 //  	.html('hi');
  
+  
   /* add context columns */
   var myDiv = this.domRootD3.selectAll('.context')
    .append('div')
@@ -1394,9 +1395,13 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    .enter()
    .append('span')
    .attr('class', function (d , i) {
-	   console.log(d);
-	   console.log(i);
-	   return 'tooltip myColumn'+i;
+	   var suffix = '';
+	   if (d.index == -1){
+		   suffix = '_'
+	   } else {
+		   suffix = d.index;
+	   }
+	   return 'tooltip klass'+suffix;
    	})
    .style('width', function (d , colIndex){
            var colNum = this.parentElement.__data__.length;
@@ -1410,8 +1415,16 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
            return "";
        });
        
-  var toberemoved = 1;
-  console.log('Doing tooltip text now!!!')
+  
+  /* specify unique class for each controller */
+  $.each(myViz.curTrace, function (i, d){
+	  console.log('**' + i)
+	  var o = Math.round, r = Math.random, s = 200;
+		   var color = 'rgba(' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (r().toFixed(1)) + ')';
+	  $(".klass"+i).css("background-color", color);
+  })
+    /* The special unknown event */
+  $("span.klass_").css("background-color","#2a404d");
   
   /*Add tooltip text */
   this.domRootD3.selectAll('.tooltip')
