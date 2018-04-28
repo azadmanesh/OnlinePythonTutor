@@ -1103,6 +1103,7 @@ table-layout: fixed;
 	display: inline-block;
 }
 
-
-
+.astChosen {
+  background-color: grey;
+}
 /* END Java frontend by David Pritchard and Will Gwozdz */

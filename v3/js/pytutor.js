@@ -1357,6 +1357,18 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       }
     });
 
+  $('.astSpan').hover(function(event){
+      $(this).addClass('astChosen');
+      $(this).parent().removeClass('astChosen');
+      event.stopPropagation();
+
+  }, function(event){
+      $(this).removeClass('astChosen');
+      if ($(this).parent().hasClass('astSpan')) {
+        $(this).parent().addClass('astChosen');
+      }
+  })
+
   var controllers = [];
   var controllerLens = [];
   $.each(this.curTrace, function(i, te) {
@@ -5376,19 +5388,23 @@ function addContentAssist(data,myViz, self) {
 	var modifiedStr = htmlspecialchars(originalText) 
 	
 	var chuncks = [];
+  var zindex = data.ast.length;
 	$.each(data.ast, function (i, d) {
-		modifiedStr = insertAstNodeDiv(d, modifiedStr, map);
+		modifiedStr = insertAstNodeDiv(d, modifiedStr, map, zindex);
+    zindex--;
 	})
 	
 	return modifiedStr;
 }
 
-function insertAstNodeDiv(d, str, map) {
+function insertAstNodeDiv(d, str, map, zindex) {
 	var text = str.slice(map[d.start_index], map[d.end_index]);
 	var span = $('<span>')
-				.attr('class', 'astSpan')
-				.attr('id', 'ast_'+d.bcTime)
+				.attr('id', 'ast__'+d.bcTime)
+        .attr('class', 'astSpan')               
 				.html(text);
+        
+	
 	
 	var shift = span.prop('outerHTML').length;
 	updateSynthesizedSourceMap(map, d.end_index, shift)
