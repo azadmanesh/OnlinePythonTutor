@@ -1286,6 +1286,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     n.lineNumber = i + 1;
     n.executionPoints = [];
     n.breakpointHere = false;
+    n.ast = myViz.curTrace[i].ast;
 
     $.each(this.curTrace, function(j, elt) {
       if (elt.line == n.lineNumber) {
@@ -1352,7 +1353,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       } else if (i == 1) {
     	return ""  
       } else {
-        return htmlspecialchars(d.text);
+        return addContentAssist(d,myViz, this);
       }
     });
 
@@ -1433,9 +1434,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   .append('span')
   .attr('class','tooltiptext')
 	.html(function(d,i){ 
-		   console.log(d);
-		   console.log(i);
-
 		  if (d.index != -1)
 		  return myViz.curTrace[d.index].synthesized_source; 
 	  else 
@@ -2729,10 +2727,10 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
 //  alert("x is"+offsetLeft)
 
   //Text to speech
-  var synth = window.speechSynthesis;
-  var msg = new SpeechSynthesisUtterance(curEntry.explanation);
-  synth.cancel();
-  synth.speak(msg);
+//  var synth = window.speechSynthesis;
+//  var msg = new SpeechSynthesisUtterance(curEntry.explanation);
+//  synth.cancel();
+//  synth.speak(msg);
   
   // use d3 to render the heap by mapping curToplevelLayout into <table class="heapRow">
   // and <td class="toplevelHeapObject"> elements
@@ -4275,11 +4273,47 @@ function assert(cond) {
   }
 }
 
+/* AZM: As for content assist, we need the original 
+   indexes of chars. However, the following steps 
+   modify the indexes. so, we use an array as a map
+   to keep track of new indexes  */
+function findSynthesizedSourceMappings(str) {
+	
+    //map contains str.length + 1 element because it is how 
+    //the indexes are kept: [start, end)
+	var map = [];
+	for (var i = 0; i <= str.length; i++) {
+		map.push(i)
+	}
+	
+	shiftMappings(map, '&', 4, str);
+	shiftMappings(map, '<', 3, str);
+	shiftMappings(map, '>', 3, str);
+	shiftMappings(map, ' ', 5, str);
+	shiftMappings(map, '\t', 23, str);
+
+    return map
+}
+
+function shiftMappings(map, c, ext, str) {
+    var shift = 0;
+    for (var i = 0; i <= str.length; i++) {
+    	map[i] = map[i] + shift
+    	
+    	if (str.charAt(i) == c) {
+    		shift += ext
+    	}
+    }
+    return map;
+}
+
 // taken from http://www.toao.net/32-my-htmlspecialchars-function-for-javascript
 function htmlspecialchars(str) {
   if (typeof(str) == "string") {
+	  
+	
     str = str.replace(/&/g, "&amp;"); /* must do &amp; first */
-
+    
     // ignore these for now ...
     //str = str.replace(/"/g, "&quot;");
     //str = str.replace(/'/g, "&#039;");
@@ -4290,9 +4324,9 @@ function htmlspecialchars(str) {
     // replace spaces:
     str = str.replace(/ /g, "&nbsp;");
 
-    // replace tab as four spaces:
     str = str.replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
   }
+  
   return str;
 }
 
@@ -5325,7 +5359,6 @@ function showFullContext() {
            return "";
        });
 	
-	
 //	/*Add tooltip text */
 	spansEnter
 	.append('span')
@@ -5335,4 +5368,37 @@ function showFullContext() {
 			return myVisualizer.curTrace[d.index].synthesized_source; 
 		else 
 			return "[UNKONWN]"})
+}
+
+function addContentAssist(data,myViz, self) {
+	var originalText = data.text
+	var map = findSynthesizedSourceMappings(originalText)
+	var modifiedStr = htmlspecialchars(originalText) 
+	
+	var chuncks = [];
+	$.each(data.ast, function (i, d) {
+		modifiedStr = insertAstNodeDiv(d, modifiedStr, map);
+	})
+	
+	return modifiedStr;
+}
+
+function insertAstNodeDiv(d, str, map) {
+	var text = str.slice(map[d.start_index], map[d.end_index]);
+	var span = $('<span>')
+				.attr('class', 'astSpan')
+				.attr('id', 'ast_'+d.bcTime)
+				.html(text);
+	
+	var shift = span.prop('outerHTML').length;
+	updateSynthesizedSourceMap(map, d.end_index, shift)
+	var ret = [str.slice(0, map[d.start_index]), span.prop('outerHTML'), str.slice(map[d.end_index])].join('');
+	var a = ret;
+	return ret;
+} 
+
+function updateSynthesizedSourceMap(map, index, shift) {
+	for (var i = index + 1; i < map.length; i++) {
+		map[i] += shift;
+	}
 }
