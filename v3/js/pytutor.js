@@ -1357,17 +1357,86 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       }
     });
 
-  $('.astSpan').hover(function(event){
-      $(this).addClass('astChosen');
-      $(this).parent().removeClass('astChosen');
-      event.stopPropagation();
+  //Provide hightlighting once hovering on ast nodes
+//  $('.astSpan').hover(function(event){
+//      $(this).addClass('astChosen');
+//      $(this).parent().removeClass('astChosen');
+//      event.stopPropagation();
+//
+//  }, function(event){
+//      $(this).removeClass('astChosen');
+//      if ($(this).parent().hasClass('astSpan')) {
+//        $(this).parent().addClass('astChosen');
+//      }
+//  })
 
-  }, function(event){
-      $(this).removeClass('astChosen');
-      if ($(this).parent().hasClass('astSpan')) {
-        $(this).parent().addClass('astChosen');
-      }
+  /* AZM: Register handler for click events on ast nodes.
+  Clicking a node generates the code for the slicing 
+  criterion in the query.*/
+  var asts = [];
+
+  $.each(this.codeOutputLines, function(i,d){
+    $.each(d.ast, function(j, dd){
+      asts.push(dd)
+    } )
   })
+
+  this.domRootD3.selectAll('.astSpan')
+  .data(asts, function(d){
+   if (d) {
+      return d.bcTime;
+    } else {
+      var id = $(this).prop('id');
+      return id.slice(id.indexOf('_') + 1);
+    }
+  }).on('click', function(d){
+    console.log(d);
+    d3.event.stopPropagation();
+  })
+  .on('mouseover', function(d,e){
+	  d3.select(this)
+      .classed('astChosen',true);
+	  
+	  d3.select(this.parentNode)
+      .classed('astChosen', false);
+      
+	  d3.select(this.lastElementChild)
+	  .classed('tooltipShow', true)
+	  ;
+	  
+      d3.event.stopPropagation();
+  })
+  .on('mouseout', function(d,e){
+	  d3.select(this)
+      .classed('astChosen',false);
+	  
+      if (d3.select(this.parentNode).classed('astSpan')) {
+    	  d3.select(this.parentNode).classed('astChosen', true);
+      }
+	  
+      d3.select(this.lastElementChild)	  
+      .classed('tooltipShow', false)
+	  ;
+	  
+//      d3.event.stopPropagation();
+  })
+  
+
+  // this.domRootD3.selectAll('.cod')
+  // .data(this.codeOutputLines)
+  // .selectAll('.astSpan')
+  // .data(function(d,i){
+  //   var target; 
+  //   var id = $(this).prop('id')
+  //   for(var i = 0; i<d.ast.length; i++) {          
+  //     if (d.ast[i].bcTime == id.slice(id.indexOf('_') + 1)) {
+  //       target = i;
+  //     } 
+  //   }
+  //   return [d.ast[target]]})
+  // .on('click', function(d,i) {
+  //   console.log(d);
+  // })
 
   var controllers = [];
   var controllerLens = [];
@@ -1500,33 +1569,36 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
           .attr('fill', darkArrowColor);
   }
 
+
+  //AZM: Disabled breakpoint for now; Should be decided whether to use
+
   // 2012-09-05: Disable breakpoints for now to simplify UX
   // 2016-05-01: Revive breakpoint functionality
-  codeOutputD3
-    .style('cursor', function(d, i) {
-      // don't do anything if exePts empty (i.e., this line was never executed)
-      var exePts = d.executionPoints;
-      if (!exePts || exePts.length == 0) {
-        return;
-      } else {
-        return 'pointer'
-      }
-    })
-    .on('click', function(d, i) {
-      // don't do anything if exePts empty (i.e., this line was never executed)
-      var exePts = d.executionPoints;
-      if (!exePts || exePts.length == 0) {
-        return;
-      }
+  // codeOutputD3
+  //   .style('cursor', function(d, i) {
+  //     // don't do anything if exePts empty (i.e., this line was never executed)
+  //     var exePts = d.executionPoints;
+  //     if (!exePts || exePts.length == 0) {
+  //       return;
+  //     } else {
+  //       return 'pointer'
+  //     }
+  //   })
+  //   .on('click', function(d, i) {
+  //     // don't do anything if exePts empty (i.e., this line was never executed)
+  //     var exePts = d.executionPoints;
+  //     if (!exePts || exePts.length == 0) {
+  //       return;
+  //     }
 
-      d.breakpointHere = !d.breakpointHere; // toggle
-      if (d.breakpointHere) {
-        setBreakpoint(this, d);
-      }
-      else {
-        unsetBreakpoint(this, d);
-      }
-    });
+  //     d.breakpointHere = !d.breakpointHere; // toggle
+  //     if (d.breakpointHere) {
+  //       setBreakpoint(this, d);
+  //     }
+  //     else {
+  //       unsetBreakpoint(this, d);
+  //     }
+  //   });
 }
 
 
@@ -5399,16 +5471,23 @@ function addContentAssist(data,myViz, self) {
 
 function insertAstNodeDiv(d, str, map, zindex) {
 	var text = str.slice(map[d.start_index], map[d.end_index]);
-	var span = $('<span>')
-				.attr('id', 'ast__'+d.bcTime)
+
+	var astSpan = $('<span>')
+				.attr('id', 'ast_'+d.bcTime)
         .attr('class', 'astSpan')               
 				.html(text);
+
+  var tooltipSpan = $('<span>')
+                    .attr('id', 'ast_'+d.bcTime)
+                    .attr('class', 'astTooltipText')
+                    .text(d.bcTime);
         
 	
+  astSpan.append(tooltipSpan)
 	
-	var shift = span.prop('outerHTML').length;
+	var shift = astSpan.prop('outerHTML').length;
 	updateSynthesizedSourceMap(map, d.end_index, shift)
-	var ret = [str.slice(0, map[d.start_index]), span.prop('outerHTML'), str.slice(map[d.end_index])].join('');
+	var ret = [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), str.slice(map[d.end_index])].join('');
 	var a = ret;
 	return ret;
 } 

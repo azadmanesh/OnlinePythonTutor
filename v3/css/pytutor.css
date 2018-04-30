@@ -1106,4 +1106,19 @@ table-layout: fixed;
 .astChosen {
   background-color: grey;
 }
+
+.astTooltipText {
+  display: none;
+  position: fixed;
+  z-index : 2;
+}
+
+.tooltipShow {
+	display: inline-block;
+}
+
+.astSpan {
+	z-index : 1;
+}
+
 /* END Java frontend by David Pritchard and Will Gwozdz */
