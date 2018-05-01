@@ -460,6 +460,7 @@ var TS_EXAMPLES = {
 };
 
 var BLAST_OPT_TEST_TEMPLATE = 'blast-opt-code/InlinedTest.java' 
+var BLAST_OPT_QUERY_TEMPLATE = 'blast-opt-code/Query.java'
 
 var JAVA_EXAMPLES = {
   javaVarLink: 'java-example-code/Variables.java',

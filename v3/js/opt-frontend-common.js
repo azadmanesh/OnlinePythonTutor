@@ -763,6 +763,15 @@ function supports_html5_storage() {
   }
 }
 
+function queryEditorGetValue() {
+	if (useCodeMirror) {
+		return queryEditorCodeMirror.getValue();
+	}
+	else {
+		return queryAceEditor.getValue();
+	}
+}
+
 // abstraction so that we can use either CodeMirror or Ace as our code editor
 function pyInputGetValue() {
   if (useCodeMirror) {
@@ -771,6 +780,16 @@ function pyInputGetValue() {
   else {
     return pyInputAceEditor.getValue();
   }
+}
+
+function queryEditorSetValue(dat) {
+	if (useCodeMirror) {
+		queryCodeMirror.setValue(dat.rtrim() /* kill trailing spaces */);
+	}
+	else {
+		queryAceEditor.setValue(dat.rtrim() /* kill trailing spaces */,
+				-1 /* do NOT select after setting text */);
+	}
 }
 
 function pyInputSetValue(dat) {
@@ -859,7 +878,7 @@ function genericOptFrontendReady() {
     initAceEditor(420);
   }
 
-  initQueryEditor(420);
+  initQueryAceEditor(420);
   initSourceViewer(420);
 
   if (useCodeMirror) {
@@ -920,6 +939,10 @@ function genericOptFrontendReady() {
   // AZM: add test template
 	$.get(BLAST_OPT_TEST_TEMPLATE, function(dat) {
 		pyInputSetValue(dat);
+	})
+	
+	$.get(BLAST_OPT_QUERY_TEMPLATE, function(dat) {
+		queryEditorSetValue(dat);
 	})
 
   // first initialize options from HTML LocalStorage. very important
@@ -2278,22 +2301,22 @@ display a brief "Thanks!" note]
 // override this with a version in codeopticon-learner.js if needed
 function logEventCodeopticon(obj) {}
 
-function initQueryEditor(height) {
-	  queryEditor = ace.edit('queryDiv');
-	  var s = queryEditor.getSession();
+function initQueryAceEditor(height) {
+	  queryAceEditor = ace.edit('queryDiv');
+	  var s = queryAceEditor.getSession();
 	  // tab -> 4 spaces
 	  s.setTabSize(4);
 	  s.setUseSoftTabs(true);
 	  // disable extraneous indicators:
 	  s.setFoldStyle('manual'); // no code folding indicators
 	  s.getDocument().setNewLineMode('unix'); // canonicalize all newlines to unix format
-	  queryEditor.setHighlightActiveLine(false);
-	  queryEditor.setShowPrintMargin(false);
-	  queryEditor.setBehavioursEnabled(false);
-	  queryEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
+	  queryAceEditor.setHighlightActiveLine(false);
+	  queryAceEditor.setShowPrintMargin(false);
+	  queryAceEditor.setBehavioursEnabled(false);
+	  queryAceEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
 
 	  // auto-grow height as fit
-	  queryEditor.setOptions({minLines: 18, maxLines: 1000});
+	  queryAceEditor.setOptions({minLines: 18, maxLines: 1000});
 
 	  $('#queryDiv').css('width', '550px');
 	  $('#queryDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
@@ -2301,8 +2324,8 @@ function initQueryEditor(height) {
 	  
 
 	  initDeltaObj();
-	  queryEditor.on('change', function(e) {
-	    $.doTimeout('queryEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
+	  queryAceEditor.on('change', function(e) {
+	    $.doTimeout('queryAceEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
 	    clearFrontendError();
 	    s.clearAnnotations();
 	  });
