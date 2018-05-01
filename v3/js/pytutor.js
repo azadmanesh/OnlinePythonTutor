@@ -1357,19 +1357,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       }
     });
 
-  //Provide hightlighting once hovering on ast nodes
-//  $('.astSpan').hover(function(event){
-//      $(this).addClass('astChosen');
-//      $(this).parent().removeClass('astChosen');
-//      event.stopPropagation();
-//
-//  }, function(event){
-//      $(this).removeClass('astChosen');
-//      if ($(this).parent().hasClass('astSpan')) {
-//        $(this).parent().addClass('astChosen');
-//      }
-//  })
-
   /* AZM: Register handler for click events on ast nodes.
   Clicking a node generates the code for the slicing 
   criterion in the query.*/
@@ -1389,7 +1376,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       var id = $(this).prop('id');
       return id.slice(id.indexOf('_') + 1);
     }
-  }).on('click', function(d){
+  })
+  .on('click', function(d){
     console.log(d);
     d3.event.stopPropagation();
   })
@@ -1418,7 +1406,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       .classed('tooltipShow', false)
 	  ;
 	  
-//      d3.event.stopPropagation();
   })
   
 
@@ -1503,9 +1490,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   
   /* specify unique class for each controller */
   $.each(myViz.curTrace, function (i, d){
-	  var o = Math.round, r = Math.random, s = 200;
-		   var color = 'rgba(' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (r().toFixed(1)) + ')';
-	  $(".klass"+i).css("background-color", color);
+	  $(".klass"+i).css("background-color", getRandomColor());
   })
     /* The special unknown event */
   $("span.klass_").css("background-color","#2a404d");
@@ -5471,29 +5456,43 @@ function addContentAssist(data,myViz, self) {
 
 function insertAstNodeDiv(d, str, map, zindex) {
 	var text = str.slice(map[d.start_index], map[d.end_index]);
-
-	var astSpan = $('<span>')
-				.attr('id', 'ast_'+d.bcTime)
-        .attr('class', 'astSpan')               
-				.html(text);
-
+	
+  var astSpan = $('<span>')
+	.attr('id', 'ast_'+d.bcTime)
+	.attr('class', 'astSpan')
+	.css('color', getRandomColor())
+	.html(text);
+ 
   var tooltipSpan = $('<span>')
                     .attr('id', 'ast_'+d.bcTime)
                     .attr('class', 'astTooltipText')
-                    .text(d.bcTime);
+                    .text(d.value);
         
 	
   astSpan.append(tooltipSpan)
 	
 	var shift = astSpan.prop('outerHTML').length;
 	updateSynthesizedSourceMap(map, d.end_index, shift)
-	var ret = [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), str.slice(map[d.end_index])].join('');
-	var a = ret;
-	return ret;
+	return [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), str.slice(map[d.end_index])].join('');
 } 
 
 function updateSynthesizedSourceMap(map, index, shift) {
 	for (var i = index + 1; i < map.length; i++) {
 		map[i] += shift;
 	}
+}
+
+var color, letters = '0123456789ABCDEF'.split('')
+function AddDigitToColor(limit)
+{
+	color += letters[Math.round(Math.random() * limit )]
+}
+
+function getRandomColor() {
+	color = '#'
+	AddDigitToColor(5)
+	for (var i = 0; i < 5; i++) {
+		AddDigitToColor(15)
+	}
+	return color
 }
