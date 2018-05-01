@@ -136,30 +136,18 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <div id="jarFilePane" class="tabContent" >
 <table>
 <tr>
-<td>
-Jar file:
-</td>
-<td>
-<input type="file" name="jarFile" id="jarFile"/> 
-</td>
+<td>Jar file:</td>
+<td><input type="file" name="jarFile" id="jarFile"/> </td>
 </tr>
 
 <tr>
-<td>
-Test class name:
-</td>
-<td>
-<input type="text" name="testClassName" id="testClassName"/>
-</td>
+<td>Test class name:</td>
+<td><input type="text" name="testClassName" id="testClassName"/></td>
 </tr>
 
 <tr>
-<td>
-Test method name:
-</td>
-<td>
-<input type="text" name="testMethodName" id="testMethodName"/>
-</td>
+<td>Test method name:</td>
+<td><input type="text" name="testMethodName" id="testMethodName"/></td>
 </tr>
 </table>
 
@@ -168,36 +156,21 @@ Test method name:
 <div id="customAddressPane" class="tabContent" >
 <table>
 <tr>
-<td>
-Classpath:
-</td>
-<td>
-<input type="text" name="classpath" id="classpath"/> 
-</td>
+<td>Classpath:</td>
+<td><input type="text" name="classpath" id="classpath"/> </td>
 </tr>
 
 <tr>
-<td>
-Test class name:
-</td>
-<td>
-<input type="text" name="testClassName" id="testClassName"/>
-</td>
+<td>Test class name:</td>
+<td><input type="text" name="testClassName" id="testClassName"/></td>
 </tr>
 
 <tr>
-<td>
-Test method name:
-</td>
-<td>
-<input type="text" name="testMethodName" id="testMethodName"/>
-</td>
+<td>Test method name:</td>
+<td><input type="text" name="testMethodName" id="testMethodName"/></td>
 </tr>
 </table>
 </div>
-
-
-
  
 <p>
 <button id="executeBtn" class="bigBtn" type="button">Visualize Execution</button>
@@ -205,11 +178,27 @@ Test method name:
 </p>
 </div>
 
-<div id="pyOutputPane">
-</div>
-
-<div id="eventViewerDiv" />
-<div id="queryDiv" />
+<table id='outputTable'>
+ <tr>
+ 	<td colspan = "2">
+		<div id="pyOutputPane"></div>
+ 	</td>
+ </tr>
+ <tr>
+ 	<td>
+		<div id="queryDiv" ></div>
+ 	</td>
+ 	<td>
+ 		<div id="sourceCodeDiv"></div>
+ 	</td>
+ </tr>
+ <tr>
+ <td>
+ <button id="executeQuery" class="bigBtn" type="button">Query Execution</button>
+ </td>
+ <td></td>
+ </tr>
+</table>
 
 </body>
 </html>

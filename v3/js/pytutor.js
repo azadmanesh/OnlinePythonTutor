@@ -124,6 +124,9 @@ var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer
 function ExecutionVisualizer(domRootID, dat, params) {
   this.curInputCode = dat.code.rtrim(); // kill trailing spaces
   this.curTrace = dat.trace;
+  
+  /* AZM: not a good locaiton for this code; to be moved */
+  $('#outputTable').css('display','block')
 
   this.DEFAULT_EMBEDDED_CODE_DIV_WIDTH = 350;
   this.DEFAULT_EMBEDDED_CODE_DIV_HEIGHT = 400;
@@ -1408,7 +1411,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 	  
   })
   
-
   // this.domRootD3.selectAll('.cod')
   // .data(this.codeOutputLines)
   // .selectAll('.astSpan')
@@ -1585,6 +1587,9 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   //     }
   //   });
 }
+
+
+
 
 
 // takes a string inputStr and returns an HTML version with

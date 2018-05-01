@@ -859,6 +859,8 @@ function genericOptFrontendReady() {
     initAceEditor(420);
   }
 
+  initQueryEditor(420);
+  initSourceViewer(420);
 
   if (useCodeMirror) {
     // for shared sessions
@@ -1226,6 +1228,7 @@ function updateAppDisplay(newAppMode) {
 
     $("#pyInputPane").show();
     $("#pyOutputPane").hide();
+    $("#outputTable").hide();
     $("#embedLinkDiv").hide();
 
     $(".surveyQ").val(''); // clear all survey results when user hits forward/back
@@ -1240,6 +1243,7 @@ function updateAppDisplay(newAppMode) {
     // conceptual model but breaks the browser's expected Forward and
     // Back button flow
     $("#pyOutputPane").empty();
+    
     // right before destroying, submit the visualizer's updateHistory
     submitUpdateHistory('editMode');
     myVisualizer = null;
@@ -2273,3 +2277,76 @@ display a brief "Thanks!" note]
 // empty stub so that our code doesn't crash.
 // override this with a version in codeopticon-learner.js if needed
 function logEventCodeopticon(obj) {}
+
+function initQueryEditor(height) {
+	  queryEditor = ace.edit('queryDiv');
+	  var s = queryEditor.getSession();
+	  // tab -> 4 spaces
+	  s.setTabSize(4);
+	  s.setUseSoftTabs(true);
+	  // disable extraneous indicators:
+	  s.setFoldStyle('manual'); // no code folding indicators
+	  s.getDocument().setNewLineMode('unix'); // canonicalize all newlines to unix format
+	  queryEditor.setHighlightActiveLine(false);
+	  queryEditor.setShowPrintMargin(false);
+	  queryEditor.setBehavioursEnabled(false);
+	  queryEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
+
+	  // auto-grow height as fit
+	  queryEditor.setOptions({minLines: 18, maxLines: 1000});
+
+	  $('#queryDiv').css('width', '550px');
+	  $('#queryDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
+	  $('#queryDiv').css('border', '1px solid black');
+	  
+
+	  initDeltaObj();
+	  queryEditor.on('change', function(e) {
+	    $.doTimeout('queryEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
+	    clearFrontendError();
+	    s.clearAnnotations();
+	  });
+
+	  // don't do real-time syntax checks:
+	  // https://github.com/ajaxorg/ace/wiki/Syntax-validation
+	  s.setOption("useWorker", false);
+
+	  s.setMode("ace/mode/java");
+	}
+
+function initSourceViewer(height) {
+	  sourceViewerEditor = ace.edit('sourceCodeDiv');
+	  var s = sourceViewerEditor.getSession();
+	  // tab -> 4 spaces
+	  s.setTabSize(4);
+	  s.setUseSoftTabs(true);
+	  // disable extraneous indicators:
+	  s.setFoldStyle('manual'); // no code folding indicators
+	  s.getDocument().setNewLineMode('unix'); // canonicalize all newlines to unix format
+	  sourceViewerEditor.setHighlightActiveLine(false);
+	  sourceViewerEditor.setShowPrintMargin(false);
+	  sourceViewerEditor.setBehavioursEnabled(false);
+	  sourceViewerEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
+
+	  // auto-grow height as fit
+	  sourceViewerEditor.setOptions({minLines: 18, maxLines: 1000});
+
+	  $('#sourceCodeDiv').css('width', '550px');
+	  $('#sourceCodeDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
+	  $('#sourceCodeDiv').css('border', '1px solid black');
+	  $('#sourceCodeDiv').css('background-color', 'lightgrey');
+	  
+
+	  initDeltaObj();
+	  sourceViewerEditor.on('change', function(e) {
+	    $.doTimeout('sourceViewerEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
+	    clearFrontendError();
+	    s.clearAnnotations();
+	  });
+
+	  // don't do real-time syntax checks:
+	  // https://github.com/ajaxorg/ace/wiki/Syntax-validation
+	  s.setOption("useWorker", false);
+
+	  s.setMode("ace/mode/java");
+}

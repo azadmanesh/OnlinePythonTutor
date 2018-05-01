@@ -1137,4 +1137,7 @@ table-layout: fixed;
     display: inline-block;
 }
 
+#outputTable {
+	display: none;
+}
 /* END Java frontend by David Pritchard and Will Gwozdz */
