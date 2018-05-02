@@ -1480,9 +1480,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    myDiv 
    .data(controllers)
    .selectAll('span')
-   .data(function(d , i) {
-           var ret =  d;
-           return ret;})
+   .data(function(d , i) { return d })
    .enter()
    .append('span')
    .attr('class', function (d , i) {
@@ -1493,15 +1491,17 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 		   suffix = d.index;
 	   }
 	   return 'tooltip klass'+suffix;
-   	})
+   })
    .style('width', function (d , colIndex){
-           var colNum = this.parentElement.__data__.length;
-           if (colIndex == colNum - 1) {         //add spanning only for the last column
-                          return (100 - colIndex * (100 / maxDepth)) + '%';
-           } else {
-                   return (100 / maxDepth) + '%'; 
-           }
-           })
+//	   var colNum = this.parentElement.__data__.length;
+//	   if (colIndex == colNum - 1) {         //add spanning only for the last column
+//		   return (100 - colIndex * (100 / maxDepth)) + '%';
+//	   } else {
+//		   return (100 / maxDepth) + '%'; 
+//	   }
+	   return (100 / maxDepth) + '%';
+   }
+   )
    .html(function (d , i) {
            return "";
        });
