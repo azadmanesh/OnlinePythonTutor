@@ -10,11 +10,12 @@ public class InlinedTest {
 	
 	@Test
 	public void test() {
-		int a = 12;
-		if (a < 200) {
-			a = 234;
+		int i = 2;
+		int sum=0;
+		while(i>0){
+		  i--;
+		  sum+=i;
 		}
-		int b = a;
 	}
 	
 }

@@ -5477,7 +5477,8 @@ function addContentAssist(data,myViz, self) {
 }
 
 function insertAstNodeDiv(d, str, map, zindex) {
-	var text = str.slice(map[d.start_index], map[d.end_index]);
+  var text = str.slice(map[d.start_index], map[d.end_index]);
+  var posix = str.slice(map[d.end_index])
 	
   var astSpan = $('<span>')
 	.attr('id', 'ast_'+d.bcTime)
@@ -5495,11 +5496,11 @@ function insertAstNodeDiv(d, str, map, zindex) {
 	
 	var shift = astSpan.prop('outerHTML').length;
 	updateSynthesizedSourceMap(map, d.end_index, shift)
-	return [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), str.slice(map[d.end_index])].join('');
+	return [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), posix].join('');
 } 
 
 function updateSynthesizedSourceMap(map, index, shift) {
-	for (var i = index + 1; i < map.length; i++) {
+	for (var i = index; i < map.length; i++) {
 		map[i] += shift;
 	}
 }
