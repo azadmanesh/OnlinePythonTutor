@@ -1290,6 +1290,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     n.executionPoints = [];
     n.breakpointHere = false;
     n.ast = myViz.curTrace[i].ast;
+    n.controllers = myViz.curTrace[i].controllers;
 
     $.each(this.curTrace, function(j, elt) {
       if (elt.line == n.lineNumber) {
@@ -1480,7 +1481,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    myDiv 
    .data(controllers)
    .selectAll('span')
-   .data(function(d , i) { return d })
+   .data(function(d , i) { return d})
    .enter()
    .append('span')
    .attr('class', function (d , i) {
@@ -1502,17 +1503,32 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 	   return (100 / maxDepth) + '%';
    }
    )
-   .html(function (d , i) {
-           return "";
-       });
+   .style('background-color', function(d , i) {
+	   if (d.invoke) {
+		   return '#2a404d'
+	   } else {
+		   return 'grey'
+	   }
+   })
+   .text(function (d , i) {
+	   if (d.index != -1)
+		   return myViz.curTrace[d.index].synthesized_source; 
+	   else 
+		   return "[UNKONWN]"
+   })
        
-  
-  /* specify unique class for each controller */
-  $.each(myViz.curTrace, function (i, d){
-	  $(".klass"+i).css("background-color", getRandomColor());
+  d3.selectAll(".tooltip").each(function () {
+    var t = document.createElement('div');
+    t.className = 'contextGap'
+    this.parentNode.insertBefore(t, this.nextSibling);       
   })
-    /* The special unknown event */
-  $("span.klass_").css("background-color","#2a404d");
+  
+//  /* specify unique class for each controller */
+//  $.each(myViz.curTrace, function (i, d){
+//	  $(".klass"+i).css("background-color", getRandomColor());
+//  })
+//    /* The special unknown event */
+//  $("span.klass_").css("background-color","#2a404d");
   
   /*Add tooltip text */
   this.domRootD3.selectAll('.tooltip')
@@ -5464,15 +5480,16 @@ function showFullContext() {
 function addContentAssist(data,myViz, self) {
 	var originalText = data.text
 	var map = findSynthesizedSourceMappings(originalText)
-	var modifiedStr = htmlspecialchars(originalText) 
-	
-	var chuncks = [];
-  var zindex = data.ast.length;
+	var indentedText= addIndentation(originalText, data.controllers, map); 
+	var modifiedStr = htmlspecialchars(indentedText) 
+
+
+	var zindex = data.ast.length;
 	$.each(data.ast, function (i, d) {
 		modifiedStr = insertAstNodeDiv(d, modifiedStr, map, zindex);
-    zindex--;
+		zindex--;
 	})
-	
+
 	return modifiedStr;
 }
 
@@ -5499,6 +5516,31 @@ function insertAstNodeDiv(d, str, map, zindex) {
 	return [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), posix].join('');
 } 
 
+function addIndentation(str, ctrls, map) {
+	var i = ctrls.length - 1;
+	var indent = 0;
+	while (i >= 0) {
+		if (ctrls[i].index == -1)
+			break;
+		
+		indent++;   //the entrance to a method adds one level of indentation
+		if (ctrls[i].invoke) {
+			break;
+		}
+		i--;
+	}
+	
+	/*a tab is translated to four "$nbsp;" so 24 characters are added for each tab */ 
+	updateSynthesizedSourceMap(map, 0, 24*indent);
+	
+	var prefix = "";
+	for (; indent > 0; indent--) {
+		prefix += "\t";
+	}
+	
+	return [prefix, str].join('');
+}
+
 function updateSynthesizedSourceMap(map, index, shift) {
 	for (var i = index; i < map.length; i++) {
 		map[i] += shift;
@@ -5519,3 +5561,4 @@ function getRandomColor() {
 	}
 	return color
 }
+
