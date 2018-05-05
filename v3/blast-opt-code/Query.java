@@ -8,7 +8,7 @@ public class Query implements BytecodeAnalyzer{
     /*
      * Criterion query for: first event
 	 */
-	private EventI slicingCriterion(final trace) {
+	private EventI slicingCriterion(final Trace trace) {
 		return trace.getAllBytecodeEvents()[0]; 
 	}
 }

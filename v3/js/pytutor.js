@@ -1328,25 +1328,21 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .selectAll('tr')
     .data(this.codeOutputLines)
     .enter().append('tr')
+    .attr('class', 'codeOutputRow')
     .selectAll('td')
-    .data(function(d, i){return [d, d, d] /* map full data item down both columns */;})
-    .enter().append('td')
+    .data(function(d, i){return [d, d] /* map full data item down both columns */;})
+    .enter()
+    .append("td")
     .attr('class', function(d, i) {
       if (i == 0) {
     	  return 'lineNo';
-      }
-      else if (i == 1){
-    	  return 'context';
-      }
-      else {
+      } else {
     	  return 'cod';
       }
     })
     .attr('id', function(d, i) {
       if (i == 0) {
         return 'lineNo' + d.lineNumber;
-      } else if (i == 1) {
-    	return 'context' + d.lineNumber;  
       } else {
         return myViz.generateID('cod' + d.lineNumber); // make globally unique (within the page)
       }
@@ -1354,8 +1350,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .html(function(d, i) {
       if (i == 0) {
         return d.lineNumber;
-      } else if (i == 1) {
-    	return ""  
       } else {
         return addContentAssist(d,myViz, this);
       }
@@ -1472,56 +1466,52 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 //  	.html('hi');
  
   
-  /* add context columns */
-  var myDiv = this.domRootD3.selectAll('.context')
-   .append('div')
-   .attr('class', 'contextDiv')
-   
-  
-   myDiv 
-   .data(controllers)
-   .selectAll('span')
-   .data(function(d , i) { return d})
-   .enter()
-   .append('span')
-   .attr('class', function (d , i) {
-	   var suffix = '';
-	   if (d.index == -1){
-		   suffix = '_'
-	   } else {
-		   suffix = d.index;
-	   }
-	   return 'tooltip klass'+suffix;
-   })
-   .style('width', function (d , colIndex){
-//	   var colNum = this.parentElement.__data__.length;
-//	   if (colIndex == colNum - 1) {         //add spanning only for the last column
-//		   return (100 - colIndex * (100 / maxDepth)) + '%';
+//  /* add context columns */
+//  var myDiv = this.domRootD3.selectAll('.context')
+//   .append('div')
+//   .attr('class', 'contextDiv')
+//   
+//  
+//   myDiv 
+//   .data(controllers)
+//   .selectAll('span')
+//   .data(function(d , i) { return d})
+//   .enter()
+//   .append('span')
+//   .attr('class', function (d , i) {
+//	   var suffix = '';
+//	   if (d.index == -1){
+//		   suffix = '_'
 //	   } else {
-//		   return (100 / maxDepth) + '%'; 
+//		   suffix = d.index;
 //	   }
-	   return (100 / maxDepth) + '%';
-   }
-   )
-   .style('background-color', function(d , i) {
-	   if (d.invoke) {
-		   return '#2a404d'
-	   } else {
-		   return 'grey'
-	   }
-   })
-   .text(function (d , i) {
-	   if (d.index != -1)
-		   return myViz.curTrace[d.index].synthesized_source; 
-	   else 
-		   return "[UNKONWN]"
-   })
+//	   return 'tooltip klass'+suffix;
+//   })
+//   .style('width', function (d , colIndex){
+////	   var colNum = this.parentElement.__data__.length;
+////	   if (colIndex == colNum - 1) {         //add spanning only for the last column
+////		   return (100 - colIndex * (100 / maxDepth)) + '%';
+////	   } else {
+////		   return (100 / maxDepth) + '%'; 
+////	   }
+//	   return (100 / maxDepth) + '%';
+//   }
+//   )
+//   .style('background-color', function(d , i) {
+//	   if (d.invoke) {
+//		   return '#2a404d'
+//	   } else {
+//		   return 'grey'
+//	   }
+//   })
+//   .text(function (d , i) {
+//	   if (d.index != -1)
+//		   return myViz.curTrace[d.index].synthesized_source; 
+//	   else 
+//		   return "[UNKONWN]"
+//   })
        
-  d3.selectAll(".tooltip").each(function () {
-    var t = document.createElement('div');
-    t.className = 'contextGap'
-    this.parentNode.insertBefore(t, this.nextSibling);       
-  })
+
   
 //  /* specify unique class for each controller */
 //  $.each(myViz.curTrace, function (i, d){
@@ -1530,17 +1520,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 //    /* The special unknown event */
 //  $("span.klass_").css("background-color","#2a404d");
   
-  /*Add tooltip text */
-  this.domRootD3.selectAll('.tooltip')
-  .append('span')
-  .attr('class','tooltiptext')
-	.html(function(d,i){ 
-		  if (d.index != -1)
-		  return myViz.curTrace[d.index].synthesized_source; 
-	  else 
-		  return "[UNKONWN]"})
-
-   
 //  this.domRootD3.selectAll('.contextDiv')
 //  .data(controllers)
 //  .selectAll('span.tooltiptext')
@@ -1568,7 +1547,58 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 //  .html(function (d , i) {
 //          return "hi";
 //      });
+		  
+  myViz.domRootD3.select('#pyCodeOutput')
+  .select('tr')
+  .insert('td', 'td.cod')
+  .attr('rowspan', this.codeOutputLines.length)
+  .attr('id', 'contextColumn')
   
+  myViz.domRootD3.select('#contextColumn')
+  .append('div')
+  .attr('class', 'contextContentsDiv')
+  .selectAll('div')
+  .data(controllers)
+  .enter().append('div')
+  .attr('class','contextRowDiv')
+  .selectAll('span')
+  .data(function(d, i){return d;})
+  .enter()
+  .append("span")
+   .attr('class', function (d , i) {
+	   var suffix = '';
+	   if (d.index == -1){
+		   suffix = '_'
+	   } else {
+		   suffix = d.index;
+	   }
+	   return 'contextSpan klass'+suffix;
+   })
+   .style('width', function (d , colIndex){
+	   return (100 / maxDepth) + '%';
+   }
+   )
+   .style('background-color', function(d , i) {
+	   if (d.invoke) {
+		   return '#2a404d'
+	   } else {
+		   return 'grey'
+	   }
+   })
+   .text(function (d , i) {
+	   if (d.index != -1)
+		   return myViz.curTrace[d.index].synthesized_source; 
+	   else 
+		   return "[UNKONWN]"
+   })
+  .append('span')		   /*Add tooltip text */
+  .attr('class','contextTooltipText')
+	.html(function(d,i){ 
+		  if (d.index != -1)
+		  return myViz.curTrace[d.index].synthesized_source; 
+	  else 
+		  return "[UNKONWN]"})
+		  
   // create a left-most gutter td that spans ALL rows ...
   // (NB: valign="top" is CRUCIAL for this to work in IE)
   if (myViz.params.arrowLines) {
@@ -5406,12 +5436,13 @@ function showCallingContext() {
 	//update the size of columns 
 	newDiv.selectAll('span.tooltip').data(function(d,i){return d})
 	.style('width', function (d , colIndex){
-		var colNum = this.parentElement.__data__.length;
-		if (colIndex == colNum - 1) {         //add spanning only for the last column
-			return (100 - colIndex * (100 / maxDepth)) + '%';
-		} else {
-			return (100 / maxDepth) + '%'; 
-		}
+//		var colNum = this.parentElement.__data__.length;
+//		if (colIndex == colNum - 1) {         //add spanning only for the last column
+//			return (100 - colIndex * (100 / maxDepth)) + '%';
+//		} else {
+//			return (100 / maxDepth) + '%'; 
+//		}
+		return (100 / maxDepth) + '%';
 	});
 
 }	
@@ -5428,12 +5459,13 @@ function showFullContext() {
 	//update the size of columns 
 	var newSpans = newDiv.selectAll('span.tooltip').data(function(d,i){return d})
 		.style('width', function (d , colIndex){
-		var colNum = this.parentElement.__data__.length;
-		if (colIndex == colNum - 1) {         //add spanning only for the last column
-			return (100 - colIndex * (100 / maxDepth)) + '%';
-		} else {
-			return (100 / maxDepth) + '%'; 
-		}
+//		var colNum = this.parentElement.__data__.length;
+//		if (colIndex == colNum - 1) {         //add spanning only for the last column
+//			return (100 - colIndex * (100 / maxDepth)) + '%';
+//		} else {
+//			return (100 / maxDepth) + '%'; 
+//		}
+		return (100 / maxDepth) + '%';
 	})
 	
 	newSpans.exit().remove();
@@ -5450,20 +5482,20 @@ function showFullContext() {
 	   return 'tooltip klass'+suffix;
    	})
    .style('width', function (d , colIndex){
-           var colNum = this.parentElement.__data__.length;
-           if (colIndex == colNum - 1) {         //add spanning only for the last column
-                          return (100 - colIndex * (100 / maxDepth)) + '%';
-           } else {
-                   return (100 / maxDepth) + '%'; 
-           }
+//           var colNum = this.parentElement.__data__.length;
+//           if (colIndex == colNum - 1) {         //add spanning only for the last column
+//                          return (100 - colIndex * (100 / maxDepth)) + '%';
+//           } else {
+//                   return (100 / maxDepth) + '%'; 
+//           }
+           return (100 / maxDepth) + '%';
            })
-   .style('background-color', function (d, colIndex){
-	   var o = Math.round, r = Math.random, s = 200;
-	   var color = 'rgba(' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (o(r()*s)+30) + ',' + (r().toFixed(1)) + ')';
-	   return color;
-   })
+   .style('background-color', 'green')
    .html(function (d , i) {
-           return "";
+	   if (d.index != -1)
+			return myVisualizer.curTrace[d.index].synthesized_source; 
+		else 
+			return "[UNKONWN]"
        });
 	
 //	/*Add tooltip text */
@@ -5561,4 +5593,3 @@ function getRandomColor() {
 	}
 	return color
 }
-

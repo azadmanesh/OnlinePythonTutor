@@ -1052,22 +1052,30 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	width: 729px;
 }
 
-.tempTable {
-	border = 1 solid black;
-	background-color: #e6e4cc;
-	width: 300px;
+/* The general container of context information within td#contextColumn */
+.contextContentsDiv{
+	width: 250px;
+	overflow: scroll;
 }
 
+/* div per row of context inside div.contextContentsDiv  */
+.contextRowDiv {
+	width: inherit;
+	height: 20px;
+	border-collapse: seperate;
+	border-top: 1px dotted black;
+}
 
-.tooltip {
-    postion: relative;
+.contextSpan {
     display: inline-block;
-    width:100%;
-    height:100%;
+    overflow: hidden;
+	text-overflow: ellipsis;
+    color : white;
+    border-right : 3px solid white;
 }
 
-.tooltip .tooltiptext {
-    visibility: hidden;
+.contextTooltipText {
+    display: none;
     width: 120px;
     background-color: black;
     color: #fff;
@@ -1078,32 +1086,45 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
     z-index:100;
 }
 
-.tooltip:hover .tooltiptext {
-    visibility: visible;
+.contextSpan:hover .contextTooltipText {
+    display: inline;
 }
 
 .pyCodeOutputTable {
-table-layout: fixed;
+	table-layout: fixed;
 }
 
-.context{
-	width: 50%;
-}
-.contextDiv {
-	display: inline-block;
-	width: 100%;
-    height:100%;
+.pyCodeOutputTable td {
+	border-bottom: 1px dotted black; */  
 }
 
-.contextSpan {
+
+/* div inside td.context */
+/* .contextDiv {
+
+	border: 1px dotted red;
+	width: inherit;
+ width: 100%;
+ height:100%; 
+} */
+
+/* each span inside td.context div.contextDiv */
+/* .contextSpan {
 	display: inline-block;
 	border: 1px solid black;
+	height: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
-
-.abstractEventDiv {
+ */
+/* .contextGap {
 	display: inline-block;
+	width: 3px;
 }
-
+ */
+ 
+/********************/
+/* td.cod contents */
 .astChosen {
   background-color: #b3aeb9;
   color : white;
@@ -1140,14 +1161,5 @@ table-layout: fixed;
 
 #outputTable {
 	display: none;
-}
-
-.contextGap {
-	display: inline-block;
-	width: 3px;
-}
-
-.tooltip {
-	color : white;
 }
 /* END Java frontend by David Pritchard and Will Gwozdz */
