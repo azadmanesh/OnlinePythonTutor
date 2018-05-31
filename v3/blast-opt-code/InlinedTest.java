@@ -22,21 +22,4 @@ public class InlinedTest {
 		}
 	}
 
-	public int g(int arg) {
-		if (arg == 0) {
-			return 1;
-		} else {
-			return f(arg - 1);
-		}
-	}
-	
-	public int h(int arg) {
-		if (arg == 0) {
-			return 1;
-		} else {
-			return f(arg - 1);
-		}
-	}
-
-
 }

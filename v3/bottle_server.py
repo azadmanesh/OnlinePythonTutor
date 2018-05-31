@@ -26,7 +26,8 @@ import shutil
 wd = 'wd'
 blast_opt_frontend = '/Users/reza/PhD/tools/OnlinePythonTutor/v3'
 junit_class_path = 'blast-opt-backend/lib/junit-4.11.jar:blast-opt-backend/lib/hamcrest-core-1.3.jar'
-blast_opt_controller = '/Users/reza/Documents/workspace2/blast-opt-controller' 
+blast_opt_controller = '/Users/reza/Documents/workspace2/blast-opt-controller'
+blast_class_path = '/Users/reza/tempInfoFlow/informationflowtracer/build/main'
 
 inlined_test_class_name = 'InlinedTest'
 inlined_test_method_name = 'test'
@@ -98,6 +99,30 @@ def index(filepath):
     if 'name_lookup.py' in filepath:
         return json.dumps(dict(name='TEST NAME', email='TEST EMAIL'))
     return static_file(filepath, root='.')
+
+@get('/query')
+def exec_query():
+    print "Execute query in server side!!!!"
+    currentRelativeTargetPath = ''+ wd + '/' + 's' + request.query.session_uuid;
+    print currentRelativeTargetPath;
+    
+    
+    if not os.path.exists(currentRelativeTargetPath):
+        raise Exception('Invalid session! Not found any match for the given session!')
+    
+    queryFilePath = currentRelativeTargetPath + '/' + 'Query.java';
+    
+    tempFile = open(queryFilePath, 'w')
+    tempFile.write(request.query.query_to_execute)
+    tempFile.close()
+    
+    retcode = call(["javac", "-g","-cp", blast_class_path, "-source", "7", "-target", "7", queryFilePath])
+    
+    if retcode != 0:
+        raise Exception("Compile error!")
+    
+    print 'working directory:\t' + currentRelativeTargetPath
+    
 
 @get('/exec')
 def get_exec():

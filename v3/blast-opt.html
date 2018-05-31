@@ -178,27 +178,47 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 </p>
 </div>
 
-<table id='outputTable'>
- <tr>
- 	<td>
- 		<div id="sourceCodeDiv"></div>
- 	</td>
- 	<td>
-		<div id="queryDiv" ></div>
- 	</td>
- </tr>
- <tr>
- 	<td colspan = "2">
-		<div id="pyOutputPane"></div>
- 	</td>
- </tr>
- <tr>
- <td>
- <button id="executeQuery" class="bigBtn" type="button">Query Execution</button>
- </td>
- <td></td>
- </tr>
-</table>
+	<table id='outputTable'>
+		<tr>
+			<td style='border: 1px solid black'>
+				<div id="sourceCodeDiv"></div>
+			</td>
+			<td>
+				<table id='querySection'>
+					<tr>
+						<td id='criterionCol' >
+							<div id="criterionDiv">
+								Criterion: <span id='criterionValue'>Last Executed event</span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td id='slicePredicateRow' >
+							<div>Slice Predicate:</div>
+							<div id="slicePredicateDiv"></div>
+						</td>
+					</tr>
+					<tr>
+						<td id='queryPredicateRow' >
+							<div>Query Predicate:</div>
+							<div id="queryPredicateDiv"></div>
+						</td>
+					</tr>
+					<tr>
+						<td id='queryBtnRow' >
+							<button id="queryBtn" type="button">Query Execution</button>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div id="pyOutputPane"></div>
+			</td>
+		</tr>
+
+	</table>
 
 </body>
 </html>

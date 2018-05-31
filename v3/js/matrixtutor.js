@@ -224,7 +224,6 @@ $(document).ready(function() {
   $("#executeBtn").attr('disabled', false);
   $("#executeBtn").click(executeCodeFromScratch);
 
-
   var queryStrOptions = getQueryStringOptions();
 
   appMode = queryStrOptions.appMode; // assign this to the GLOBAL appMode

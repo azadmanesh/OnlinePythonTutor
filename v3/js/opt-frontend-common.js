@@ -763,12 +763,21 @@ function supports_html5_storage() {
   }
 }
 
-function queryEditorGetValue() {
+function slicePredicateEditorGetValue() {
 	if (useCodeMirror) {
-		return queryEditorCodeMirror.getValue();
+		return slicePredicateEditorCodeMirror.getValue();
 	}
 	else {
-		return queryAceEditor.getValue();
+		return slicePredicateEditor.getValue();
+	}
+}
+
+function queryPredicateEditorGetValue() {
+	if (useCodeMirror) {
+		return queryPredicateEditorCodeMirror.getValue();
+	}
+	else {
+		return queryPredicateEditor.getValue();
 	}
 }
 
@@ -782,12 +791,22 @@ function pyInputGetValue() {
   }
 }
 
-function queryEditorSetValue(dat) {
+function slicePredicateEditorSetValue(dat) {
 	if (useCodeMirror) {
-		queryCodeMirror.setValue(dat.rtrim() /* kill trailing spaces */);
+		slicePredicateCodeMirror.setValue(dat.rtrim() /* kill trailing spaces */);
 	}
 	else {
-		queryAceEditor.setValue(dat.rtrim() /* kill trailing spaces */,
+		slicePredicateEditor.setValue(dat.rtrim() /* kill trailing spaces */,
+				-1 /* do NOT select after setting text */);
+	}
+}
+
+function queryPredicateEditorSetValue(dat) {
+	if (useCodeMirror) {
+		queryPredicateCodeMirror.setValue(dat.rtrim() /* kill trailing spaces */);
+	}
+	else {
+		queryPredicateEditor.setValue(dat.rtrim() /* kill trailing spaces */,
 				-1 /* do NOT select after setting text */);
 	}
 }
@@ -888,8 +907,11 @@ function genericOptFrontendReady() {
     initAceEditor(420);
   }
 
-  initQueryAceEditor(420);
+//  initQueryAceEditor(420);
+  
   initSourceViewer(420);
+  initSlicePredicateAceEditor(200);
+  initQueryPredicateAceEditor(200);
 
   if (useCodeMirror) {
     // for shared sessions
@@ -951,9 +973,6 @@ function genericOptFrontendReady() {
 		pyInputSetValue(dat);
 	})
 	
-	$.get(BLAST_OPT_QUERY_TEMPLATE, function(dat) {
-		queryEditorSetValue(dat);
-	})
 
   // first initialize options from HTML LocalStorage. very important
   // that this code runs first so that options get overridden by query
@@ -1071,6 +1090,7 @@ function genericOptFrontendReady() {
   $("#executeBtn").attr('disabled', false);
   $("#executeBtn").click(executeDispatch);
   
+  $("#queryBtn").click(executeQuery);
 
   // for Versions 1 and 2, initialize here. But for version 3+, dynamically
   // generate a survey whenever the user successfully executes a piece of code
@@ -1793,6 +1813,22 @@ function executeCodeAndCreateViz(codeToExec,
     initDeltaObj(); // clear deltaObj to start counting over again
 }
 
+function executeQuery() {
+	console.log('ExecuteQuery!')
+	var backend_script = 'query';
+	
+	function exec_query_callback() {
+		console.log('return from get!');
+	}
+	
+	$.get(backend_script, {
+		user_query : backend_script,
+		slice_predicate: slicePredicateEditorGetValue(),
+		query_predicate: queryPredicateEditorGetValue(),
+		session_uuid: sessionUUID
+	},
+	exec_query_callback, "json");
+}
 
 // Compress updateHistory before encoding and sending to
 // the server so that it takes up less room in the URL. Have each
@@ -2311,42 +2347,6 @@ display a brief "Thanks!" note]
 // override this with a version in codeopticon-learner.js if needed
 function logEventCodeopticon(obj) {}
 
-function initQueryAceEditor(height) {
-	  queryAceEditor = ace.edit('queryDiv');
-	  var s = queryAceEditor.getSession();
-	  // tab -> 4 spaces
-	  s.setTabSize(4);
-	  s.setUseSoftTabs(true);
-	  // disable extraneous indicators:
-	  s.setFoldStyle('manual'); // no code folding indicators
-	  s.getDocument().setNewLineMode('unix'); // canonicalize all newlines to unix format
-	  queryAceEditor.setHighlightActiveLine(false);
-	  queryAceEditor.setShowPrintMargin(false);
-	  queryAceEditor.setBehavioursEnabled(false);
-	  queryAceEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
-
-	  // auto-grow height as fit
-	  queryAceEditor.setOptions({minLines: 22, maxLines: 22});
-
-	  $('#queryDiv').css('width', '550px');
-	  $('#queryDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
-	  $('#queryDiv').css('border', '1px solid black');
-	  
-
-	  initDeltaObj();
-	  queryAceEditor.on('change', function(e) {
-	    $.doTimeout('queryAceEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
-	    clearFrontendError();
-	    s.clearAnnotations();
-	  });
-
-	  // don't do real-time syntax checks:
-	  // https://github.com/ajaxorg/ace/wiki/Syntax-validation
-	  s.setOption("useWorker", false);
-
-	  s.setMode("ace/mode/java");
-	}
-
 function initSourceViewer(height) {
 	  sourceViewerEditor = ace.edit('sourceCodeDiv');
 	  var s = sourceViewerEditor.getSession();
@@ -2364,13 +2364,13 @@ function initSourceViewer(height) {
 		  
 	  // auto-grow height as fit
 	  sourceViewerEditor.setOptions({
-		  minLines: 22, 
-		  maxLines: 22,
+		  minLines: 25, 
+		  maxLines: 25,
 		  readOnly: true});
 
 	  $('#sourceCodeDiv').css('width', '550px');
 	  $('#sourceCodeDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
-	  $('#sourceCodeDiv').css('border', '1px solid black');
+//	  $('#sourceCodeDiv').css('border', '1px solid black');
 	  $('#sourceCodeDiv').css('background-color', '#E1E1E1');
 	  
 
@@ -2387,3 +2387,75 @@ function initSourceViewer(height) {
 
 	  s.setMode("ace/mode/java");
 }
+
+function initSlicePredicateAceEditor(height) {
+	  slicePredicateEditor = ace.edit('slicePredicateDiv');
+	  var s = slicePredicateEditor.getSession();
+	  // tab -> 4 spaces
+	  s.setTabSize(4);
+	  s.setUseSoftTabs(true);
+	  // disable extraneous indicators:
+	  s.setFoldStyle('manual'); // no code folding indicators
+	  s.getDocument().setNewLineMode('unix'); // canonicalize all newlines to unix format
+	  slicePredicateEditor.setHighlightActiveLine(false);
+	  slicePredicateEditor.setShowPrintMargin(false);
+	  slicePredicateEditor.setBehavioursEnabled(false);
+	  slicePredicateEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
+
+	  // auto-grow height as fit
+	  slicePredicateEditor.setOptions({minLines: 10, maxLines: 10});
+
+	  $('#slicePredicateDiv').css('width', '550px');
+	  $('#slicePredicateDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
+	  
+	  
+
+	  initDeltaObj();
+	  slicePredicateEditor.on('change', function(e) {
+	    $.doTimeout('slicePredicateEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
+	    clearFrontendError();
+	    s.clearAnnotations();
+	  });
+
+	  // don't do real-time syntax checks:
+	  // https://github.com/ajaxorg/ace/wiki/Syntax-validation
+	  s.setOption("useWorker", false);
+
+	  s.setMode("ace/mode/java");
+	}
+
+function initQueryPredicateAceEditor(height) {
+	  queryPredicateEditor = ace.edit('queryPredicateDiv');
+	  var s = queryPredicateEditor.getSession();
+	  // tab -> 4 spaces
+	  s.setTabSize(4);
+	  s.setUseSoftTabs(true);
+	  // disable extraneous indicators:
+	  s.setFoldStyle('manual'); // no code folding indicators
+	  s.getDocument().setNewLineMode('unix'); // canonicalize all newlines to unix format
+	  queryPredicateEditor.setHighlightActiveLine(false);
+	  queryPredicateEditor.setShowPrintMargin(false);
+	  queryPredicateEditor.setBehavioursEnabled(false);
+	  queryPredicateEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
+
+	  // auto-grow height as fit
+	  queryPredicateEditor.setOptions({minLines: 10, maxLines: 10});
+
+	  $('#queryPredicateDiv').css('width', '550px');
+	  $('#queryPredicateDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
+	  
+	  
+
+	  initDeltaObj();
+	  queryPredicateEditor.on('change', function(e) {
+	    $.doTimeout('queryPredicateEditorChange', CODE_SNAPSHOT_DEBOUNCE_MS, snapshotCodeDiff); // debounce
+	    clearFrontendError();
+	    s.clearAnnotations();
+	  });
+
+	  // don't do real-time syntax checks:
+	  // https://github.com/ajaxorg/ace/wiki/Syntax-validation
+	  s.setOption("useWorker", false);
+
+	  s.setMode("ace/mode/java");
+	}

@@ -1161,6 +1161,8 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 
 #outputTable {
 	display: none;
+	border-collapse: separate;
+    border-spacing: 10px;
 }
 
 .sourceLineChosen
@@ -1171,4 +1173,23 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
     left: 0 !important;
 }
 
+#queryBtn {
+	height: 18px;
+	float: right;
+}
+
+#criterionCol {
+	height: 25px;
+	background-color: green;
+	color: lightgrey;
+}
+
+#criterionValue {
+	color: #fff9a0;
+}
+
+#querySection {
+	background-color: grey;
+	color: lightgrey;
+}
 /* END Java frontend by David Pritchard and Will Gwozdz */

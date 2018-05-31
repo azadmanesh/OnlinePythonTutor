@@ -1805,12 +1805,14 @@ ExecutionVisualizer.prototype.updateCurPrevLines = function() {
 // This function is called every time the display needs to be updated
 // smoothTransition is OPTIONAL!
 ExecutionVisualizer.prototype.updateOutput = function(smoothTransition) {
-	//revert any changes made to the previous line
-	if (this.prevLineNumber){
-		var cod = this.codeOutputLines[this.prevLineNumber - 1].text;
-		this.domRoot.find('#'+this.generateID('cod' + this.prevLineNumber)).
-		html(htmlspecialchars(cod));
-	}
+
+	// @AZM: disabled breakpoints; so no need to revert any changes
+//	//revert any changes made to the previous line
+//	if (this.prevLineNumber){
+//		var cod = this.codeOutputLines[this.prevLineNumber - 1].text;
+//		this.domRoot.find('#'+this.generateID('cod' + this.prevLineNumber)).
+//		html(htmlspecialchars(cod));
+//	}
 	
   if (this.params.hideCode) {
     this.updateOutputMini();
