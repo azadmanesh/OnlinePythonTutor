@@ -5535,7 +5535,6 @@ function getRandomColor() {
 }
 
 function resetSourceDiv(curEntry) {
-	console.log("Reset source div!");
 	var source; 
 	var lineNo;  
 	
@@ -5551,7 +5550,6 @@ function resetSourceDiv(curEntry) {
 	
 	
 	if (source == 'UNTRACED') {
-		console.log('untraced source')
 		return;
 	}
 	
@@ -5559,21 +5557,22 @@ function resetSourceDiv(curEntry) {
 	
 	var sourceContent = myVisualizer.sourceCache[url];
 	if ( sourceContent == null) {
-		console.log("source cache miss!")
 		$.get(url, function(data){
 			sourceEditorSetValue(data);
 			myVisualizer.sourceCache[url] = data;
 		})
 	} else {
-		console.log('source cache hit!');
 		sourceEditorSetValue(sourceContent);
 	}
 	
 	if (lineNo != -1) {
-		console.log('lineNo:\t'+ lineNo)
 		var Range = ace.require('ace/range').Range;
 		var marker = sourceViewerEditor.session.addMarker(new Range(lineNo - 1, 0, lineNo - 1, 2000), "sourceLineChosen", "fullLine", true);
 		sourceViewerEditor.getSession().removeMarker(myVisualizer.lastSourceMarker);
-		myVisualizer.lastSourceMarker = marker;  
+		myVisualizer.lastSourceMarker = marker;
+
+
+		sourceViewerEditor.resize(true);
+		sourceViewerEditor.gotoLine(lineNo, 0, true);
 	}
 }

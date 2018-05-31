@@ -2360,7 +2360,8 @@ function initSourceViewer(height) {
 	  sourceViewerEditor.setShowPrintMargin(false);
 	  sourceViewerEditor.setBehavioursEnabled(false);
 	  sourceViewerEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
-
+	  sourceViewerEditor.renderer.$cursorLayer.element.style.display = "none"
+		  
 	  // auto-grow height as fit
 	  sourceViewerEditor.setOptions({
 		  minLines: 22, 
