@@ -7,15 +7,36 @@ import static org.junit.Assert.*;
  * Do not add any further test!
  */
 public class InlinedTest {
+
 	
 	@Test
 	public void test() {
-		int i = 2;
-		int sum=0;
-		while(i>0){
-		  i--;
-		  sum+=i;
+		f(4);
+	}
+	
+	public int f(int arg) {
+		if (arg == 0) {
+			return 1;
+		} else {
+			return f(arg - 1);
+		}
+	}
+
+	public int g(int arg) {
+		if (arg == 0) {
+			return 1;
+		} else {
+			return f(arg - 1);
 		}
 	}
 	
+	public int h(int arg) {
+		if (arg == 0) {
+			return 1;
+		} else {
+			return f(arg - 1);
+		}
+	}
+
+
 }

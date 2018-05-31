@@ -68,6 +68,8 @@ var SVG_ARROW_HEIGHT = 10; // must match height of SVG_ARROW_POLYGON
 
 var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer instance
 
+// @AZM TODO: lines 2659-2072, 3003-3011, 3120-3126
+
 // domRootID is the string ID of the root element where to render this instance
 // dat is data returned by the Python Tutor backend consisting of two fields:
 //   code  - string of executed code
@@ -1351,7 +1353,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       if (i == 0) {
         return d.lineNumber;
       } else {
-        return addContentAssist(d,myViz, this);
+        return addContentAssist(d);
       }
     });
 
@@ -2655,48 +2657,50 @@ ExecutionVisualizer.prototype.precomputeCurTraceLayouts = function() {
       }
     }
 
-    // iterate through all globals and ordered stack frames and call updateCurLayout
-    $.each(curEntry.ordered_globals, function(i, varname) {
-      var val = curEntry.globals[varname];
-      if (val !== undefined) { // might not be defined at this line, which is OKAY!
-        // TODO: try to unify this behavior between C/C++ and other languages:
-        if (myViz.isCppMode()) {
-          updateCurLayoutAndRecurse(val);
-        } else {
-          if (!myViz.isPrimitiveType(val)) {
-            var id = getRefID(val);
-            updateCurLayout(id, null, []);
-          }
-        }
-      }
-    });
-
-    $.each(curEntry.stack_to_render, function(i, frame) {
-      $.each(frame.ordered_varnames, function(xxx, varname) {
-        var val = frame.encoded_locals[varname];
-        // TODO: try to unify this behavior between C/C++ and other languages:
-        if (myViz.isCppMode()) {
-          updateCurLayoutAndRecurse(val);
-        } else {
-          if (!myViz.isPrimitiveType(val)) {
-            var id = getRefID(val);
-            updateCurLayout(id, null, []);
-          }
-        }
-      });
-    });
-
-
-    // iterate through remaining elements of idsToRemove and REMOVE them from curLayout
-    idsToRemove.forEach(function(id, xxx) {
-      id = Number(id); // keys are stored as strings, so convert!!!
-      $.each(curLayout, function(rownum, row) {
-        var ind = row.indexOf(id);
-        if (ind > 0) { // remember that index 0 of the row is the row ID tag
-          row.splice(ind, 1);
-        }
-      });
-    });
+//// TODO: Adapt to the new path condition system     
+//    // iterate through all globals and ordered stack frames and call updateCurLayout
+//    $.each(curEntry.ordered_globals, function(i, varname) {
+//    	var val = curEntry.globals[varname];
+//    	if (val !== undefined) { // might not be defined at this line, which is OKAY!
+//    		// TODO: try to unify this behavior between C/C++ and other languages:
+//    		if (myViz.isCppMode()) {
+//    			updateCurLayoutAndRecurse(val);
+//    		} else {
+//    			if (!myViz.isPrimitiveType(val)) {
+//    				var id = getRefID(val);
+//    				updateCurLayout(id, null, []);
+//    			}
+//    		}
+//    	}
+//    })
+//    
+// // TODO: Adapt to the new path condition system
+//    $.each(curEntry.stack_to_render, function(i, frame) {
+//      $.each(frame.ordered_varnames, function(xxx, varname) {
+//        var val = frame.encoded_locals[varname];
+//        // TODO: try to unify this behavior between C/C++ and other languages:
+//        if (myViz.isCppMode()) {
+//          updateCurLayoutAndRecurse(val);
+//        } else {
+//          if (!myViz.isPrimitiveType(val)) {
+//            var id = getRefID(val);
+//            updateCurLayout(id, null, []);
+//          }
+//        }
+//      });
+//    });
+//
+//	// TODO: Adapt to the new path condition system
+//    // iterate through remaining elements of idsToRemove and REMOVE them from curLayout
+//    idsToRemove.forEach(function(id, xxx) {
+//      id = Number(id); // keys are stored as strings, so convert!!!
+//      $.each(curLayout, function(rownum, row) {
+//        var ind = row.indexOf(id);
+//        if (ind > 0) { // remember that index 0 of the row is the row ID tag
+//          row.splice(ind, 1);
+//        }
+//      });
+//    });
 
     // now remove empty rows (i.e., those with only a row ID tag) from curLayout
     curLayout = curLayout.filter(function(row) {return row.length > 1});
@@ -2749,76 +2753,9 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
     return; // return EARLY!!!
   }
   
-  // ANDREA GALLIDABINO: test visualiser START  
-//compute children level\
-
-//var treeVisualiserElement = document.getElementById('treeVisualiser')
-////var treeVisualiserbg = document.getElementById('treeBackground')
-//var maxLevel = 0
-//var levelHeight = 20
-//var maxWidth = 0
-//var minStart = undefined
-//var codeLeftBase = 59 + 61.5;
-//var treeBackgourdTopPadding = 5;
-//var treeBackgourdLeftPadding = 5;
-//var treeElementPadding = 3;
-//for(var i = 0; i < curEntry.rangeValue.length; i++) { 
-//	  curEntry.rangeValue[i].level = maxLevel;
-//	  maxLevel++
-//}
-//
-//treeVisualiserElement.innerHTML = '';
-////treeVisualiserbg.innerHTML = '';
-//for(var i = 0; i < curEntry.rangeValue.length; i++) {
-//	  
-//	  var treeElement = document.createElement('div');
-//	  treeElement.className += "treeCircle";
-//	  treeElement.innerHTML = curEntry.rangeValue[i].value;
-//	  
-//	  var elementCharCount = curEntry.rangeValue[i].value.length
-//	  
-//	  var charFontWidth = 8.8;
-//	  var widthChars = (curEntry.rangeValue[i].end - curEntry.rangeValue[i].start) + 1
-//	  if(maxWidth < (widthChars * charFontWidth)) {
-//		  maxWidth = widthChars * charFontWidth
-//	  }
-//	  
-//	  treeElement.style.width = (Math.max(elementCharCount,widthChars))*charFontWidth + 'px'
-//	  
-//	  
-//	  if(minStart == undefined || minStart > curEntry.rangeValue[i].start) {
-//		  minStart = curEntry.rangeValue[i].start
-//	  }
-////	  var positionLeft = curEntry.rangeValue[i].start + (widthChars / 2 )
-////	  var pixels = (positionLeft + 6) * 9 + 61.5 // 13 pixels =~ 10pt --- 61.5pixel = margin-left --- 6 character offset
-//    
-//	  var pixels = codeLeftBase + ((curEntry.rangeValue[i].start-1)*charFontWidth) - 2
-//	  treeElement.style.left = pixels + 'px'
-//	  
-//	  var linePositionTop = 23+ 8 +((myViz.prevLineNumber - 1)*20) ; 
-//	  var positionTop = linePositionTop;
-//	  positionTop = positionTop - ((curEntry.rangeValue[i].level) * levelHeight)
-//	  
-//	  treeElement.style.top = positionTop + 'px'
-//	  
-//	  treeVisualiserElement.appendChild(treeElement);
-//}
-//
-//var treeBg = document.createElement('div');
-//treeBg.className += "treeBackground";
-//treeBg.style.width = (maxWidth + (2*treeBackgourdLeftPadding) )+ 'px'
-//treeBg.style.height = ((maxLevel)*levelHeight) + 6 + 'px'
-//treeBg.style.top = (linePositionTop - ((maxLevel-1) * levelHeight) - treeBackgourdTopPadding ) + 'px'
-//treeBg.style.left = ((minStart - 1) * charFontWidth + codeLeftBase)- treeBackgourdLeftPadding + 'px'
-//treeVisualiserElement.appendChild(treeBg);
-//treeElement.innerHTML = curEntry.rangeValue[i].value;
-//
-//var treeBackground = document.getElementById('treeBackground')
-//treeBackground.className += "treeBackground"
-
-//ANDREA GALLIDABINO: test visualiser END
-
   myViz.resetJsPlumbManager(); // very important!!!
+  
+  resetSourceDiv(curEntry);
 
   // for simplicity (but sacrificing some performance), delete all
   // connectors and redraw them from scratch. doing so avoids mysterious
@@ -2995,14 +2932,16 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
   // (Sometimes entries in curEntry.ordered_globals are undefined,
   // so filter those out.)
   var realGlobalsLst = [];
-  $.each(curEntry.ordered_globals, function(i, varname) {
-    var val = curEntry.globals[varname];
-
-    // (use '!==' to do an EXACT match against undefined)
-    if (val !== undefined) { // might not be defined at this line, which is OKAY!
-      realGlobalsLst.push(varname);
-    }
-  });
+  
+//// TODO: adapt to path condition system.
+//  $.each(curEntry.ordered_globals, function(i, varname) {
+//    var val = curEntry.globals[varname];
+//
+//    // (use '!==' to do an EXACT match against undefined)
+//    if (val !== undefined) { // might not be defined at this line, which is OKAY!
+//      realGlobalsLst.push(varname);
+//    }
+//  });
 
   var globalsID = myViz.generateID('globals');
   var globalTblID = myViz.generateID('global_table');
@@ -3111,13 +3050,14 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
     .remove();
 
 
+  //@AZM: TODO: adapt to path condition
   // for aesthetics, hide globals if there aren't any globals to display
-  if (curEntry.ordered_globals.length == 0) {
-    this.domRoot.find('#' + globalsID).hide();
-  }
-  else {
-    this.domRoot.find('#' + globalsID).show();
-  }
+//  if (curEntry.ordered_globals.length == 0) {
+//    this.domRoot.find('#' + globalsID).hide();
+//  }
+//  else {
+//    this.domRoot.find('#' + globalsID).show();
+//  }
 
 
   // holy cow, the d3 code for stack rendering is ABSOLUTELY NUTS!
@@ -5509,7 +5449,7 @@ function showFullContext() {
 			return "[UNKONWN]"})
 }
 
-function addContentAssist(data,myViz, self) {
+function addContentAssist(data) {
 	var originalText = data.text
 	var map = findSynthesizedSourceMappings(originalText)
 	var indentedText= addIndentation(originalText, data.controllers, map); 
@@ -5592,4 +5532,41 @@ function getRandomColor() {
 		AddDigitToColor(15)
 	}
 	return color
+}
+
+function resetSourceDiv(curEntry) {
+	console.log("Reset source div!");
+	var source; 
+	var lineNo;  
+	
+	//show the entry source code before executing any instruction
+	if (myVisualizer.curInstr == 0) {  
+		source = myVisualizer.curTrace[1].source_name;
+		lineNo = -1;
+		myVisualizer.sourceCache = new Object();
+	} else {
+		source = curEntry.source_name;
+		lineNo = curEntry.source_line_no;
+	}
+	
+	
+	if (source == 'UNTRACED') {
+		console.log('untraced source')
+		return;
+	}
+	
+	var url = 'wd/s' + sessionUUID+ '/' + source;
+	
+	var sourceContent = myVisualizer.sourceCache[url];
+	if ( sourceContent == null) {
+		console.log("empty cache")
+		$.get(url, function(data){
+			sourceEditorSetValue(data);
+			myVisualizer.sourceCache[url] = data;
+		})
+	} else {
+		console.log('full cache');
+		sourceEditorSetValue(sourceContent);
+	}
+	
 }

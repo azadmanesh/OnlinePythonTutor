@@ -792,6 +792,16 @@ function queryEditorSetValue(dat) {
 	}
 }
 
+function sourceEditorSetValue(dat) {
+	if (useCodeMirror) {
+		sourceViewerEditor.setValue(dat.rtrim() /* kill trailing spaces */);
+	}
+	else {
+		sourceViewerEditor.setValue(dat.rtrim() /* kill trailing spaces */,
+				-1 /* do NOT select after setting text */);
+	}
+}
+
 function pyInputSetValue(dat) {
   if (useCodeMirror) {
     pyInputCodeMirror.setValue(dat.rtrim() /* kill trailing spaces */);
@@ -2316,7 +2326,7 @@ function initQueryAceEditor(height) {
 	  queryAceEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
 
 	  // auto-grow height as fit
-	  queryAceEditor.setOptions({minLines: 18, maxLines: 1000});
+	  queryAceEditor.setOptions({minLines: 22, maxLines: 22});
 
 	  $('#queryDiv').css('width', '550px');
 	  $('#queryDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
@@ -2352,12 +2362,15 @@ function initSourceViewer(height) {
 	  sourceViewerEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
 
 	  // auto-grow height as fit
-	  sourceViewerEditor.setOptions({minLines: 18, maxLines: 1000});
+	  sourceViewerEditor.setOptions({
+		  minLines: 22, 
+		  maxLines: 22,
+		  readOnly: true});
 
 	  $('#sourceCodeDiv').css('width', '550px');
 	  $('#sourceCodeDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
 	  $('#sourceCodeDiv').css('border', '1px solid black');
-	  $('#sourceCodeDiv').css('background-color', 'lightgrey');
+	  $('#sourceCodeDiv').css('background-color', '#E1E1E1');
 	  
 
 	  initDeltaObj();
