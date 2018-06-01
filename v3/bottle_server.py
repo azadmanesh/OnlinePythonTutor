@@ -14,6 +14,7 @@
 
 from bottle import route, get, request, run, template, static_file
 from subprocess import call, check_call, CalledProcessError
+from shutil import copyfile
 import StringIO # NB: don't use cStringIO since it doesn't support unicode!!!
 import json
 import pg_logger
@@ -26,8 +27,17 @@ import shutil
 wd = 'wd'
 blast_opt_frontend = '/Users/reza/PhD/tools/OnlinePythonTutor/v3'
 junit_class_path = 'blast-opt-backend/lib/junit-4.11.jar:blast-opt-backend/lib/hamcrest-core-1.3.jar'
+blast_classpath = '/Users/reza/tempInfoFlow/informationflowtracer/build/main'
 blast_opt_controller = '/Users/reza/Documents/workspace2/blast-opt-controller'
-blast_class_path = '/Users/reza/tempInfoFlow/informationflowtracer/build/main'
+blast_opt_controller_classpath = blast_opt_controller + '/bin' 
+query_files_path = 'blast-opt-code'
+predicate_prototype_file_name = 'PredicatePrototype.java'
+query_package_path = 'ch/usi/inf/sape/blastopt/controller/analyzer';
+query_class_name = 'Query'
+query_file_name = query_class_name+ '.java'
+criterion_prototype_file_name = 'CriterionPrototype.java'
+slice_predicate_prototype_file_name = 'SlicePredicatePrototype.java'
+query_predicate_prototype_file_name = 'QueryPredicatePrototype.java'
 
 inlined_test_class_name = 'InlinedTest'
 inlined_test_method_name = 'test'
@@ -110,18 +120,61 @@ def exec_query():
     if not os.path.exists(currentRelativeTargetPath):
         raise Exception('Invalid session! Not found any match for the given session!')
     
-    queryFilePath = currentRelativeTargetPath + '/' + 'Query.java';
+    query_destination = currentRelativeTargetPath + '/' + query_package_path
+    if not os.path.exists(query_destination):
+        os.makedirs(query_destination)
+        
+    #copy query source files after replacing the template with concrete values
+    slice_predicate_prototype_file = open(query_files_path + '/' + slice_predicate_prototype_file_name, 'r')
+    slice_predicate_param_value = request.query.slice_predicate
+    slice_predicate_concrete_text = slice_predicate_prototype_file.read().replace('/*...*/', slice_predicate_param_value, 1)
+    slice_predicate_concrete_file = open(query_destination + '/' + slice_predicate_prototype_file_name, 'w')
+    slice_predicate_concrete_file.write(slice_predicate_concrete_text);
+    slice_predicate_concrete_file.close()
+    slice_predicate_prototype_file.close()
     
-    tempFile = open(queryFilePath, 'w')
-    tempFile.write(request.query.query_to_execute)
-    tempFile.close()
+    query_predicate_prototype_file = open(query_files_path + '/' + query_predicate_prototype_file_name, 'r')
+    query_predicate_param_value = request.query.query_predicate
+    query_predicate_concrete_text = query_predicate_prototype_file.read().replace('/*...*/', query_predicate_param_value, 1)
+    query_predicate_concrete_file = open(query_destination + '/' + query_predicate_prototype_file_name, 'w')
+    query_predicate_concrete_file.write(query_predicate_concrete_text);
+    query_predicate_concrete_file.close()
+    query_predicate_prototype_file.close()
     
-    retcode = call(["javac", "-g","-cp", blast_class_path, "-source", "7", "-target", "7", queryFilePath])
+    criterion_prototype_file = open(query_files_path + '/' + criterion_prototype_file_name, 'r')
+    criterion_param_value = request.query.criterion
+    criterion_concrete_text = criterion_prototype_file.read().replace('/*...*/', criterion_param_value, 1)
+    criterion_concrete_file = open(query_destination + '/' + criterion_prototype_file_name, 'w')
+    criterion_concrete_file.write(criterion_concrete_text);
+    criterion_concrete_file.close()
+    criterion_prototype_file.close()
+    
+    targetQueryFile = query_destination + '/' + query_file_name
+    copyfile(query_files_path+'/'+ query_file_name, targetQueryFile)
+    classpath = blast_classpath + ':' + blast_opt_controller_classpath + ':' + currentRelativeTargetPath
+    
+    retcode = call(["javac", "-g","-cp", classpath, "-source", "7", "-target", "7", targetQueryFile])
     
     if retcode != 0:
         raise Exception("Compile error!")
     
+    query_fully_qualified_class_name = query_package_path.replace('/', '.')+ '.' + query_class_name
+    retcode = call(["ant", "-f", blast_opt_controller, 
+                                                    "run", 
+                                                    "-Dtest.class="+inlined_test_class_name,
+                                                    "-Dtest.method="+inlined_test_method_name,
+                                                    "-Dtest.analyzer="+query_fully_qualified_class_name,
+                                                    "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
+    
+    print "opt-controller:\t" + str(retcode)
+    if retcode != 0:
+        raise Exception("Opt-controller failed in running the test!")
+    
+    print 'Results written into:\t' + blast_opt_frontend+ '/' + currentRelativeTargetPath
     print 'working directory:\t' + currentRelativeTargetPath
+    
+    return static_file("data.json", root=currentRelativeTargetPath)
+    
     
 
 @get('/exec')

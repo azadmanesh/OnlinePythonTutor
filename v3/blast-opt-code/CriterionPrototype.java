@@ -1,3 +1,5 @@
+package ch.usi.inf.sape.blastopt.controller.analyzer;
+
 import java.util.List;
 
 import ch.usi.inf.sape.tracer.analyzer.*;

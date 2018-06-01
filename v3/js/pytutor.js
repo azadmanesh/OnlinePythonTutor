@@ -1381,20 +1381,10 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   })
   .on('click', function(d, i){
     console.log(i);
-    var query = queryEditorGetValue();
-    var start = query.indexOf('Criterion query for:');
-    var end = query.indexOf('}', start)
-    console.log(d.code);
-    var criterionQuery = 'Criterion query for:\n';
-    var astCode = d.code.slice(d.start_index, d.end_index);
-    criterionQuery += '\t * Event Code:\t"' + astCode + '\"' + (astCode == d.code ? '' : ' in ' + d.code ) + '\n'+
-    					'\t * Event Time:\t' + (d.time + 1) + '\n' +
-    					'\t */\n' +
-     					'\tprivate EventI slicingCriterion(final trace) {\n' +
-     					'\t\t return trace.getAllBytecodeEvents()['+ d.bcTime + '];\n\t}';
     
-    var queryEditorText = [query.slice(0, start), criterionQuery, query.slice(end + 1)].join('');
-    queryEditorSetValue(queryEditorText);
+    var astCode = d.code.slice(d.start_index, d.end_index);
+    $('#criterionValue').text(astCode + (astCode == d.code ? '' : ' in ' + d.code ) +', Event Time:\t' + (d.time + 1));
+    criterionBcIndex =  d.bcTime;
     
     d3.event.stopPropagation();
   })

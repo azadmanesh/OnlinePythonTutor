@@ -1823,6 +1823,7 @@ function executeQuery() {
 	
 	$.get(backend_script, {
 		user_query : backend_script,
+		criterion: criterionBcIndex,
 		slice_predicate: slicePredicateEditorGetValue(),
 		query_predicate: queryPredicateEditorGetValue(),
 		session_uuid: sessionUUID
