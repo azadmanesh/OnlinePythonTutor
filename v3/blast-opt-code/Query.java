@@ -1,15 +1,25 @@
 package ch.usi.inf.sape.blastopt.controller.analyzer;
 
-import java.util.List;
+import ch.usi.inf.sape.tracer.analyzer.EventI;
+import ch.usi.inf.sape.tracer.analyzer.PathCondition;
+import ch.usi.inf.sape.tracer.analyzer.PathConditionI;
+import ch.usi.inf.sape.tracer.analyzer.PathConditionSlice;
+import ch.usi.inf.sape.tracer.analyzer.Trace;
+import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractionUtils.AbstractHistory;
+import ch.usi.inf.sape.tracer.analyzer.bytecodeops.BytecodePureEvent;
+import ch.usi.inf.sape.tracer.analyzer.slicing.AbstractSliceAction;
+import ch.usi.inf.sape.tracer.analyzer.slicing.AbstractSlicedEvent;
+import ch.usi.inf.sape.tracer.analyzer.slicing.DfsNavigator;
+import ch.usi.inf.sape.tracer.analyzer.slicing.Focuser;
+import ch.usi.inf.sape.tracer.analyzer.slicing.Navigator;
+import ch.usi.inf.sape.tracer.analyzer.slicing.PostFilterNavigator;
+import ch.usi.inf.sape.tracer.analyzer.slicing.Predicate;
+import ch.usi.inf.sape.tracer.analyzer.slicing.Slice;
+import ch.usi.inf.sape.tracer.analyzer.slicing.SlicePredicate;
+import ch.usi.inf.sape.tracer.analyzer.slicing.SliceStepAction;
+import ch.usi.inf.sape.tracer.analyzer.slicing.Traversal;
 
-import ch.usi.inf.sape.tracer.analyzer.*;
-import ch.usi.inf.sape.tracer.analyzer.slicing.*;
-import ch.usi.inf.sape.tracer.analyzer.bytecodeops.*;
-import ch.usi.inf.sape.tracer.analyzer.locations.*;
-import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocation.LocationType;
-import ch.usi.inf.sape.blastopt.controller.analyzer.*;
-
-public class Query implements BytecodeAnalyzerBlastOpt {
+public class Query implements BlastOptQueryAnalyzer {
 
 	public enum PredicateShortName {Data(SlicePredicate.DATA), Control(SlicePredicate.CONTROL), DC(SlicePredicate.DATAwithCONTROL), Thin(SlicePredicate.THIN);
 		Predicate predicate;
@@ -24,7 +34,10 @@ public class Query implements BytecodeAnalyzerBlastOpt {
 	}
 
 	@Override
-	public BytecodeEventI[] analyze(final Trace trace) {
+	public PathConditionI analyze(Trace trace, 
+								PathCondition root,
+								AbstractHistory history,
+								BytecodePureEvent[] bcEvents) {
 		
 		final EventI criterion = CriterionPrototype.find(trace);
 		final Predicate slicePredicate = SlicePredicatePrototype.find();
@@ -35,10 +48,14 @@ public class Query implements BytecodeAnalyzerBlastOpt {
 		
 		Navigator postFilterNav = new PostFilterNavigator(dfsNav, queryPredicate);
 		
-		SliceStepAction<BytecodeEventI[]> collectAction = new AccumulationSortedAction();
-		BytecodeEventI[] events = Traversal.traverse(postFilterNav, collectAction);
-		return events;
+		SliceStepAction<AbstractSlicedEvent[]> abstractSlicedCollectAction = new AbstractSliceAction(history);
+		AbstractSlicedEvent[] slicedEvents = Traversal.traverse(postFilterNav, abstractSlicedCollectAction);
+		
+		if (slicedEvents.length == 0) {
+			return PathConditionSlice.EMPTY_PATH;
+		}
+		
+		return new PathConditionSlice(root, slicedEvents, 0, history.getPathFor(slicedEvents[0]).equals(root));
 	}
 
-	
 }

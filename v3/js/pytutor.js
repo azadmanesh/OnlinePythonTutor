@@ -2747,7 +2747,7 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
   
   myViz.resetJsPlumbManager(); // very important!!!
   
-  resetSourceDiv(curEntry);
+  resetSourceDiv(myViz, curEntry);
 
   // for simplicity (but sacrificing some performance), delete all
   // connectors and redraw them from scratch. doing so avoids mysterious
@@ -5526,7 +5526,7 @@ function getRandomColor() {
 	return color
 }
 
-function resetSourceDiv(curEntry) {
+function resetSourceDiv(myVisualizer, curEntry) {
 	var source; 
 	var lineNo;  
 	

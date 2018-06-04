@@ -8,11 +8,11 @@ import ch.usi.inf.sape.tracer.analyzer.bytecodeops.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocation.LocationType;
 
-import ch.usi.inf.sape.blastopt.controller.analyzer.Query.PredicateShortName;
-import static ch.usi.inf.sape.blastopt.controller.analyzer.Query.PredicateShortName.Data;
-import static ch.usi.inf.sape.blastopt.controller.analyzer.Query.PredicateShortName.Control;
-import static ch.usi.inf.sape.blastopt.controller.analyzer.Query.PredicateShortName.DC;
-import static ch.usi.inf.sape.blastopt.controller.analyzer.Query.PredicateShortName.Thin;
+import ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName;
+import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Data;
+import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Control;
+import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.DC;
+import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Thin;
 
 public abstract class QueryPredicatePrototype {
 
