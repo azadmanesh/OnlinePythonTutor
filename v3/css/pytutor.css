@@ -1198,4 +1198,9 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	float: right;
 }
 
+#queryErrors {
+	color: white;
+	background-color: red; 
+}
+
 /* END Java frontend by David Pritchard and Will Gwozdz */

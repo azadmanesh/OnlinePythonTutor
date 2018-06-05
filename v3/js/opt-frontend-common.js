@@ -1821,12 +1821,16 @@ function executeQuery(codeToExec,
         handleSuccessFunc, handleUncaughtExceptionFunc) {
 	console.log('ExecuteQuery!')
 	frontendOptionsObj.lang = 'java';
+	$('#queryErrors').text('');
 	
 	function exec_query_callback(dataFromBackend) {
 	      var trace = dataFromBackend.trace;
 
 	      var killerException = null;
-
+	      
+	      $('#queryErrors').text(dataFromBackend)
+	      resetQuerySection();
+	      
 	      // don't enter visualize mode if there are killer errors:
 	      if (!trace ||
 	          (trace.length == 0) ||
@@ -1976,15 +1980,43 @@ function executeQuery(codeToExec,
 	      num414Tries = 0;
 	    }
 	
-		
-	$.get(backendScript, {
-		user_query : backendScript,
-		criterion: criterionBcIndex,
-		slice_predicate: slicePredicateEditorGetValue(),
-		query_predicate: queryPredicateEditorGetValue(),
-		session_uuid: sessionUUID
-	},
-	exec_query_callback, "json");
+	var slicePredicate = slicePredicateEditorGetValue();
+	var queryPredicate = queryPredicateEditorGetValue();
+	var errorMsgs = '';
+	
+	if ((typeof criterionBcIndex == 'undefined') || criterionBcIndex == -1) {
+		errorMsgs+= 'No criterion set!<br/>';
+	} 
+	
+	if (slicePredicate == '') {
+		errorMsgs+= 'No slice predicate set!<br/>';
+	} 
+	
+	if (queryPredicate == '') {
+		errorMsgs+= 'No query predicate set!<br/>';
+	} 
+	
+	if (errorMsgs !== ''){
+		$('#queryErrors').html(errorMsgs)
+	} else {
+
+		$.get(backendScript, {
+			user_query : backendScript,
+			criterion: criterionBcIndex,
+			slice_predicate: slicePredicate,
+			query_predicate: queryPredicate,
+			session_uuid: sessionUUID
+		},
+		exec_query_callback, "json").fail(function(errorMsg) {
+			$('#queryErrors').text('Query execution failed in server side; check the syntax of the query.');
+		});
+	}
+}
+
+function resetQuerySection() {
+	$('#criterionValue').text('');
+	$('#queryErrors').text('');
+	criterionBcIndex = -1;
 }
 
 // Compress updateHistory before encoding and sending to
