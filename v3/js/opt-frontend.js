@@ -121,6 +121,26 @@ function executeCode(forceStartingInstr, forceRawInputLst) {
                           optFinishSuccessfulExecution, handleUncaughtExceptionFunc);
 }
 
+function executeQueryCode(forceStartingInstr, forceRawInputLst) {
+	  if (forceRawInputLst !== undefined) {
+		    rawInputLst = forceRawInputLst; // UGLY global across modules, FIXME
+		  }
+
+		  var backend_script = 'query';
+		  var backendOptionsObj = getBaseBackendOptionsObj();
+
+		  var startingInstruction = 0;
+
+		  var frontendOptionsObj = getBaseFrontendOptionsObj();
+		  frontendOptionsObj.startingInstruction = startingInstruction;
+
+
+		  executeQuery(pyInputGetValue(),
+		                          backend_script, backendOptionsObj,
+		                          frontendOptionsObj,
+		                          'pyOutputPane',
+		                          optFinishSuccessfulExecution, handleUncaughtExceptionFunc);
+}
 
 
 // domID is the ID of the element to attach to (without the leading '#' sign)

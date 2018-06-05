@@ -4,8 +4,11 @@ import ch.usi.inf.sape.tracer.analyzer.EventI;
 import ch.usi.inf.sape.tracer.analyzer.PathCondition;
 import ch.usi.inf.sape.tracer.analyzer.PathConditionI;
 import ch.usi.inf.sape.tracer.analyzer.PathConditionSlice;
+import ch.usi.inf.sape.tracer.analyzer.PathIterator;
 import ch.usi.inf.sape.tracer.analyzer.Trace;
+import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractEventI;
 import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractionUtils.AbstractHistory;
+import ch.usi.inf.sape.tracer.analyzer.bbevent.BasicBlockEventI;
 import ch.usi.inf.sape.tracer.analyzer.bytecodeops.BytecodePureEvent;
 import ch.usi.inf.sape.tracer.analyzer.slicing.AbstractSliceAction;
 import ch.usi.inf.sape.tracer.analyzer.slicing.AbstractSlicedEvent;
@@ -55,7 +58,20 @@ public class Query implements BlastOptQueryAnalyzer {
 			return PathConditionSlice.EMPTY_PATH;
 		}
 		
-		return new PathConditionSlice(root, slicedEvents, 0, history.getPathFor(slicedEvents[0]).equals(root));
+		PathConditionI res = new PathConditionSlice(root, slicedEvents, 0, history.getPathFor(slicedEvents[0]).equals(root));
+		PathIterator pit = res.iterator(history);
+		
+		System.out.println("Dumping paths:\t");
+		while (pit.hasNext()) {
+			PathConditionI path = pit.next(history);
+			for (BasicBlockEventI bbe : path.getRepetitions()) {
+				for(AbstractEventI abs : bbe.getAbstractEvents()) {
+					System.out.println("source:\t" + abs.getSynthesizedSource() + "\t,\tvisible:\t"+ !path.isMasked());
+				}
+			}
+		}
+				
+		return res;
 	}
 
 }

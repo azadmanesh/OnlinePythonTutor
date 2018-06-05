@@ -1192,4 +1192,10 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	background-color: grey;
 	color: lightgrey;
 }
+
+#fullHistoryBtn {
+	height: 18px;
+	float: right;
+}
+
 /* END Java frontend by David Pritchard and Will Gwozdz */

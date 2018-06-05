@@ -595,7 +595,7 @@ ExecutionVisualizer.prototype.render = function() {
     } else if (this.params.lang === 'ruby') {
       this.domRoot.find('#langDisplayDiv').html('Ruby');
     } else if (this.params.lang === 'java') {
-      this.domRoot.find('#langDisplayDiv').html('Java');
+      this.domRoot.find('#langDisplayDiv').html('Abstract Events');
     } else if (this.params.lang === 'py2') {
       this.domRoot.find('#langDisplayDiv').html('Abstract Events');
     } else if (this.params.lang === 'py3') {
@@ -1282,7 +1282,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   }
 
   var lines = this.curInputCode.split('\n');
-
+    
   for (var i = 0; i < lines.length; i++) {
     var cod = lines[i];
 
@@ -1316,7 +1316,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       addToBreakpoints(n.executionPoints);
     }
 
-    this.codeOutputLines.push(n);
+    if (myViz.curTrace[i].visible)
+    	this.codeOutputLines.push(n);
   }
 
 
@@ -1332,7 +1333,9 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .enter().append('tr')
     .attr('class', 'codeOutputRow')
     .selectAll('td')
-    .data(function(d, i){return [d, d] /* map full data item down both columns */;})
+    .data(function(d, i){
+    	return [d, d] /* map full data item down both columns */;
+    })
     .enter()
     .append("td")
     .attr('class', function(d, i) {
@@ -1434,10 +1437,12 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   var controllers = [];
   var controllerLens = [];
   $.each(this.curTrace, function(i, te) {
-	  controllers.push(te.controllers)
-	  controllerLens.push(te.controllers.length);
-    });
-  
+	  if (te.visible) {
+		  controllers.push(te.controllers)
+		  controllerLens.push(te.controllers.length);
+	  }
+  });
+
   var maxDepth = Math.max.apply(Math, controllerLens);
  
   //cache it for future accesses, e.g.: in filtering calling context
@@ -2266,7 +2271,7 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
 
   // render code output:
   if (curEntry.line) {
-    highlightCodeLine();
+//    highlightCodeLine();
   }
 
   // inject user-specified HTML/CSS/JS output:
