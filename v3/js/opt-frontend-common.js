@@ -2008,7 +2008,7 @@ function executeQuery(codeToExec,
 			session_uuid: sessionUUID
 		},
 		exec_query_callback, "json").fail(function(errorMsg) {
-			$('#queryErrors').text('Query execution failed in server side; check the syntax of the query.');
+			$('#queryErrors').text('Query execution failed on the server side; check the syntax of the query.');
 		});
 	}
 }
@@ -2592,11 +2592,11 @@ function initSlicePredicateAceEditor(height) {
 	  slicePredicateEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
 
 	  // auto-grow height as fit
-	  slicePredicateEditor.setOptions({minLines: 10, maxLines: 10});
+	  slicePredicateEditor.setOptions({minLines: 7, maxLines: 7});
 
 	  $('#slicePredicateDiv').css('width', '550px');
 	  $('#slicePredicateDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
-	  
+	  $('#slicePredicateDiv').css('border', '1px solid black');
 	  
 
 	  initDeltaObj();
@@ -2628,11 +2628,11 @@ function initQueryPredicateAceEditor(height) {
 	  queryPredicateEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
 
 	  // auto-grow height as fit
-	  queryPredicateEditor.setOptions({minLines: 10, maxLines: 10});
+	  queryPredicateEditor.setOptions({minLines: 9, maxLines: 9});
 
 	  $('#queryPredicateDiv').css('width', '550px');
 	  $('#queryPredicateDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
-	  
+	  $('#queryPredicateDiv').css('border', '1px solid black');
 	  
 
 	  initDeltaObj();

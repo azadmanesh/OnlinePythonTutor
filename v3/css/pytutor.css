@@ -1189,8 +1189,7 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 }
 
 #querySection {
-	background-color: grey;
-	color: lightgrey;
+	border : 1px solid black;
 }
 
 #fullHistoryBtn {
@@ -1203,4 +1202,7 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	background-color: red; 
 }
 
+#dependencyImg {
+	width: 32%;
+}
 /* END Java frontend by David Pritchard and Will Gwozdz */
