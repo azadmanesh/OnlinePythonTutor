@@ -420,6 +420,7 @@ ExecutionVisualizer.prototype.render = function() {
        <div id="pyCodeOutputDiv"/>\
        <div id="editCodeLinkDiv">\
  	   <input type="checkbox" id="contextTypeCheck">Calling context</input> \
+	   <input type="checkbox" id="fullvsCompactCheck">Full History</input> \
 	   <a id="editBtn">Edit code</a>\
        </div>\
        <div id="legendDiv"/>\
@@ -5572,4 +5573,31 @@ function resetSourceDiv(myVisualizer, curEntry) {
 		sourceViewerEditor.resize(true);
 		sourceViewerEditor.gotoLine(lineNo, 0, true);
 	}
+}
+
+function showFullHistory() {
+	console.log('Show full history')
+	
+	
+//	myVisualizer.curTrace
+	
+//	var newDiv = myVisualizer.domRootD3.selectAll('.contextDiv')
+//	.data(newDataSet);
+	
+	//first find the UN-compressed set of events (data)
+	var lastPathVisited = -1;
+	$.each(myVisualizer.curTrace, function(i,d){
+		if (!d.visible) {
+			return true;
+		}
+		
+		console.log('reps:\t'+ d.states.length)
+	});
+	
+}
+
+
+
+function showCompactHistory() {
+	console.log('Show Compact History')
 }

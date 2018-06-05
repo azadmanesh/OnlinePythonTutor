@@ -1338,6 +1338,13 @@ function updateAppDisplay(newAppMode) {
     		showFullContext();
     	}
     })
+    $('#pyOutputPane #fullvsCompactCheck').on('change', function(e) {
+    	if (this.checked) {
+    		showFullHistory();
+    	} else {
+    		showCompactHistory();
+    	}
+    })
     $('#pyOutputPane #editBtn').click(function() {
       enterEditMode();
     });
