@@ -1091,6 +1091,7 @@ function genericOptFrontendReady() {
   $("#executeBtn").click(executeDispatch);
   
   $("#queryBtn").click(executeQueryCode);
+  $("#fullHistoryBtn").click(executeCode)
 
   // for Versions 1 and 2, initialize here. But for version 3+, dynamically
   // generate a survey whenever the user successfully executes a piece of code
@@ -2553,8 +2554,8 @@ function initSourceViewer(height) {
 		  
 	  // auto-grow height as fit
 	  sourceViewerEditor.setOptions({
-		  minLines: 25, 
-		  maxLines: 25,
+		  minLines: 26, 
+		  maxLines: 26,
 		  readOnly: true});
 
 	  $('#sourceCodeDiv').css('width', '550px');

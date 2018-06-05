@@ -1203,6 +1203,7 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 }
 
 #dependencyImg {
-	width: 32%;
+	width: 40%;
+	display:inline-block;
 }
 /* END Java frontend by David Pritchard and Will Gwozdz */
