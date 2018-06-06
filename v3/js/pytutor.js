@@ -1285,8 +1285,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 
   var lines = this.curInputCode.split('\n');
     
-  for (var i = 0; i < lines.length; i++) {
-    var cod = lines[i];
+  for (var i = 0; i < myViz.curTrace.length; i++) {
+    var cod = myViz.curTrace[i].synthesized_source;
 
     var n = {};
     n.text = cod;
@@ -1594,7 +1594,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   .attr('class','contextTooltipText')
 	.html(function(d,i){ 
 		  if (d.index != -1)
-		  return myViz.curTrace[d.index - 1].synthesized_source; 
+		  return d.code; 
 	  else 
 		  return "[UNKONWN]"})
 		  
