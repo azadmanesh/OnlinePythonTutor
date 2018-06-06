@@ -125,6 +125,7 @@ var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer
 //   debugMode - some extra debugging printouts
 function ExecutionVisualizer(domRootID, dat, params) {
   this.curInputCode = dat.code.rtrim(); // kill trailing spaces
+  this.comTrace = dat.trace;   			//compressed trace is kept for finding controllers using path indices
   this.curTrace = uncompressToCompactPresentation(dat.trace);
   
   /* AZM: not a good locaiton for this code; to be moved */
@@ -1435,19 +1436,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   //   console.log(d);
   // })
 
-  var controllers = [];
-  var controllerLens = [];
-  $.each(this.curTrace, function(i, te) {
-	  if (te.visible) {
-		  controllers.push(te.controllers)
-		  controllerLens.push(te.controllers.length);
-	  }
-  });
 
-  var maxDepth = Math.max.apply(Math, controllerLens);
- 
-  //cache it for future accesses, e.g.: in filtering calling context
-  this.controllers = {"set":controllers, 'maxDepth' : maxDepth}
   
 //  var test = this.domRootD3.selectAll('.context')
 //  	.data(controllers)
@@ -1545,6 +1534,18 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 //  .html(function (d , i) {
 //          return "hi";
 //      });
+  var controllers = [];
+  var controllerLens = [];
+  $.each(this.curTrace, function(i, te) {
+	  controllers.push(te.controllers)
+	  controllerLens.push(te.controllers.length);
+  });
+
+  var maxDepth = Math.max.apply(Math, controllerLens);
+
+  //cache it for future accesses, e.g.: in filtering calling context
+  this.controllers = {"set":controllers, 'maxDepth' : maxDepth}
+  
 		  
   myViz.domRootD3.select('#pyCodeOutput')
   .select('tr')
@@ -1585,7 +1586,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
    })
    .text(function (d , i) {
 	   if (d.index != -1)
-		   return myViz.curTrace[d.index].synthesized_source; 
+		   return d.code; 
 	   else 
 		   return "[UNKONWN]"
    })
@@ -1593,7 +1594,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   .attr('class','contextTooltipText')
 	.html(function(d,i){ 
 		  if (d.index != -1)
-		  return myViz.curTrace[d.index].synthesized_source; 
+		  return myViz.curTrace[d.index - 1].synthesized_source; 
 	  else 
 		  return "[UNKONWN]"})
 		  
@@ -5633,13 +5634,19 @@ function showCompactHistory() {
 function uncompressToCompactPresentation(trace) {
 	var unComTrace = [];
 	var absEvent;
+	
 	$.each(trace, function(i,d){
 		var newObject = jQuery.extend({}, d);
+		if (!d.visible)
+			return true;
+		
 		$.each(d.states[0], function(j, event){
 			newObject.synthesized_source = event.synthesized_source;
 			newObject.states = event;
 			unComTrace.push(newObject);
 		})
+		
 	})
+	
 	return unComTrace;
 }
