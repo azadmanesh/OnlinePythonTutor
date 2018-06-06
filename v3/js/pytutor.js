@@ -1318,8 +1318,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       addToBreakpoints(n.executionPoints);
     }
 
-    if (myViz.curTrace[i].visible)
-    	this.codeOutputLines.push(n);
+    
+    this.codeOutputLines.push(n);
   }
 
 
@@ -5590,9 +5590,7 @@ function showFullHistory() {
 	
 	var lastPathVisited = -1;
 	$.each(myVisualizer.curTrace, function(i,d){
-		if (!d.visible) {
-			return true;
-		}
+		
 		
 		console.log('reps:\t'+ d.states.length)
 		if (d.states.length == 1) {
@@ -5637,8 +5635,6 @@ function uncompressToCompactPresentation(trace) {
 	
 	$.each(trace, function(i,d){
 		var newObject = jQuery.extend({}, d);
-		if (!d.visible)
-			return true;
 		
 		$.each(d.states[0], function(j, event){
 			newObject.synthesized_source = event.synthesized_source;
