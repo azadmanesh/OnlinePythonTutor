@@ -58,12 +58,13 @@ public class Query implements BlastOptQueryAnalyzer {
 			return PathConditionSlice.EMPTY_PATH;
 		}
 		
-		PathConditionI res = new PathConditionSlice(root, slicedEvents, 0);
+		PathConditionI res = PathConditionSlice.generateSlicedPathConditions(root, slicedEvents, history); 
 		PathIterator pit = res.iterator(history);
 		
 		System.out.println("Dumping paths:\t");
 		while (pit.hasNext()) {
 			PathConditionI path = pit.next(history);
+			System.out.println("Events for path:\t"+ path);
 			for (BasicBlockEventI bbe : path.getRepetitions()) {
 				for(AbstractEventI abs : bbe.getAbstractEvents()) {
 					System.out.println("source:\t" + abs.getSynthesizedSource());
