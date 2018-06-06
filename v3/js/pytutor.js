@@ -125,7 +125,7 @@ var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer
 //   debugMode - some extra debugging printouts
 function ExecutionVisualizer(domRootID, dat, params) {
   this.curInputCode = dat.code.rtrim(); // kill trailing spaces
-  this.curTrace = dat.trace;
+  this.curTrace = uncompressToCompactPresentation(dat.trace);
   
   /* AZM: not a good locaiton for this code; to be moved */
   $('#outputTable').css('display','block')
@@ -5585,6 +5585,8 @@ function showFullHistory() {
 //	.data(newDataSet);
 	
 	//first find the UN-compressed set of events (data)
+	var uncompressedTrace = [];
+	
 	var lastPathVisited = -1;
 	$.each(myVisualizer.curTrace, function(i,d){
 		if (!d.visible) {
@@ -5592,12 +5594,52 @@ function showFullHistory() {
 		}
 		
 		console.log('reps:\t'+ d.states.length)
+		if (d.states.length == 1) {
+			visitOnceOccuredBlock(d, uncompressedTrace);
+		} else {
+//			if (myVisualizer.curTrace[i+1].states.length > 1) {
+//				visitLoopTail();
+//			}
+		}
+		
+//		$.each(d.states)
+//		var trace = d;
+//		if (d.states.length == 1) {
+//			trace.states = d.states[0];
+//		} else {
+//			
+//		}
 	});
 	
 }
 
+function visitOnceOccurredBlock(d, trace) {
+	var curTraceLine = d;
+	
+	/*
+	 * For each abstract event within this bb, create a separate trace line.
+	 */
+	$.each(d.states[0], function (i,d) {
+		curTraceLine.states = d
+		trace.push(curTraceLine);
+	})
+}
 
 
 function showCompactHistory() {
 	console.log('Show Compact History')
+}
+
+function uncompressToCompactPresentation(trace) {
+	var unComTrace = [];
+	var absEvent;
+	$.each(trace, function(i,d){
+		var newObject = jQuery.extend({}, d);
+		$.each(d.states[0], function(j, event){
+			newObject.synthesized_source = event.synthesized_source;
+			newObject.states = event;
+			unComTrace.push(newObject);
+		})
+	})
+	return unComTrace;
 }
