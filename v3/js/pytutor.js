@@ -1293,7 +1293,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     n.lineNumber = i + 1;
     n.executionPoints = [];
     n.breakpointHere = false;
-    n.ast = myViz.curTrace[i].ast;
+    n.ast = myViz.curTrace[i].states.ast;
     n.controllers = myViz.curTrace[i].controllers;
 
     $.each(this.curTrace, function(j, elt) {
@@ -1358,7 +1358,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       if (i == 0) {
         return d.lineNumber;
       } else {
-        return addContentAssist(d);
+        return addContentAssist(d, myViz.curTrace, myViz.comTrace);
       }
     });
 
@@ -5448,7 +5448,7 @@ function showFullContext() {
 			return "[UNKONWN]"})
 }
 
-function addContentAssist(data) {
+function addContentAssist(data, trace, ftrace) {
 	var originalText = data.text
 	var map = findSynthesizedSourceMappings(originalText)
 	var indentedText= addIndentation(originalText, data.controllers, map); 
@@ -5634,9 +5634,10 @@ function uncompressToCompactPresentation(trace) {
 	var absEvent;
 	
 	$.each(trace, function(i,d){
-		var newObject = jQuery.extend({}, d);
 		
+		//Provide the state of only the first repetition 
 		$.each(d.states[0], function(j, event){
+			var newObject = jQuery.extend({}, d);
 			newObject.synthesized_source = event.synthesized_source;
 			newObject.states = event;
 			unComTrace.push(newObject);
