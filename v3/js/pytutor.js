@@ -1324,7 +1324,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 
 
   myViz.domRoot.find('#pyCodeOutputDiv').empty();
-
+  
+  indentRealMax = 0;
   // maps this.codeOutputLines to both table columns
   var codeOutputD3 = this.domRootD3.select('#pyCodeOutputDiv')
     .append('table')
@@ -1585,18 +1586,13 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 	   }
    })
    .text(function (d , i) {
-	   if (d.index != -1)
-		   return d.code; 
-	   else 
-		   return "[UNKONWN]"
+		return d.code; 
    })
   .append('span')		   /*Add tooltip text */
   .attr('class','contextTooltipText')
 	.html(function(d,i){ 
-		  if (d.index != -1)
 		  return d.code; 
-	  else 
-		  return "[UNKONWN]"})
+	})
 		  
   // create a left-most gutter td that spans ALL rows ...
   // (NB: valign="top" is CRUCIAL for this to work in IE)
@@ -5431,10 +5427,9 @@ function showFullContext() {
            })
    .style('background-color', 'green')
    .html(function (d , i) {
-	   if (d.index != -1)
-			return myVisualizer.curTrace[d.index].synthesized_source; 
-		else 
-			return "[UNKONWN]"
+	   
+			return d.code; 
+		
        });
 	
 //	/*Add tooltip text */
@@ -5442,10 +5437,7 @@ function showFullContext() {
 	.append('span')
 	.attr('class','tooltiptext')
 	.html(function(d,i){ 
-		if (d.index != -1)
-			return myVisualizer.curTrace[d.index].synthesized_source; 
-		else 
-			return "[UNKONWN]"})
+		d.code})
 }
 
 function addContentAssist(data, trace, ftrace) {
@@ -5488,19 +5480,30 @@ function insertAstNodeDiv(d, str, map, zindex) {
 } 
 
 function addIndentation(str, ctrls, map) {
-	var i = ctrls.length - 1;
-	var indent = 0;
-	while (i >= 0) {
-		if (ctrls[i].index == -1)
-			break;
-		
-		indent++;   //the entrance to a method adds one level of indentation
-		if (ctrls[i].invoke) {
-			break;
+	var indent;
+	if (indentRealMax == 0) {
+		indent = 0;
+		indentRealMax = ctrls.length;
+		indentMap = new Object();
+		indentMap[ctrls.length] = indent;
+	} else if (ctrls.length > indentRealMax) {
+		indent = indentMap[indentRealMax] + 1;
+		indentRealMax = ctrls.length;
+		indentMap[indentRealMax] = indent;
+	} else if (ctrls.length <= indentRealMax) {
+		if (indentMap[ctrls.length]) {
+			indent = indentMap[ctrls.length];
+		} else {
+			for (var v in indentMap) {
+				if (v > ctrls.length) {
+					indent= indentMap[v] - 1;
+					break;
+				}
+			}
+			
 		}
-		i--;
 	}
-	
+		
 	/*a tab is translated to four "$nbsp;" so 24 characters are added for each tab */ 
 	updateSynthesizedSourceMap(map, 0, 24*indent);
 	
