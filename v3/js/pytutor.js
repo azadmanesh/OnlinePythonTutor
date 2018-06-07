@@ -126,7 +126,7 @@ var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer
 function ExecutionVisualizer(domRootID, dat, params) {
   this.curInputCode = dat.code.rtrim(); // kill trailing spaces
   this.comTrace = dat.trace;   			//compressed trace is kept for finding controllers using path indices
-  this.curTrace = uncompressToCompactPresentation(dat.trace);
+  this.curTrace = uncompressToFullTrace(dat.trace);
   
   /* AZM: not a good locaiton for this code; to be moved */
   $('#outputTable').css('display','block')
@@ -1293,7 +1293,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     n.lineNumber = i + 1;
     n.executionPoints = [];
     n.breakpointHere = false;
-    n.ast = myViz.curTrace[i].states.ast;
+    n.ast = myViz.curTrace[i].ast;
     n.controllers = myViz.curTrace[i].controllers;
 
     $.each(this.curTrace, function(j, elt) {
@@ -5496,7 +5496,11 @@ function addIndentation(str, ctrls, map) {
 		} else {
 			for (var v in indentMap) {
 				if (v > ctrls.length) {
-					indent= indentMap[v] - 1;
+					if (indentMap[v] > 0) {
+						indent= indentMap[v] - 1;
+					}else {
+						indent = 0;
+					}
 					break;
 				}
 			}
@@ -5632,7 +5636,7 @@ function showCompactHistory() {
 	console.log('Show Compact History')
 }
 
-function uncompressToCompactPresentation(trace) {
+function uncompressToCompactTrace(trace) {
 	var unComTrace = [];
 	var absEvent;
 	
@@ -5649,4 +5653,89 @@ function uncompressToCompactPresentation(trace) {
 	})
 	
 	return unComTrace;
+}
+
+function uncompressToFullTrace(trace) {
+	var unComTrace = [];
+	var absEvent;
+	
+	var curIndex = 0;
+	var nextIndex = 0;
+	while (nextIndex < trace.length){
+		nextIndex = findNextLoopRange(trace, curIndex);
+		var newRange = emitRange(trace, curIndex, nextIndex);
+		unComTrace = unComTrace.concat(newRange);
+		curIndex = nextIndex;
+	}
+	
+//	$.each(trace, function(i,d){
+//		var lastGrowingState = d.is_growing;
+//		
+//		
+//		$.each(d.states, function(j, rep){
+//			$.each(rep, function(k, event){
+//				var newObject = jQuery.extend({}, d);
+//				newObject.synthesized_source = event.synthesized_source;
+//				newObject.states = event;
+//				unComTrace.push(newObject);
+//			})
+//		})
+//	})
+	
+	return unComTrace;
+}
+
+function findNextLoopRange(trace, curIndex) {
+	var lastGrowingState = trace[curIndex].is_growing;
+	
+	if (curIndex == trace.length - 1) {
+		return curIndex + 1;
+	}
+	
+	while (curIndex < trace.length) {
+		/*
+		 * stop in case the current path has either one repetition
+		 * or the next has a reverse growth direction, or oherwise
+		 * the next has only one repetition.
+		 */
+		if (trace[curIndex].states.length == 1 || 
+				trace[curIndex + 1].is_growing != lastGrowingState ||
+				trace[curIndex + 1].states.length == 1) {
+			break;
+		}
+		curIndex++;
+	}
+	
+	return curIndex + 1;
+}
+
+function emitRange(trace, curIndex, nextIndex) {
+	var result = [];
+	var iterationCount = new Object();
+	for (var i = curIndex; i <nextIndex; i++) {
+		iterationCount[i] = trace[i].states.length;
+	}
+	
+	var hasIteration = true;
+	var iterationId = 0;
+	while (hasIteration) {
+		hasIteration = false;
+		for (var i = curIndex; i < nextIndex; i++) {
+			if (iterationCount[i] > 0) {
+				for(var insnIdx = 0; insnIdx < trace[i].states[iterationId].length; insnIdx++) {
+					var newTraceLine = jQuery.extend({}, trace[i]);
+					newTraceLine.synthesized_source = trace[i].states[iterationId][insnIdx].synthesized_source;
+					newTraceLine.ast = trace[i].states[iterationId][insnIdx].ast;
+					newTraceLine.states = trace[i].states[iterationId][insnIdx];
+					result.push(newTraceLine);
+				}
+				//TODO add/remove controllers
+
+				hasIteration = true;
+				iterationCount[i]--;
+			}
+		}
+		iterationId++;
+	}
+	return result;
 }
