@@ -5738,9 +5738,12 @@ function emitRange(trace, curIndex, nextIndex) {
 							newTraceLine.controllers = newTraceLine.controllers.concat(controllerSuffix[i]);
 						}
 					} else {
+						var controllersCopy = jQuery.extend([], trace[i].controllers);
 						for (var j = 0; j<iterationId; j++) {
-							popExtraControllers(newTraceLine);
+							controllersCopy.pop();
+							controllersCopy.pop();
 						}
+						newTraceLine.controllers = controllersCopy;
 					}
 					result.push(newTraceLine);
 					
@@ -5753,10 +5756,6 @@ function emitRange(trace, curIndex, nextIndex) {
 		iterationId++;
 	}
 	return result;
-}
-
-function popExtraControllers(newTraceLine){
-	
 }
 
 function findGrowingControllerSuffix(curRangeStart, curRangeEnd, bbIndex, trace) {
