@@ -126,7 +126,7 @@ var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer
 function ExecutionVisualizer(domRootID, dat, params) {
   this.curInputCode = dat.code.rtrim(); // kill trailing spaces
   this.comTrace = dat.trace;   			//compressed trace is kept for finding controllers using path indices
-  this.curTrace = uncompressToFullTrace(dat.trace);
+  this.curTrace = uncompressToCompactTrace(dat.trace);
   
   /* AZM: not a good locaiton for this code; to be moved */
   $('#outputTable').css('display','block')
@@ -5647,6 +5647,7 @@ function uncompressToCompactTrace(trace) {
 			var newObject = jQuery.extend({}, d);
 			newObject.synthesized_source = event.synthesized_source;
 			newObject.states = event;
+			newObject.ast = event.ast;
 			unComTrace.push(newObject);
 		})
 		
@@ -5667,21 +5668,7 @@ function uncompressToFullTrace(trace) {
 		unComTrace = unComTrace.concat(newRange);
 		curIndex = nextIndex;
 	}
-	
-//	$.each(trace, function(i,d){
-//		var lastGrowingState = d.is_growing;
-//		
-//		
-//		$.each(d.states, function(j, rep){
-//			$.each(rep, function(k, event){
-//				var newObject = jQuery.extend({}, d);
-//				newObject.synthesized_source = event.synthesized_source;
-//				newObject.states = event;
-//				unComTrace.push(newObject);
-//			})
-//		})
-//	})
-	
+		
 	return unComTrace;
 }
 
