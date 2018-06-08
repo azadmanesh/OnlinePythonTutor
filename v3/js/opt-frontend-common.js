@@ -1274,7 +1274,7 @@ function updateAppDisplay(newAppMode) {
   appMode = newAppMode; // global!
   
 //  document.getElementById('treeVisualiser').innerHTML='';
-  window.speechSynthesis.cancel();
+//  window.speechSynthesis.cancel();
 
   if (appMode === undefined || appMode == 'edit' ||
       !myVisualizer /* subtle -- if no visualizer, default to edit mode */) {
@@ -1951,6 +1951,7 @@ function executeQuery(codeToExec,
 	          myVisualizer.backendOptionsObj = backendOptionsObj;
 	        }
 
+	        appMode = 'edit';
 	        handleSuccessFunc();
 
 	        // VERY SUBTLE -- reinitialize TogetherJS so that it can detect

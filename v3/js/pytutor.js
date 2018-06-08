@@ -584,7 +584,7 @@ ExecutionVisualizer.prototype.render = function() {
     this.domRoot.find('#editBtn').attr('href', urlStr);
   }
   else {
-    this.domRoot.find('#editCodeLinkDiv').hide(); // just hide for simplicity!
+//    this.domRoot.find('#editCodeLinkDiv').hide(); // just hide for simplicity!
     this.domRoot.find('#editBtn').attr('href', "#");
     this.domRoot.find('#editBtn').click(function(){return false;}); // DISABLE the link!
   }
@@ -5584,39 +5584,8 @@ function resetSourceDiv(myVisualizer, curEntry) {
 }
 
 function showFullHistory() {
-	console.log('Show full history')
-	
-	
-//	myVisualizer.curTrace
-	
-//	var newDiv = myVisualizer.domRootD3.selectAll('.contextDiv')
-//	.data(newDataSet);
-	
-	//first find the UN-compressed set of events (data)
-	var uncompressedTrace = [];
-	
-	var lastPathVisited = -1;
-	$.each(myVisualizer.curTrace, function(i,d){
-		
-		
-		console.log('reps:\t'+ d.states.length)
-		if (d.states.length == 1) {
-			visitOnceOccuredBlock(d, uncompressedTrace);
-		} else {
-//			if (myVisualizer.curTrace[i+1].states.length > 1) {
-//				visitLoopTail();
-//			}
-		}
-		
-//		$.each(d.states)
-//		var trace = d;
-//		if (d.states.length == 1) {
-//			trace.states = d.states[0];
-//		} else {
-//			
-//		}
-	});
-	
+	myVisualizer.curTrace = uncompressToFullTrace(myVisualizer.comTrace);
+	myVisualizer.renderPyCodeOutput();
 }
 
 function visitOnceOccurredBlock(d, trace) {
@@ -5634,6 +5603,8 @@ function visitOnceOccurredBlock(d, trace) {
 
 function showCompactHistory() {
 	console.log('Show Compact History')
+	myVisualizer.curTrace = uncompressToCompactTrace(myVisualizer.comTrace);
+	myVisualizer.renderPyCodeOutput();
 }
 
 function uncompressToCompactTrace(trace) {
