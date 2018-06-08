@@ -2147,55 +2147,7 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
       }
     }
 
-    if (myViz.params.arrowLines) {
-        if (prevLineNumber) {
-            var pla = myViz.domRootD3.select('#prevLineArrow');
-            var translatePrevCmd = 'translate(0, ' + (((prevLineNumber - 1) * myViz.codeRowHeight) + myViz.arrowOffsetY + prevVerticalNudge) + ')';
-            
-            if (smoothTransition) {
-                pla 
-                    .transition()
-                    .duration(200)
-                    .attr('fill', 'white')
-                    .each('end', function() {
-                        pla
-                            .attr('transform', translatePrevCmd)
-                            .attr('fill', lightArrowColor);
-                        
-                        gutterSVG.find('#prevLineArrow').show(); // show at the end to avoid flickering
-                    });
-            }
-            else {
-                pla.attr('transform', translatePrevCmd)
-                gutterSVG.find('#prevLineArrow').show();
-            }
-            
-        }
-        else {
-            gutterSVG.find('#prevLineArrow').hide();
-        }
-        
-        if (curLineNumber) {
-            var cla = myViz.domRootD3.select('#curLineArrow');
-            var translateCurCmd = 'translate(0, ' + (((curLineNumber - 1) * myViz.codeRowHeight) + myViz.arrowOffsetY + curVerticalNudge) + ')';
-            
-            if (smoothTransition) {
-                cla 
-                    .transition()
-                    .delay(200)
-                    .duration(250)
-                    .attr('transform', translateCurCmd);
-            }
-            else {
-                cla.attr('transform', translateCurCmd);
-            }
-            
-            gutterSVG.find('#curLineArrow').show();
-        }
-        else {
-            gutterSVG.find('#curLineArrow').hide();
-        }
-    }
+    
 
     myViz.domRootD3.selectAll('#pyCodeOutputDiv td.cod')
       .style('border-top', function(d) {
