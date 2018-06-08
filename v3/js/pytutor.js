@@ -5712,12 +5712,17 @@ function findNextLoopRange(trace, curIndex) {
 function emitRange(trace, curIndex, nextIndex) {
 	var result = [];
 	var iterationCount = new Object();
+	var controllerSuffix = new Object();
 	for (var i = curIndex; i <nextIndex; i++) {
 		iterationCount[i] = trace[i].states.length;
+		if (trace[i].is_growing) {
+			controllerSuffix[i] = findGrowingControllerSuffix(curIndex, nextIndex, i, trace);
+		} 
 	}
 	
 	var hasIteration = true;
 	var iterationId = 0;
+	var lastControllers = new Object();
 	while (hasIteration) {
 		hasIteration = false;
 		for (var i = curIndex; i < nextIndex; i++) {
@@ -5727,9 +5732,19 @@ function emitRange(trace, curIndex, nextIndex) {
 					newTraceLine.synthesized_source = trace[i].states[iterationId][insnIdx].synthesized_source;
 					newTraceLine.ast = trace[i].states[iterationId][insnIdx].ast;
 					newTraceLine.states = trace[i].states[iterationId][insnIdx];
+					
+					if (trace[i].is_growing) {
+						for (var j = 0; j < iterationId; j++) {
+							newTraceLine.controllers = newTraceLine.controllers.concat(controllerSuffix[i]);
+						}
+					} else {
+						for (var j = 0; j<iterationId; j++) {
+							popExtraControllers(newTraceLine);
+						}
+					}
 					result.push(newTraceLine);
+					
 				}
-				//TODO add/remove controllers
 
 				hasIteration = true;
 				iterationCount[i]--;
@@ -5739,3 +5754,25 @@ function emitRange(trace, curIndex, nextIndex) {
 	}
 	return result;
 }
+
+function popExtraControllers(newTraceLine){
+	
+}
+
+function findGrowingControllerSuffix(curRangeStart, curRangeEnd, bbIndex, trace) {
+	var controllerSuffix = [];
+	var rangeSize = curRangeEnd - curRangeStart;
+	
+	var nextIdx; 
+	for (var i=0; i<rangeSize; i++){
+		nextIdx = bbIndex + i + 1;
+		if (nextIdx >= curRangeEnd) {
+			nextIdx = curRangeStart + (nextIdx % curRangeEnd)
+		}
+		var lastControllerIdx = trace[nextIdx].controllers.length - 1;
+		controllerSuffix.push(trace[nextIdx].controllers[lastControllerIdx]);
+	}
+	return controllerSuffix;
+}
+
+
