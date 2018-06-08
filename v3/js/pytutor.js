@@ -2269,7 +2269,7 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
 
   // render code output:
   if (curEntry.line) {
-//    highlightCodeLine();
+    highlightCodeLine();
   }
 
   // inject user-specified HTML/CSS/JS output:
@@ -5585,27 +5585,33 @@ function resetSourceDiv(myVisualizer, curEntry) {
 
 function showFullHistory() {
 	myVisualizer.curTrace = uncompressToFullTrace(myVisualizer.comTrace);
+	myVisualizer.precomputeCurTraceLayouts();
+	myVisualizer.curInstr = 0;
 	myVisualizer.renderPyCodeOutput();
+	myVisualizer.updateOutput();
 }
-
-function visitOnceOccurredBlock(d, trace) {
-	var curTraceLine = d;
-	
-	/*
-	 * For each abstract event within this bb, create a separate trace line.
-	 */
-	$.each(d.states[0], function (i,d) {
-		curTraceLine.states = d
-		trace.push(curTraceLine);
-	})
-}
-
 
 function showCompactHistory() {
-	console.log('Show Compact History')
 	myVisualizer.curTrace = uncompressToCompactTrace(myVisualizer.comTrace);
+	myVisualizer.precomputeCurTraceLayouts();
+	myVisualizer.curInstr = 0;
+	
 	myVisualizer.renderPyCodeOutput();
+	myVisualizer.updateOutput();
 }
+
+//function visitOnceOccurredBlock(d, trace) {
+//	var curTraceLine = d;
+//	
+//	/*
+//	 * For each abstract event within this bb, create a separate trace line.
+//	 */
+//	$.each(d.states[0], function (i,d) {
+//		curTraceLine.states = d
+//		trace.push(curTraceLine);
+//	})
+//}
+
 
 function uncompressToCompactTrace(trace) {
 	var unComTrace = [];
@@ -5619,6 +5625,7 @@ function uncompressToCompactTrace(trace) {
 			newObject.synthesized_source = event.synthesized_source;
 			newObject.states = event;
 			newObject.ast = event.ast;
+			newObject.source_line_no = event.source_line_no;
 			unComTrace.push(newObject);
 		})
 		
@@ -5690,6 +5697,7 @@ function emitRange(trace, curIndex, nextIndex) {
 					newTraceLine.synthesized_source = trace[i].states[iterationId][insnIdx].synthesized_source;
 					newTraceLine.ast = trace[i].states[iterationId][insnIdx].ast;
 					newTraceLine.states = trace[i].states[iterationId][insnIdx];
+					newTraceLine.source_line_no = trace[i].states[iterationId][insnIdx].source_line_no;
 					
 					if (trace[i].is_growing) {
 						for (var j = 0; j < iterationId; j++) {
