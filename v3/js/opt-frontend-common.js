@@ -1414,9 +1414,16 @@ function executeDispatch() {
 		return executeCodeFromScratch();
 	else if (inputType == 'jarFilePane')
 		return executeJarFile();
+	else if (inputType == 'defects4jPane')
+		return executeDefects4jTest();
 	else 
 		return executeCustomTest();
 	
+}
+
+
+function executeDefects4jTest(){
+	console.log(myVisualizer)
 }
 
 function executeJarFile() {

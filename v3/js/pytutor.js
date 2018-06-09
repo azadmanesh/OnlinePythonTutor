@@ -68,6 +68,7 @@ var SVG_ARROW_HEIGHT = 10; // must match height of SVG_ARROW_POLYGON
 
 var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer instance
 
+var defects4jPaneInit = false;
 // @AZM TODO: lines 2659-2072, 3003-3011, 3120-3126
 
 // domRootID is the string ID of the root element where to render this instance
@@ -2209,6 +2210,8 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
     if (!isOutputLineVisible(curEntry.line)) {
       scrollCodeOutputToLine(curEntry.line);
     }
+    
+    
 
     // add these fields to myViz
     myViz.curLineNumber = curLineNumber;
@@ -5289,6 +5292,20 @@ function openInputTypePane(event, id) {
 	document.getElementById(id).style.display="block";
 	event.currentTarget.className += " active";
 	document.getElementById("inputType").value=id;
+	
+	if (id == 'defects4jPane' && !defects4jPaneInit){
+		prepareDefects4jPane();
+	}
+}
+
+function prepareDefects4jPane(){
+	d3.select('#projectSelectionDiv')
+	   .append('span')
+	   .text('hi')
+	   .style('font-size')
+	   .append('textarea')
+	   
+	defects4jPaneInit = true;
 }
 
 function showCallingContext() {
