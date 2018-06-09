@@ -1151,7 +1151,7 @@ ExecutionVisualizer.prototype.stepForward = function() {
   if (myViz.curInstr < myViz.curTrace.length - 1) {
 	  
 	  var lineNo = myViz.curInstr + 1;
-	  highlightLine(lineNo, lineNo + 1, codeHighlightColor)
+	  highlightLine(lineNo, lineNo + 1, highlightedLineColor)
 
 	  myViz.curInstr += 1;
 	  myViz.updateOutput(true);
@@ -1187,7 +1187,7 @@ ExecutionVisualizer.prototype.stepBack = function() {
   if (myViz.curInstr > 0) {
 
 	  var lineNo = myViz.curInstr + 1;
-	  highlightLine(lineNo, lineNo -1, codeHighlightColor)
+	  highlightLine(lineNo, lineNo -1, highlightedLineColor)
 
 	  myViz.curInstr -= 1;
 	  myViz.updateOutput();
@@ -1841,6 +1841,12 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
   assert(!this.params.hideCode);
 
   var myViz = this; // to prevent confusion of 'this' inside of nested functions
+  
+  //highlight the line for the first line explicitly (nobody does it before)
+  if (myViz.curInstr == 0){
+		var curLineTdId = myViz.generateID('cod' + 1); 
+		myViz.domRootD3.select('#'+curLineTdId).style('background-color', highlightedLineColor);	
+  }
 
   // there's no point in re-rendering if this pane isn't even visible in the first place!
   if (!myViz.domRoot.is(':visible')) {
@@ -2320,7 +2326,7 @@ ExecutionVisualizer.prototype.renderStep = function(step) {
   
   //remove highlighting from previous line
   var lineNo = this.curInstr + 1;
-  highlightLine(lineNo, step + 1, codeHighlightColor)
+  highlightLine(lineNo, step + 1, highlightedLineColor)
 
 
   this.curInstr = step;
