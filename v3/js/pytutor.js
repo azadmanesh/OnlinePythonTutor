@@ -1828,6 +1828,11 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
   if (!myViz.domRoot.is(':visible')) {
     return;
   }
+  
+  //remove highlighting from previous line
+  var prevLineTdId = myViz.generateID('cod' + myViz.curLineNumber); 
+  myViz.domRootD3.select('#'+prevLineTdId).style('background-color', 'white');
+  
 
   // reset
   myViz.curLineNumber = undefined;
@@ -2211,6 +2216,10 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
       scrollCodeOutputToLine(curEntry.line);
     }
     
+    console.log(curLineNumber);
+    console.log(prevLineNumber)
+    var curLineTdId = myViz.generateID('cod' + curLineNumber); 
+    myViz.domRootD3.select('#'+curLineTdId).style('background-color', 'green');
     
 
     // add these fields to myViz
@@ -2623,34 +2632,34 @@ ExecutionVisualizer.prototype.precomputeCurTraceLayouts = function() {
 //    		}
 //    	}
 //    })
-//    
-// // TODO: Adapt to the new path condition system
-//    $.each(curEntry.stack_to_render, function(i, frame) {
-//      $.each(frame.ordered_varnames, function(xxx, varname) {
-//        var val = frame.encoded_locals[varname];
-//        // TODO: try to unify this behavior between C/C++ and other languages:
-//        if (myViz.isCppMode()) {
-//          updateCurLayoutAndRecurse(val);
-//        } else {
-//          if (!myViz.isPrimitiveType(val)) {
-//            var id = getRefID(val);
-//            updateCurLayout(id, null, []);
-//          }
-//        }
-//      });
-//    });
-//
-//	// TODO: Adapt to the new path condition system
-//    // iterate through remaining elements of idsToRemove and REMOVE them from curLayout
-//    idsToRemove.forEach(function(id, xxx) {
-//      id = Number(id); // keys are stored as strings, so convert!!!
-//      $.each(curLayout, function(rownum, row) {
-//        var ind = row.indexOf(id);
-//        if (ind > 0) { // remember that index 0 of the row is the row ID tag
-//          row.splice(ind, 1);
-//        }
-//      });
-//    });
+    
+ // TODO: Adapt to the new path condition system
+    $.each(curEntry.stack_to_render, function(i, frame) {
+      $.each(frame.ordered_varnames, function(xxx, varname) {
+        var val = frame.encoded_locals[varname];
+        // TODO: try to unify this behavior between C/C++ and other languages:
+        if (myViz.isCppMode()) {
+          updateCurLayoutAndRecurse(val);
+        } else {
+          if (!myViz.isPrimitiveType(val)) {
+            var id = getRefID(val);
+            updateCurLayout(id, null, []);
+          }
+        }
+      });
+    });
+
+	// TODO: Adapt to the new path condition system
+    // iterate through remaining elements of idsToRemove and REMOVE them from curLayout
+    idsToRemove.forEach(function(id, xxx) {
+      id = Number(id); // keys are stored as strings, so convert!!!
+      $.each(curLayout, function(rownum, row) {
+        var ind = row.indexOf(id);
+        if (ind > 0) { // remember that index 0 of the row is the row ID tag
+          row.splice(ind, 1);
+        }
+      });
+    });
 
     // now remove empty rows (i.e., those with only a row ID tag) from curLayout
     curLayout = curLayout.filter(function(row) {return row.length > 1});
@@ -5510,6 +5519,7 @@ function getRandomColor() {
 }
 
 function resetSourceDiv(myVisualizer, curEntry) {
+	
 	var source; 
 	var lineNo;  
 	
@@ -5518,14 +5528,10 @@ function resetSourceDiv(myVisualizer, curEntry) {
 		source = myVisualizer.curTrace[1].source_name;
 		lineNo = -1;
 		myVisualizer.sourceCache = new Object();
+
 	} else {
 		source = curEntry.source_name;
 		lineNo = curEntry.source_line_no;
-	}
-	
-	
-	if (source == 'UNTRACED') {
-		return;
 	}
 	
 	var url = 'wd/s' + sessionUUID+ '/' + source;
@@ -5549,7 +5555,10 @@ function resetSourceDiv(myVisualizer, curEntry) {
 
 		sourceViewerEditor.resize(true);
 		sourceViewerEditor.gotoLine(lineNo, 0, true);
+	} else {
+		sourceViewerEditor.getSession().removeMarker(myVisualizer.lastSourceMarker);
 	}
+	
 }
 
 function showFullHistory() {
