@@ -69,6 +69,8 @@ var SVG_ARROW_HEIGHT = 10; // must match height of SVG_ARROW_POLYGON
 var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer instance
 
 var defects4jPaneInit = false;
+var codeHighlightColor = 'lightblue';
+
 // @AZM TODO: lines 2659-2072, 3003-3011, 3120-3126
 
 // domRootID is the string ID of the root element where to render this instance
@@ -1148,19 +1150,27 @@ ExecutionVisualizer.prototype.stepForward = function() {
   
   if (myViz.curInstr < myViz.curTrace.length - 1) {
 	  
-    // if there is a next breakpoint, then jump to it ...
-    if (myViz.sortedBreakpointsList.length > 0) {
-      var nextBreakpoint = myViz.findNextBreakpoint();
-      if (nextBreakpoint != -1)
-        myViz.curInstr = nextBreakpoint;
-      else
-        myViz.curInstr += 1; // prevent "getting stuck" on a solitary breakpoint
-    }
-    else {
-      myViz.curInstr += 1;
-    }
-    myViz.updateOutput(true);
-    return true;
+	  var lineNo = myViz.curInstr + 1;
+	  highlightLine(lineNo, lineNo + 1, codeHighlightColor)
+
+	  myViz.curInstr += 1;
+	  myViz.updateOutput(true);
+	  return true;
+
+	  
+//    // if there is a next breakpoint, then jump to it ...
+//    if (myViz.sortedBreakpointsList.length > 0) {
+//      var nextBreakpoint = myViz.findNextBreakpoint();
+//      if (nextBreakpoint != -1)
+//        myViz.curInstr = nextBreakpoint;
+//      else
+//        myViz.curInstr += 1; // prevent "getting stuck" on a solitary breakpoint
+//    }
+//    else {
+//      myViz.curInstr += 1;
+//    }
+//    myViz.updateOutput(true);
+//    return true;
   }
 
   return false;
@@ -1175,19 +1185,27 @@ ExecutionVisualizer.prototype.stepBack = function() {
   }
     
   if (myViz.curInstr > 0) {
-    // if there is a prev breakpoint, then jump to it ...
-    if (myViz.sortedBreakpointsList.length > 0) {
-      var prevBreakpoint = myViz.findPrevBreakpoint();
-      if (prevBreakpoint != -1)
-        myViz.curInstr = prevBreakpoint;
-      else
-        myViz.curInstr -= 1; // prevent "getting stuck" on a solitary breakpoint
-    }
-    else {
-      myViz.curInstr -= 1;
-    }
-    myViz.updateOutput();
-    return true;
+
+	  var lineNo = myViz.curInstr + 1;
+	  highlightLine(lineNo, lineNo -1, codeHighlightColor)
+
+	  myViz.curInstr -= 1;
+	  myViz.updateOutput();
+
+	  
+//    // if there is a prev breakpoint, then jump to it ...
+//    if (myViz.sortedBreakpointsList.length > 0) {
+//      var prevBreakpoint = myViz.findPrevBreakpoint();
+//      if (prevBreakpoint != -1)
+//        myViz.curInstr = prevBreakpoint;
+//      else
+//        myViz.curInstr -= 1; // prevent "getting stuck" on a solitary breakpoint
+//    }
+//    else {
+//      myViz.curInstr -= 1;
+//    }
+//    myViz.updateOutput();
+//    return true;
   }
 
   return false;
@@ -1829,11 +1847,6 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
     return;
   }
   
-  //remove highlighting from previous line
-  var prevLineTdId = myViz.generateID('cod' + myViz.curLineNumber); 
-  myViz.domRootD3.select('#'+prevLineTdId).style('background-color', 'white');
-  
-
   // reset
   myViz.curLineNumber = undefined;
   myViz.prevLineNumber = undefined;
@@ -2216,10 +2229,6 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
       scrollCodeOutputToLine(curEntry.line);
     }
     
-    console.log(curLineNumber);
-    console.log(prevLineNumber)
-    var curLineTdId = myViz.generateID('cod' + curLineNumber); 
-    myViz.domRootD3.select('#'+curLineTdId).style('background-color', 'green');
     
 
     // add these fields to myViz
@@ -2308,6 +2317,11 @@ ExecutionVisualizer.prototype.renderStep = function(step) {
   if (this.curInstr == step) {
     return;
   }
+  
+  //remove highlighting from previous line
+  var lineNo = this.curInstr + 1;
+  highlightLine(lineNo, step + 1, codeHighlightColor)
+
 
   this.curInstr = step;
   this.updateOutput();
@@ -5534,16 +5548,18 @@ function resetSourceDiv(myVisualizer, curEntry) {
 		lineNo = curEntry.source_line_no;
 	}
 	
-	var url = 'wd/s' + sessionUUID+ '/' + source;
-	
-	var sourceContent = myVisualizer.sourceCache[url];
-	if ( sourceContent == null) {
-		$.get(url, function(data){
-			sourceEditorSetValue(data);
-			myVisualizer.sourceCache[url] = data;
-		})
-	} else {
-		sourceEditorSetValue(sourceContent);
+	if (source != 'UNTRACED') {
+		var url = 'wd/s' + sessionUUID+ '/' + source;
+
+		var sourceContent = myVisualizer.sourceCache[url];
+		if ( sourceContent == null) {
+			$.get(url, function(data){
+				sourceEditorSetValue(data);
+				myVisualizer.sourceCache[url] = data;
+			})
+		} else {
+			sourceEditorSetValue(sourceContent);
+		}
 	}
 	
 	if (lineNo != -1) {
@@ -5718,4 +5734,11 @@ function findGrowingControllerSuffix(curRangeStart, curRangeEnd, bbIndex, trace)
 	return controllerSuffix;
 }
 
+function highlightLine(currLineNo, nextLineNo, color) {
+	//remove highlighting from previous line
+	var prevLineTdId = myVisualizer.generateID('cod' + currLineNo); 
+	myVisualizer.domRootD3.select('#'+prevLineTdId).style('background-color', 'white');
 
+	var curLineTdId = myVisualizer.generateID('cod' + nextLineNo); 
+	myVisualizer.domRootD3.select('#'+curLineTdId).style('background-color', color);	
+}
