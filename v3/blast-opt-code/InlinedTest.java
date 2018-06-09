@@ -11,21 +11,10 @@ public class InlinedTest {
 	
 	@Test
 	public void test() {
-		f(5);
-//		int i = 5;
-//		int sum = 1;
-//		while (i >= 0) {
-//			sum+= i;
-//			i--;
-//		}
+		int a = 1;
+		float b = 3;
+		InlinedTest test = new InlinedTest();
+		int[] array = new int[5];
 	}
 	
-	public int f(int arg) {
-		if (arg == 0) {
-			return 1;
-		} else {
-			return f(arg - 1);
-		}
-	}
-
 }
