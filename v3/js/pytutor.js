@@ -5630,6 +5630,8 @@ function uncompressToCompactTrace(trace) {
 			newObject.stack_to_render.push(event.frame);
 			newObject.stack_to_render = newObject.stack_to_render.concat(d.stack_to_render);
 			
+			newObject.heap = event.heap;
+			
 			unComTrace.push(newObject);
 		})
 		
@@ -5706,6 +5708,9 @@ function emitRange(trace, curIndex, nextIndex) {
 					newTraceLine.stack_to_render = new Array();
 					newTraceLine.stack_to_render.push(trace[i].states[iterationId][insnIdx].frame);
 					newTraceLine.stack_to_render = newTraceLine.stack_to_render.concat(trace[i].stack_to_render);
+					
+					newTraceLine.heap = trace[i].states[iterationId][insnIdx].heap;
+					
 					
 					if (trace[i].is_growing) {
 						for (var j = 0; j < iterationId; j++) {
