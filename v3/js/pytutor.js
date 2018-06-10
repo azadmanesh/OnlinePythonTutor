@@ -5327,14 +5327,101 @@ function openInputTypePane(event, id) {
 	}
 }
 
+var defects4jProjects = [ 
+	{name : 'Lang', tests : 65},
+	{name : 'Chart', tests : 26},
+	{name : 'Math', tests : 106},
+	{name : 'Closure', tests : 133},
+	{name : 'Time', tests : 27}
+	];
+
 function prepareDefects4jPane(){
-	d3.select('#projectSelectionDiv')
-	   .append('span')
-	   .text('hi')
-	   .style('font-size')
-	   .append('textarea')
+	
+	 d3.select('#projectSelectionDiv')
+	   .append('div')
+	   .attr('class', 'defects4jPane defects4jLabels')
+	   .text('Project:');
 	   
+	 var projectSelection =  d3.select('#projectSelectionDiv')
+	   .append('select')
+	   .attr('class', 'defects4jPane')
+	   .attr("id", "projectSelection")
+	   .on('change', defects4jProjectSelectionChange)
+
+	
+	  
+	projectSelection
+	.selectAll('option')
+	.data(defects4jProjects)
+	.enter()
+	.append("option")
+	.attr('class', 'defects4jPane')
+	.text(function(d,i){
+		return d.name;
+	}).attr("value", function(d) {
+		return d.name;
+	});
+	 
+	 d3.select('#versionSelectionDiv')
+	 .append('div')
+	 .attr('class', 'defects4jPane defects4jLabels')
+	 .text('Testcase number:');
+	 
+	 var testcaseSelection = d3.select('#versionSelectionDiv')
+	 .append('select')
+	 .attr('class', 'defects4jPane')
+	 .attr("id", "testcaseSelection")
+	 
+	 defects4jProjectSelectionChange();
+	 
+	 d3.select('#fvsbSelectionDiv')
+	 .append('div')
+	 .attr('class', 'defects4jPane defects4jLabels')
+	 .text('Buggy version?');
+	 
+	 
+	 d3.select('#fvsbSelectionDiv')
+	 .append('input')
+	 .attr('type','checkbox')
+	 .attr('id', 'fvb')
 	defects4jPaneInit = true;
+}
+
+function defects4jProjectSelectionChange () {
+	var currSelection = d3.select('#projectSelection').property('value');
+	
+	 var testcaseOptionCount;
+	 $.each(defects4jProjects, function(i, v){
+		 if (v.name == currSelection) {
+			 testcaseOptionCount = v.tests;
+			 return false;
+		 }
+	 });
+	 
+	 
+	 var testcaseOptions = [];
+	 for (var i = 1; i <= testcaseOptionCount; i++) {
+		 testcaseOptions.push(i);
+	 }
+	 
+	 
+	 var textcaseDataBound = d3.select('#testcaseSelection')
+	 .selectAll('option')
+	 .data(testcaseOptions);
+	 
+	 textcaseDataBound
+	 .exit()
+	 .remove();
+	 
+	 textcaseDataBound
+	 .enter()
+	 .append('option')
+	 .attr('class', 'defects4jPane')
+	 .text(function(d,i){
+		 return d;
+	 }).attr("value", function(d) {
+		 return d;
+	 })
 }
 
 function showCallingContext() {

@@ -1207,5 +1207,22 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	display:inline-block;
 }
 
+.defects4jLabels {
+	display:inline-block;
+	width: 180px;
+	
+}
 
+.defects4jPane {
+	font-size: 13pt;
+}
+
+.defects4jInputRow {
+	height: 35px;
+}
+
+#fvb {
+	width: 30px;
+	-webkit-transform: scale(2);
+}
 /* END Java frontend by David Pritchard and Will Gwozdz */
