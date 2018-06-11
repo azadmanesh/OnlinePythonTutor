@@ -110,6 +110,35 @@ def index(filepath):
         return json.dumps(dict(name='TEST NAME', email='TEST EMAIL'))
     return static_file(filepath, root='.')
 
+@get('/defects4j')
+def exec_defects4j_test():
+    print "Execute defects4j test in server side!!!!"
+    selected_defects4j_project = request.query.project_name;
+    selected_project_bug_no = request.query.bug_no;
+    selected_fvb = request.query.fvb;
+    print 'Selected Project\t' + selected_defects4j_project;
+    print 'Selected bug no\t' + selected_project_bug_no;
+    print 'Selected fvb\t' + selected_fvb;
+    
+    currentRelativeTargetPath = ''+ wd + '/' + 's' + request.query.session_uuid;
+    print 'Relative target path:\t' + currentRelativeTargetPath;
+    
+    retcode = call(["ant", "-f", blast_opt_controller, 
+                                                    "run-defects4j-test", 
+                                                    "-Dtest.project="+selected_defects4j_project,
+                                                    "-Dbug.no="+selected_project_bug_no,
+                                                    "-Dfvb="+selected_fvb,
+                                                    "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
+    
+    print "opt-controller:\t" + str(retcode)
+    if retcode != 0:
+        raise Exception("Opt-controller failed in running the test!")
+    
+    print 'Results written into:\t' + blast_opt_frontend+ '/' + currentRelativeTargetPath
+    print 'working directory:\t' + currentRelativeTargetPath
+    
+    return static_file("data.json", root=currentRelativeTargetPath)
+
 @get('/query')
 def exec_query():
     print "Execute query in server side!!!!"

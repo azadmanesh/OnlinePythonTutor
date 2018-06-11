@@ -121,6 +121,27 @@ function executeCode(forceStartingInstr, forceRawInputLst) {
                           optFinishSuccessfulExecution, handleUncaughtExceptionFunc);
 }
 
+function executeDefects4jTestCode(forceStartingInstr, forceRawInputLst) {
+	  if (forceRawInputLst !== undefined) {
+		    rawInputLst = forceRawInputLst; // UGLY global across modules, FIXME
+		  }
+
+		  var backend_script = 'defects4j';
+		  var backendOptionsObj = getBaseBackendOptionsObj();
+
+		  var startingInstruction = 0;
+
+		  var frontendOptionsObj = getBaseFrontendOptionsObj();
+		  frontendOptionsObj.startingInstruction = startingInstruction;
+
+
+		  executeDefects4jTest(pyInputGetValue(),
+		                          backend_script, backendOptionsObj,
+		                          frontendOptionsObj,
+		                          'pyOutputPane',
+		                          optFinishSuccessfulExecution, handleUncaughtExceptionFunc);	
+}
+
 function executeQueryCode(forceStartingInstr, forceRawInputLst) {
 	  if (forceRawInputLst !== undefined) {
 		    rawInputLst = forceRawInputLst; // UGLY global across modules, FIXME

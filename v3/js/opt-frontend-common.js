@@ -1415,16 +1415,12 @@ function executeDispatch() {
 	else if (inputType == 'jarFilePane')
 		return executeJarFile();
 	else if (inputType == 'defects4jPane')
-		return executeDefects4jTest();
+		return executeDefects4jTestCode();
 	else 
 		return executeCustomTest();
 	
 }
 
-
-function executeDefects4jTest(){
-	console.log(myVisualizer)
-}
 
 function executeJarFile() {
 	executeCode();
@@ -2028,6 +2024,189 @@ function executeQuery(codeToExec,
 		});
 	}
 }
+
+
+
+function executeDefects4jTest(codeToExec,
+        backendScript, backendOptionsObj,
+        frontendOptionsObj,
+        outputDiv,
+        handleSuccessFunc, handleUncaughtExceptionFunc) {
+	console.log('Execute Defects4j Test!')
+	frontendOptionsObj.lang = 'java';
+	$('#queryErrors').text('');
+	
+	function exec_defects4j_callback(dataFromBackend) {
+	      var trace = dataFromBackend.trace;
+
+	      var killerException = null;
+	      
+	      $('#queryErrors').text(dataFromBackend)
+	      resetQuerySection();
+	      
+	      // don't enter visualize mode if there are killer errors:
+	      if (!trace ||
+	          (trace.length == 0) ||
+	          (trace[trace.length - 1].event == 'uncaught_exception')) {
+
+	        handleUncaughtExceptionFunc(trace);
+
+	        if (trace.length == 1) {
+	          killerException = trace[0]; // killer!
+	          setFronendError([trace[0].exception_msg]);
+	        }
+	        else if (trace.length > 0 && trace[trace.length - 1].exception_msg) {
+	          killerException = trace[trace.length - 1]; // killer!
+	          setFronendError([trace[trace.length - 1].exception_msg]);
+	        }
+	        else {
+	          setFronendError(["Unknown error. Reload the page and try again. Or report a bug to",
+	                           "philip@pgbovine.net by clicking on the 'Generate permanent link'",
+	                           "button at the bottom and including a URL in your email."]);
+	        }
+	      }
+	      else {
+	        // fail-soft to prevent running off of the end of trace
+	        if (frontendOptionsObj.startingInstruction >= trace.length) {
+	          frontendOptionsObj.startingInstruction = 0;
+	        }
+
+	        if (frontendOptionsObj.runTestCaseCallback) {
+	          // hacky! DO NOT actually create a visualization! instead call:
+	          frontendOptionsObj.runTestCaseCallback(trace);
+	        } else if (frontendOptionsObj.holisticMode) {
+	          // do NOT override, or else bad things will happen with
+	          // jsPlumb arrows interfering ...
+	          delete frontendOptionsObj.visualizerIdOverride;
+
+	          myVisualizer = new HolisticVisualizer(outputDiv, dataFromBackend, frontendOptionsObj);
+	        } else {
+	          myVisualizer = new ExecutionVisualizer(outputDiv, dataFromBackend, frontendOptionsObj);
+
+	          myVisualizer.add_pytutor_hook("end_updateOutput", function(args) {
+	            if (updateOutputSignalFromRemote) {
+	              return;
+	            }
+	            if (typeof TogetherJS !== 'undefined' && TogetherJS.running && !isExecutingCode) {
+	              TogetherJS.send({type: "updateOutput", step: args.myViz.curInstr});
+	            }
+
+	            // debounce to compress a bit ... 250ms feels "right"
+	            $.doTimeout('updateOutputLogEvent', 250, function() {
+	              var obj = {type: 'updateOutput', step: args.myViz.curInstr,
+	                         curline: args.myViz.curLineNumber,
+	                         prevline: args.myViz.prevLineNumber};
+	              // optional fields
+	              if (args.myViz.curLineExceptionMsg) {
+	                obj.exception = args.myViz.curLineExceptionMsg;
+	              }
+	              if (args.myViz.curLineIsReturn) {
+	                obj.curLineIsReturn = true;
+	              }
+	              if (args.myViz.prevLineIsReturn) {
+	                obj.prevLineIsReturn = true;
+	              }
+	              logEventCodeopticon(obj);
+	            });
+
+	            // 2014-05-25: implemented more detailed tracing for surveys
+	            if (args.myViz.creationTime) {
+	              var curTs = new Date().getTime();
+
+	              var uh = args.myViz.updateHistory;
+	              assert(uh.length > 0); // should already be seeded with an initial value
+	              if (uh.length > 1) { // don't try to "compress" the very first entry
+	                var lastTs = uh[uh.length - 1][1];
+	                // (debounce entries that are less than 1 second apart to
+	                // compress the logs a bit when there's rapid scrubbing or scrolling)
+	                if ((curTs - lastTs) < 1000) {
+	                  uh.pop(); // get rid of last entry before pushing a new entry
+	                }
+	              }
+	              uh.push([args.myViz.curInstr, curTs]);
+	            }
+	            return [false]; // pass through to let other hooks keep handling
+	          });
+
+
+	          // bind keyboard shortcuts if we're not in embedded mode
+	          // (i.e., in an iframe)
+	          //
+	          // on second thought, eliminate keyboard shortcuts for now
+	          // since it's kind of annoying to be pressing left/right to move
+	          // the page horizontally and then also have the visualizer jump.
+	          // ugh there isn't a perfect solution here for now:
+	          /*
+	          if (!myVisualizer.embeddedMode) {
+	            $(document).off('keydown'); // clear first before rebinding, just to be paranoid
+	            $(document).keydown(function(e) {
+	              if (myVisualizer) {
+	                if (e.keyCode === 37) { // left
+	                  myVisualizer.stepBack();
+	                } else if (e.keyCode === 39) { // right
+	                  myVisualizer.stepForward();
+	                }
+	              }
+	            });
+	          }
+	          */
+	        }
+	        // SUPER HACK -- slip in backendOptionsObj as an extra field
+	        if (myVisualizer) {
+	          myVisualizer.backendOptionsObj = backendOptionsObj;
+	        }
+
+	        appMode = 'edit';
+	        handleSuccessFunc();
+
+	        // VERY SUBTLE -- reinitialize TogetherJS so that it can detect
+	        // and sync any new elements that are now inside myVisualizer
+	        if (typeof TogetherJS !== 'undefined' && TogetherJS.running) {
+	          TogetherJS.reinitialize();
+	        }
+	      }
+
+	      doneExecutingCode(); // rain or shine, we're done executing!
+	      // run this at the VERY END after all the dust has settled
+
+	      // do logging at the VERY END after the dust settles ...
+	      // and don't do it for iframe-embed.js since getAppState doesn't
+	      // work in that case ...
+	      if (originFrontendJsFile !== 'iframe-embed.js') {
+	        logEventCodeopticon({type: 'doneExecutingCode',
+	                  appState: getAppState(),
+	                  // enough to reconstruct the ExecutionVisualizer object
+	                  backendDataJSON: JSON.stringify(dataFromBackend), // for easier transport and compression
+	                  frontendOptionsObj: frontendOptionsObj,
+	                  backendOptionsObj: backendOptionsObj,
+	                  killerException: killerException, // if there's, say, a syntax error
+	                  });
+	      }
+
+	      if (killerException && (originFrontendJsFile !== 'iframe-embed.js')) {
+	        var excObj = {killerException: killerException, myAppState: getAppState()};
+	        prevExecutionExceptionObjLst.push(excObj);
+	      } else {
+	        prevExecutionExceptionObjLst = []; // reset!!!
+	      }
+
+	      // tricky hacky reset
+	      num414Tries = 0;
+	    }
+	
+		$.get(backendScript, {
+			user_query : backendScript,
+			project_name : d3.select('#projectSelection').property('value'),
+			bug_no : d3.select('#testcaseSelection').property('value'),
+			fvb : (d3.select("#fvb").property("checked") ? 'b' : 'f'),
+			session_uuid: sessionUUID
+		},
+		exec_defects4j_callback, "json").fail(function(errorMsg) {
+			$('#queryErrors').text('Defects4j test execution failed on the server side.');
+		});
+}
+
+
 
 function resetQuerySection() {
 	$('#criterionValue').text('');
