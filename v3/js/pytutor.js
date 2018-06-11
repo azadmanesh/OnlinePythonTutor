@@ -423,7 +423,6 @@ ExecutionVisualizer.prototype.render = function() {
        <div id="langDisplayDiv"></div>\
        <div id="pyCodeOutputDiv"/>\
        <div id="editCodeLinkDiv">\
- 	   <input type="checkbox" id="contextTypeCheck">Calling context</input> \
 	   <input type="checkbox" id="fullvsCompactCheck">Full History</input> \
 	   <a id="editBtn">Edit code</a>\
        </div>\

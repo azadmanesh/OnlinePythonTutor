@@ -11,10 +11,12 @@ public class InlinedTest {
 	
 	@Test
 	public void test() {
-		int a = 1;
-		float b = 3;
-		InlinedTest test = new InlinedTest();
-		int[] array = new int[5];
+		int[][] aa = new int[2][3];
+		aa[1][1] = 1;
+//		int a = 1;
+//		float b = 3;
+//		InlinedTest test = new InlinedTest();
+//		int[] array = new int[5];
 	}
 	
 }
