@@ -5630,10 +5630,23 @@ function resetSourceDiv(myVisualizer, curEntry) {
 	var lineNo;  
 	
 	//show the entry source code before executing any instruction
-	if (myVisualizer.curInstr == 0) {  
-		source = myVisualizer.curTrace[1].source_name;
-		lineNo = -1;
-		myVisualizer.sourceCache = new Object();
+	if (myVisualizer.curInstr == 0) {
+		if (!myVisualizer.sourceCache){
+			myVisualizer.sourceCache = new Object();
+		}
+		
+		if (curEntry.source_name == 'UNTRACED') {
+			if (myVisualizer.curTrace.length > 0) {
+				source = myVisualizer.curTrace[1].source_name;
+				lineNo = -1;
+			} else {
+				lineNo = -1;
+			}
+			
+		} else {
+			source = curEntry.source_name;
+			lineNo = curEntry.source_line_no;
+		}
 
 	} else {
 		source = curEntry.source_name;
