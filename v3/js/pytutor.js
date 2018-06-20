@@ -128,8 +128,7 @@ var codeHighlightColor = 'lightblue';
 //   debugMode - some extra debugging printouts
 function ExecutionVisualizer(domRootID, dat, params) {
   this.curInputCode = dat.code.rtrim(); // kill trailing spaces
-  this.comTrace = dat.trace;   			//compressed trace is kept for finding controllers using path indices
-  this.curTrace = uncompressToCompactTrace(dat.trace);
+  this.curTrace = dat.trace;
   
   /* AZM: not a good locaiton for this code; to be moved */
   $('#outputTable').css('display','block')
@@ -423,7 +422,6 @@ ExecutionVisualizer.prototype.render = function() {
        <div id="langDisplayDiv"></div>\
        <div id="pyCodeOutputDiv"/>\
        <div id="editCodeLinkDiv">\
-	   <input type="checkbox" id="fullvsCompactCheck">Full History</input> \
 	   <a id="editBtn">Edit code</a>\
        </div>\
        <div id="legendDiv"/>\

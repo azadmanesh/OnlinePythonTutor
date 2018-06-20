@@ -25,10 +25,11 @@ import os
 import shutil
 
 wd = 'wd'
-blast_opt_frontend = '/Users/reza/PhD/tools/OnlinePythonTutor/v3'
-junit_class_path = 'blast-opt-backend/lib/junit-4.11.jar:blast-opt-backend/lib/hamcrest-core-1.3.jar'
+blast_opt_frontend = '/Users/reza/PhD/tools/blast-opt-frontend/v3'
 blast_classpath = '/Users/reza/tempInfoFlow/informationflowtracer/build/main'
-blast_opt_controller = '/Users/reza/Documents/workspace2/blast-opt-controller'
+blast_lib = '/Users/reza/tempInfoFlow/informationflowtracer/lib'
+junit_class_path = blast_lib + '/junit-4.11.jar:blast-opt-backend/lib/hamcrest-core-1.3.jar'
+blast_opt_controller = '/Users/reza/PhD/tools/blast-opt-controller'
 blast_opt_controller_classpath = blast_opt_controller + '/bin' 
 query_files_path = 'blast-opt-code'
 predicate_prototype_file_name = 'PredicatePrototype.java'
