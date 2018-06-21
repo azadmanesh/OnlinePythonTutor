@@ -5556,7 +5556,8 @@ function insertAstNodeDiv(d, str, map, zindex) {
 	
   astSpan.append(tooltipSpan)
 	
-	var shift = astSpan.prop('outerHTML').length;
+	var newLength = astSpan.prop('outerHTML').length;
+  	var shift = newLength - text.length;
 	updateSynthesizedSourceMap(map, d.end_index, shift)
 	return [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), posix].join('');
 } 
