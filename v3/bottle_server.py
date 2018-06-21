@@ -37,8 +37,10 @@ query_package_path = 'ch/usi/inf/sape/blastopt/controller/analyzer';
 query_class_name = 'Query'
 query_file_name = query_class_name+ '.java'
 criterion_prototype_file_name = 'CriterionPrototype.java'
-slice_predicate_prototype_file_name = 'SlicePredicatePrototype.java'
-query_predicate_prototype_file_name = 'QueryPredicatePrototype.java'
+slice_pure_predicate_prototype = 'SlicePredicatePrototype'
+slice_boolean_predicate_prototype = 'SliceBooleanPredicatePrototype'
+query_pure_predicate_prototype = 'QueryPredicatePrototype'
+query_boolean_predicate_prototype = 'QueryBooleanPredicatePrototype'
 
 inlined_test_class_name = 'InlinedTest'
 inlined_test_method_name = 'test'
@@ -155,18 +157,28 @@ def exec_query():
         os.makedirs(query_destination)
         
     #copy query source files after replacing the template with concrete values
-    slice_predicate_prototype_file = open(query_files_path + '/' + slice_predicate_prototype_file_name, 'r')
+    if request.query.slice_predicate_type == 'boolType':
+        slice_predicate_prototype = slice_boolean_predicate_prototype;
+    else:
+        slice_predicate_prototype = slice_pure_predicate_prototype;
+    
+    slice_predicate_prototype_file = open(query_files_path + '/' + slice_predicate_prototype + '.java', 'r')
     slice_predicate_param_value = request.query.slice_predicate
     slice_predicate_concrete_text = slice_predicate_prototype_file.read().replace('/*...*/', slice_predicate_param_value, 1)
-    slice_predicate_concrete_file = open(query_destination + '/' + slice_predicate_prototype_file_name, 'w')
+    slice_predicate_concrete_file = open(query_destination + '/' + slice_predicate_prototype + '.java', 'w')
     slice_predicate_concrete_file.write(slice_predicate_concrete_text);
     slice_predicate_concrete_file.close()
     slice_predicate_prototype_file.close()
     
-    query_predicate_prototype_file = open(query_files_path + '/' + query_predicate_prototype_file_name, 'r')
+    if request.query.query_predicate_type == 'boolType':
+        query_predicate_prototype = query_boolean_predicate_prototype;
+    else:
+        query_predicate_prototype = query_pure_predicate_prototype;
+        
+    query_predicate_prototype_file = open(query_files_path + '/' + query_predicate_prototype + '.java', 'r')
     query_predicate_param_value = request.query.query_predicate
     query_predicate_concrete_text = query_predicate_prototype_file.read().replace('/*...*/', query_predicate_param_value, 1)
-    query_predicate_concrete_file = open(query_destination + '/' + query_predicate_prototype_file_name, 'w')
+    query_predicate_concrete_file = open(query_destination + '/' + query_predicate_prototype + '.java', 'w')
     query_predicate_concrete_file.write(query_predicate_concrete_text);
     query_predicate_concrete_file.close()
     query_predicate_prototype_file.close()
@@ -179,11 +191,21 @@ def exec_query():
     criterion_concrete_file.close()
     criterion_prototype_file.close()
     
-    targetQueryFile = query_destination + '/' + query_file_name
-    copyfile(query_files_path+'/'+ query_file_name, targetQueryFile)
+    
+    target_query_prototype_file = open(query_files_path + '/' + query_file_name, 'r')
+    target_query_file_text = target_query_prototype_file.read() 
+    target_query_concrete_text = target_query_file_text.replace('/*s...*/', slice_predicate_prototype, 1)
+    target_query_concrete_text = target_query_concrete_text.replace('/*q...*/', query_predicate_prototype, 1)
+    target_query_file_address = query_destination + '/' + query_file_name
+    target_query_file = open(target_query_file_address, 'w')
+    target_query_file.write(target_query_concrete_text);
+    target_query_file.close()
+    target_query_prototype_file.close()
+    
+#     copyfile(query_files_path+'/'+ query_file_name, targetQueryFile)
     classpath = blast_classpath + ':' + blast_opt_controller_classpath + ':' + currentRelativeTargetPath
     
-    retcode = call(["javac", "-g","-cp", classpath, "-source", "7", "-target", "7", targetQueryFile])
+    retcode = call(["javac", "-g","-cp", classpath, "-source", "7", "-target", "7", target_query_file_address])
     
     if retcode != 0:
         raise Exception("Compile error!")

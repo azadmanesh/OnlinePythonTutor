@@ -2011,11 +2011,15 @@ function executeQuery(codeToExec,
 	if (errorMsgs !== ''){
 		$('#queryErrors').html(errorMsgs)
 	} else {
-
+		
+		console.log($('#queryPredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType')
+		
 		$.get(backendScript, {
 			user_query : backendScript,
 			criterion: criterionBcIndex,
+			slice_predicate_type : $('#slicePredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',
 			slice_predicate: slicePredicate,
+			query_predicate_type : $('#queryPredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',
 			query_predicate: queryPredicate,
 			session_uuid: sessionUUID
 		},

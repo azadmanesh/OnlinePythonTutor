@@ -14,28 +14,15 @@ import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.DC;
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Thin;
 
-public abstract class SlicePredicatePrototype{
+public abstract class SliceBooleanPredicatePrototype{
 
 	public static Predicate find() {
-		return predicate(/*...*/);
-	}
-	
-	private static Predicate predicate(PredicateShortName p) {
-		if (p == null) {
-			return defaultPredicate();
-		}
-		
-		return p.getPredicate();
-	}
-	
-	private static Predicate defaultPredicate() {
 		return new Predicate() {
-			
+
 			@Override
 			public boolean test(Dependency dependency) {
-				return true;
+				return /*...*/;
 			}
 		};
 	}
-
 }

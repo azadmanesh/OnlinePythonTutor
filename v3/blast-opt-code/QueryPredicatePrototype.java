@@ -15,7 +15,7 @@ import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Thin;
 
 public abstract class QueryPredicatePrototype {
-
+	
 	public static Predicate find() {
 		return predicate(/*...*/);
 	}
@@ -28,16 +28,6 @@ public abstract class QueryPredicatePrototype {
 		return p.getPredicate();
 	}
 
-	private static Predicate predicate(final boolean cond) {
-		return new Predicate() {
-			
-			@Override
-			public boolean test(Dependency dependency) {
-				return cond;
-			}
-		};
-	}
-	
 	private static Predicate defaultPredicate() {
 		return new Predicate() {
 			

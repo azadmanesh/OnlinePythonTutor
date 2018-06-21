@@ -36,9 +36,9 @@ public class Query implements BlastOptQueryAnalyzer {
 								AbstractHistory history,
 								BytecodePureEvent[] bcEvents) {
 		
-		final EventI criterion = C1.find(trace);
-		final Predicate slicePredicate = S1.find();
-		final Predicate queryPredicate = QQ.find();
+		final EventI criterion = CriterionPrototype.find(trace);
+		final Predicate slicePredicate = /*s...*/.find();
+		final Predicate queryPredicate = /*q...*/.find();
 		
 		Slice slice = new Slice(criterion, slicePredicate);
 		Navigator dfsNav = new DfsNavigator(slice, Focuser.EARLIEST_FIRST);
