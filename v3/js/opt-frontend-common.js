@@ -1817,6 +1817,7 @@ function executeQuery(codeToExec,
         outputDiv,
         handleSuccessFunc, handleUncaughtExceptionFunc) {
 	console.log('ExecuteQuery!')
+
 	frontendOptionsObj.lang = 'java';
 	$('#queryErrors').text('');
 	
@@ -1998,11 +1999,13 @@ function executeQuery(codeToExec,
 		$('#queryErrors').html(errorMsgs)
 	} else {
 		
-		console.log($('#queryPredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType')
-		
 		$.get(backendScript, {
 			user_query : backendScript,
 			criterion: criterionBcIndex,
+			input_type : document.getElementById('inputType').value,
+			project_name : defects4jProjectName,
+			bug_no : defects4jBugNo,
+			fvb : defects4jFvb,
 			slice_predicate_type : $('#slicePredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',
 			slice_predicate: slicePredicate,
 			query_predicate_type : $('#queryPredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',
@@ -2184,11 +2187,15 @@ function executeDefects4jTest(codeToExec,
 	      num414Tries = 0;
 	    }
 	
+		defects4jProjectName = d3.select('#projectSelection').property('value');
+		defects4jBugNo = d3.select('#testcaseSelection').property('value');
+		defects4jFvb =  (d3.select("#fvb").property("checked") ? 'b' : 'f'); 
+	
 		$.get(backendScript, {
 			user_query : backendScript,
-			project_name : d3.select('#projectSelection').property('value'),
-			bug_no : d3.select('#testcaseSelection').property('value'),
-			fvb : (d3.select("#fvb").property("checked") ? 'b' : 'f'),
+			project_name : defects4jProjectName,
+			bug_no : defects4jBugNo,
+			fvb : defects4jFvb,
 			session_uuid: sessionUUID
 		},
 		exec_defects4j_callback, "json").fail(function(errorMsg) {

@@ -5653,14 +5653,12 @@ function resetSourceDiv(myVisualizer, curEntry) {
 	}
 	
 	if (source != 'UNTRACED') {
-		var url = 'wd/s' + sessionUUID+ '/' + source;
+		
 
-		var sourceContent = myVisualizer.sourceCache[url];
+		var sourceContent = myVisualizer.sourceCache[source];
 		if ( sourceContent == null) {
-			$.get(url, function(data){
-				sourceEditorSetValue(data);
-				myVisualizer.sourceCache[url] = data;
-			})
+			readSourceContent(source, myVisualizer);
+			
 		} else {
 			sourceEditorSetValue(sourceContent);
 		}
@@ -5677,9 +5675,30 @@ function resetSourceDiv(myVisualizer, curEntry) {
 		sourceViewerEditor.gotoLine(lineNo, 0, true);
 	} else {
 		sourceViewerEditor.getSession().removeMarker(myVisualizer.lastSourceMarker);
-	}
-	
+	}	
 }
+
+function readSourceContent(source, myVisualizer) {
+	var inputType = document.getElementById('inputType').value;
+	if (inputType == 'inlineTestPane') {
+		var url = 'wd/s' + sessionUUID+ '/' + source;
+		$.get(url, function(data){
+			sourceEditorSetValue(data);
+			myVisualizer.sourceCache[source] = data;
+		})
+	} else {
+		$.get('src', {
+			source_name : source,
+			project_name : 'Lang',  //defects4jProjectName,
+			bug_no : 1, 		//defects4jBugNo,
+			fvb : 'b'			//defects4jFvb,
+		}, function(data){
+			sourceEditorSetValue(data);
+			myVisualizer.sourceCache[source] = data;
+		})
+	}
+}
+
 
 function showFullHistory() {
 	myVisualizer.curTrace = uncompressToFullTrace(myVisualizer.comTrace);
@@ -5859,3 +5878,4 @@ function highlightLine(currLineNo, nextLineNo, color) {
 	var curLineTdId = myVisualizer.generateID('cod' + nextLineNo); 
 	myVisualizer.domRootD3.select('#'+curLineTdId).style('background-color', color);	
 }
+

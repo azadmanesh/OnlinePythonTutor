@@ -23,6 +23,7 @@ import urllib2
 import sys
 import os
 import shutil
+from pip._vendor.html5lib.constants import prefixes
 
 wd = 'wd'
 blast_opt_frontend = '/Users/reza/PhD/tools/blast-opt-frontend/v3'
@@ -41,6 +42,7 @@ slice_pure_predicate_prototype = 'SlicePredicatePrototype'
 slice_boolean_predicate_prototype = 'SliceBooleanPredicatePrototype'
 query_pure_predicate_prototype = 'QueryPredicatePrototype'
 query_boolean_predicate_prototype = 'QueryBooleanPredicatePrototype'
+defects4j_projects_home='/Users/reza/temp/wd/projects'
 
 inlined_test_class_name = 'InlinedTest'
 inlined_test_method_name = 'test'
@@ -211,12 +213,26 @@ def exec_query():
         raise Exception("Compile error!")
     
     query_fully_qualified_class_name = query_package_path.replace('/', '.')+ '.' + query_class_name
-    retcode = call(["ant", "-f", blast_opt_controller, 
-                                                    "run", 
-                                                    "-Dtest.class="+inlined_test_class_name,
-                                                    "-Dtest.method="+inlined_test_method_name,
-                                                    "-Dtest.analyzer="+query_fully_qualified_class_name,
-                                                    "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
+    selected_defects4j_project = request.query.project_name;
+    selected_project_bug_no = request.query.bug_no;
+    selected_fvb = request.query.fvb;
+    input_type = request.query.input_type;
+    
+    if input_type == 'inlineTestPane':
+        retcode = call(["ant", "-f", blast_opt_controller, 
+                                                        "run", 
+                                                        "-Dtest.class="+inlined_test_class_name,
+                                                        "-Dtest.method="+inlined_test_method_name,
+                                                        "-Dtest.analyzer="+query_fully_qualified_class_name,
+                                                        "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
+    else:
+        retcode = call(["ant", "-f", blast_opt_controller, 
+                                                        "run-defects4j-test", 
+                                                        "-Dtest.project="+selected_defects4j_project,
+                                                        "-Dbug.no="+selected_project_bug_no,
+                                                        "-Dfvb="+selected_fvb,
+                                                        "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
+     
     
     print "opt-controller:\t" + str(retcode)
     if retcode != 0:
@@ -227,9 +243,50 @@ def exec_query():
     
     return static_file("data.json", root=currentRelativeTargetPath)
     
+@get('/src')
+def get_src():
+    prefixes = [
+                'src/test/java',
+                'src/main/java'
+                ];
+    
+    src_name = request.query.source_name;
+    selected_defects4j_project = request.query.project_name;
+    selected_project_bug_no = request.query.bug_no;
+    selected_fvb = request.query.fvb;
+    found = False;
+    
+    for prefix in prefixes:
+        addrs = defects4j_projects_home+ '/' + selected_defects4j_project + '/' + selected_project_bug_no + '/' + selected_fvb + '/' + prefix + '/' + src_name;
+        print 'Testing address:\t' + addrs
+         
+        if os.path.exists(addrs):
+            found = True;
+            print 'address matched' 
+            break; 
+        
+    
+    if found:
+        root = defects4j_projects_home+ '/' + selected_defects4j_project + '/' + selected_project_bug_no + '/' + selected_fvb + '/' + prefix;
+        return static_file(src_name, root)
+    else:
+        return 'not found'
+    
+#         
+#         var url = prefix + '/' + source;
+#             $.get(url, function(data){
+#                 sourceEditorSetValue(data);
+#                 myVisualizer.sourceCache[url] = data;
+#             })
+#         } else {
+#             sourceEditorSetValue(sourceContent);
+#         }
+
     
 
-@get('/exec')
+    
+
+@get('/exec') 
 def get_exec():
     print "Hi from Python"
     print >> sys.stderr, 'ID:' 
