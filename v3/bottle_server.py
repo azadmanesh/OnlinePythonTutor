@@ -231,6 +231,7 @@ def exec_query():
                                                         "-Dtest.project="+selected_defects4j_project,
                                                         "-Dbug.no="+selected_project_bug_no,
                                                         "-Dfvb="+selected_fvb,
+                                                        "-Dtest.analyzer="+query_fully_qualified_class_name,
                                                         "-Dtarget=" + blast_opt_frontend+ '/' + currentRelativeTargetPath])
      
     
