@@ -1998,14 +1998,15 @@ function executeQuery(codeToExec,
 	if (errorMsgs !== ''){
 		$('#queryErrors').html(errorMsgs)
 	} else {
+		var inputType = document.getElementById('inputType').value
 		
 		$.get(backendScript, {
 			user_query : backendScript,
 			criterion: criterionBcIndex,
-			input_type : document.getElementById('inputType').value,
-			project_name : defects4jProjectName,
-			bug_no : defects4jBugNo,
-			fvb : defects4jFvb,
+			input_type : inputType,
+			project_name : inputType == 'inlineTestPane' ? '' : defects4jProjectName,
+			bug_no : inputType == 'inlineTestPane' ? '' : defects4jBugNo,
+			fvb : inputType == 'inlineTestPane' ? '' : defects4jFvb,
 			slice_predicate_type : $('#slicePredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',
 			slice_predicate: slicePredicate,
 			query_predicate_type : $('#queryPredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',

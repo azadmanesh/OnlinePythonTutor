@@ -6,7 +6,7 @@ import ch.usi.inf.sape.tracer.analyzer.*;
 import ch.usi.inf.sape.tracer.analyzer.slicing.*;
 import ch.usi.inf.sape.tracer.analyzer.bytecodeops.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.*;
-import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocation.LocationType;
+import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocation.LocationCategory;
 
 public abstract class CriterionPrototype {
 	
