@@ -1225,4 +1225,9 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	width: 30px;
 	-webkit-transform: scale(2);
 }
+
+.astInSlice {
+	background-color: lightgrey;	
+}
+
 /* END Java frontend by David Pritchard and Will Gwozdz */

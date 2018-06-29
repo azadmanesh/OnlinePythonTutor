@@ -1375,7 +1375,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       if (i == 0) {
         return d.lineNumber;
       } else {
-        return addContentAssist(d, myViz.curTrace, myViz.comTrace);
+        return addContentAssist(d, myViz.curTrace);
       }
     });
 
@@ -5522,12 +5522,11 @@ function showFullContext() {
 		d.code})
 }
 
-function addContentAssist(data, trace, ftrace) {
+function addContentAssist(data, trace) {
 	var originalText = data.text
 	var map = findSynthesizedSourceMappings(originalText)
 	var indentedText= addIndentation(originalText, data.controllers, map); 
 	var modifiedStr = htmlspecialchars(indentedText) 
-
 
 	var zindex = data.ast.length;
 	$.each(data.ast, function (i, d) {
@@ -5544,15 +5543,18 @@ function insertAstNodeDiv(d, str, map, zindex) {
 	
   var astSpan = $('<span>')
 	.attr('id', 'ast_'+d.bcTime)
-	.attr('class', 'astSpan')
+	.attr('class', (d.in_slice ? 'astSpan astInSlice' : 'astSpan'))
 	.css('color', getRandomColor())
 	.html(text);
+  
+  
  
   var tooltipSpan = $('<span>')
                     .attr('id', 'ast_'+d.bcTime)
                     .attr('class', 'astTooltipText')
                     .text(d.value);
-        
+    
+  
 	
   astSpan.append(tooltipSpan)
 	
