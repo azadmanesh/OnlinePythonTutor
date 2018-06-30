@@ -1582,13 +1582,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   .enter()
   .append("span")
    .attr('class', function (d , i) {
-	   var suffix = '';
-	   if (d.index == -1){
-		   suffix = '_'
-	   } else {
-		   suffix = d.index;
-	   }
-	   return 'contextSpan klass'+suffix;
+	   return 'has-tooltip'
    })
    .style('width', function (d , colIndex){
 	   return (100 / maxDepth) + '%';
@@ -1605,10 +1599,13 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 		return d.code; 
    })
   .append('span')		   /*Add tooltip text */
-  .attr('class','contextTooltipText')
+  .attr('class','tooltip-wrapper')
+  .append('span')
+  .attr('class','tooltip')
 	.html(function(d,i){ 
 		  return d.code; 
 	})
+	
 		  
   // create a left-most gutter td that spans ALL rows ...
   // (NB: valign="top" is CRUCIAL for this to work in IE)
@@ -2235,6 +2232,7 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
     
 
     // add these fields to myViz
+    
     myViz.curLineNumber = curLineNumber;
     myViz.prevLineNumber = prevLineNumber;
     myViz.curLineIsReturn = curIsReturn;
@@ -2292,6 +2290,7 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
     }
   }
 
+  
 } // end of updateOutputFull
 
 

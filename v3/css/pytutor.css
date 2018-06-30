@@ -1066,30 +1066,140 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	border-top: 1px dotted black;
 }
 
-.contextSpan {
+
+/* .contextSpan {
+    position: relative;
     display: inline-block;
+    border-bottom: 1px dotted black;
+    text-overflow: ellipsis;
     overflow: hidden;
-	text-overflow: ellipsis;
-    color : white;
-    border-right : 3px solid white;
 }
 
-.contextTooltipText {
-    display: none;
+.contextSpan .contextTooltipText {
+    visibility: hidden;
     width: 120px;
     background-color: black;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
     border-radius: 6px;
+    padding: 5px 0;
+    
+    Position the tooltip
     position: absolute;
-    z-index:100;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
 }
 
 .contextSpan:hover .contextTooltipText {
-    display: inline;
+    visibility: visible;
+} */
+
+/* 	z-index : 1;
+	position: relative;
+    display: inline-block;
+    overflow: hidden;
+ */
+
+/* .contextSpanContainer {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right : 3px solid white;
+  position: relative;
+  margin: auto;
+  padding: 10px;
+  color : white; 
+} */
+
+.has-tooltip { 
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-right : 3px solid white;
+  color : white; 
 }
 
+.tooltip-wrapper {
+  position: relative;
+  visibility: hidden;
+  z-index: 1000;
+  width:100%;
+}
+
+.has-tooltip:hover .tooltip-wrapper {
+  visibility: visible;
+  opacity: 0.7;
+  z-index: 999; 
+}
+
+.tooltip {
+  display: block;
+  position: fixed;
+  height: 20px;
+  /*margin-left: -76px;*/
+  color: #FFFFFF;
+  background: #000000;
+
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 4px 3px 10px #800000;
+}
+.tooltip:after {
+  content: '';
+  position: absolute;
+    bottom: 100%;
+    left: 50%;
+  margin-left: -8px;
+  width: 0;
+  height: 0;
+  border-bottom: 8px solid #000000;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+
+
+/* .contextSpan {
+	z-index : 1;
+	position: relative;
+    display: inline-block;
+    border-right : 3px solid white;
+	text-overflow: ellipsis;
+    overflow: hidden;
+    color : white; 
+}
+
+.contextChosen {
+  background-color: #b3aeb9;
+  color : white;
+  border-radius: 6px;
+  padding: 1px 0;
+}
+
+.contextTooltipText {
+  visibility: hidden;
+  
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    Position the tooltip
+    z-index : 1000;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -20%;
+}
+
+.contextTooltipShow {
+	visibility: visible;
+}
+ */
+ 
+ 
 .pyCodeOutputTable {
 	table-layout: fixed;
 }
