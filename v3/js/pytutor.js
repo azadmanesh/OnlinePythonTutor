@@ -2932,15 +2932,14 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
   // so filter those out.)
   var realGlobalsLst = [];
   
-//// TODO: adapt to path condition system.
-//  $.each(curEntry.ordered_globals, function(i, varname) {
-//    var val = curEntry.globals[varname];
-//
-//    // (use '!==' to do an EXACT match against undefined)
-//    if (val !== undefined) { // might not be defined at this line, which is OKAY!
-//      realGlobalsLst.push(varname);
-//    }
-//  });
+  $.each(curEntry.ordered_globals, function(i, varname) {
+    var val = curEntry.globals[varname];
+
+    // (use '!==' to do an EXACT match against undefined)
+    if (val !== undefined) { // might not be defined at this line, which is OKAY!
+      realGlobalsLst.push(varname);
+    }
+  });
 
   var globalsID = myViz.generateID('globals');
   var globalTblID = myViz.generateID('global_table');
@@ -3049,14 +3048,14 @@ ExecutionVisualizer.prototype.renderDataStructures = function(curEntry, curTople
     .remove();
 
 
-  //@AZM: TODO: adapt to path condition
+
   // for aesthetics, hide globals if there aren't any globals to display
-//  if (curEntry.ordered_globals.length == 0) {
-//    this.domRoot.find('#' + globalsID).hide();
-//  }
-//  else {
-//    this.domRoot.find('#' + globalsID).show();
-//  }
+  if (curEntry.ordered_globals.length == 0) {
+    this.domRoot.find('#' + globalsID).hide();
+  }
+  else {
+    this.domRoot.find('#' + globalsID).show();
+  }
 
 
   // holy cow, the d3 code for stack rendering is ABSOLUTELY NUTS!
