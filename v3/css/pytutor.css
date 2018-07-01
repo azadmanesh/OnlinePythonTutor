@@ -1340,4 +1340,19 @@ div.ExecutionVisualizer td.queueFElt table.dictTbl {
 	background-color: lightgrey;	
 }
 
+.condition {
+	font-size: 10pt;
+	background-color: lightgrey;
+}
+
+.conditionTooltip {
+	position:fixed;
+	visibility: hidden; 
+	z-index:10;
+	
+	margin-left: -20pt;	
+	margin-top: 10pt;
+}
+
+
 /* END Java frontend by David Pritchard and Will Gwozdz */

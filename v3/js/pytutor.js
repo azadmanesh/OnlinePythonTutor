@@ -1379,6 +1379,30 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
       }
     });
 
+//  var conditions= this.domRootD3.selectAll('.condition')
+//  .data(this.codeOutputLines);
+//  
+//  conditions
+//  .append('span')
+//  .attr('class', 'conditionTooltip')
+//  .html(function(d,i) {
+//	  var html = '';
+//	  $.each(d.controllers, function(i,d){
+//		  html += d.code + '</br>'
+//	  })
+//	  
+//	  return html;
+//  })
+//  
+//  conditions
+//  .on('mouseover', function(d,e){
+//	  d3.select(this.lastElementChild).style('visibility', 'visible');
+//  })
+//  .on('mouseout', function(d,e){
+//	  d3.select(this.lastElementChild).style('visibility', 'hidden'); 
+//  })
+  
+  
   /* AZM: Register handler for click events on ast nodes.
   Clicking a node generates the code for the slicing 
   criterion in the query.*/
