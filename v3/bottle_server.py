@@ -246,6 +246,7 @@ def exec_query():
     
 @get('/src')
 def get_src():
+    
     prefixes = [
                 'src/test/java',
                 'src/main/java'
@@ -256,6 +257,9 @@ def get_src():
     selected_project_bug_no = request.query.bug_no;
     selected_fvb = request.query.fvb;
     found = False;
+    
+    print 'get source for:\t'+ request.query.project_name + ':' + selected_project_bug_no+':' + selected_fvb
+    
     
     for prefix in prefixes:
         addrs = defects4j_projects_home+ '/' + selected_defects4j_project + '/' + selected_project_bug_no + '/' + selected_fvb + '/' + prefix + '/' + src_name;

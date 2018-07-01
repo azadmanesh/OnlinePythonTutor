@@ -5649,6 +5649,7 @@ function getRandomColor() {
 }
 
 function resetSourceDiv(myVisualizer, curEntry) {
+	console.log("Finding source for line:\t" + curEntry.source_line_no)
 	
 	var source; 
 	var lineNo;  
@@ -5714,9 +5715,9 @@ function readSourceContent(source, myVisualizer) {
 	} else {
 		$.get('src', {
 			source_name : source,
-			project_name : 'Lang',  //defects4jProjectName,
-			bug_no : 1, 		//defects4jBugNo,
-			fvb : 'b'			//defects4jFvb,
+			project_name : defects4jProjectName,
+			bug_no : defects4jBugNo,
+			fvb : defects4jFvb,
 		}, function(data){
 			sourceEditorSetValue(data);
 			myVisualizer.sourceCache[source] = data;
