@@ -5648,6 +5648,7 @@ function getRandomColor() {
 }
 
 function resetSourceDiv(myVisualizer, curEntry) {
+	console.log("Finding source :\t" + curEntry.source_name)
 	console.log("Finding source for line:\t" + curEntry.source_line_no)
 	
 	var source; 
@@ -5706,11 +5707,25 @@ function resetSourceDiv(myVisualizer, curEntry) {
 function readSourceContent(source, myVisualizer) {
 	var inputType = document.getElementById('inputType').value;
 	if (inputType == 'inlineTestPane') {
-		var url = 'wd/s' + sessionUUID+ '/' + source;
-		$.get(url, function(data){
-			sourceEditorSetValue(data);
-			myVisualizer.sourceCache[source] = data;
-		})
+		var testUrl = 'wd/s' + sessionUUID+ '/' + source;
+		console.log('source:\t' + source)
+		if (source == 'UNTRACED'){
+			sourceEditorSetValue("No source available!");
+			return;
+		}
+		
+		$.ajax({
+		    url: testUrl,
+		    type: 'GET',
+		    success: function(data){ 
+		    	sourceEditorSetValue(data);
+				myVisualizer.sourceCache[source] = data;
+		    },
+		    error: function(data) {
+		    	sourceEditorSetValue("No source available!");
+		    }
+		});
+		
 	} else {
 		$.get('src', {
 			source_name : source,

@@ -14,10 +14,12 @@ public class InlinedTest {
 	
 	@Test
 	public void test() {
-		InlinedTest test = new InlinedTest();
-		this.a = 1;
-		this.b = 2f;
-		this.c = new InlinedTest();
+		String s = "hihhhhhh";
+		
+		if (s.startsWith("hi")) {
+			s = "sdfsf";
+		}
+		
 	}
 	
 }

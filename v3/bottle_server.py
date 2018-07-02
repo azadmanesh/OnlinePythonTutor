@@ -88,7 +88,7 @@ def executeInlinedTest():
     print 'Results written into:\t' + blast_opt_frontend+ '/' + currentRelativeTargetPath
     
     return static_file("data.json", root=currentRelativeTargetPath)
-
+    
 def executeJarFile():
     print "executing jar file"
     
