@@ -71,6 +71,8 @@ var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer
 var defects4jPaneInit = false;
 var codeHighlightColor = 'lightblue';
 
+var lastSourceMarker;
+
 // @AZM TODO: lines 2659-2072, 3003-3011, 3120-3126
 
 // domRootID is the string ID of the root element where to render this instance
@@ -5693,14 +5695,22 @@ function resetSourceDiv(myVisualizer, curEntry) {
 	if (lineNo != -1) {
 		var Range = ace.require('ace/range').Range;
 		var marker = sourceViewerEditor.session.addMarker(new Range(lineNo - 1, 0, lineNo - 1, 2000), "sourceLineChosen", "fullLine", true);
-		sourceViewerEditor.getSession().removeMarker(myVisualizer.lastSourceMarker);
-		myVisualizer.lastSourceMarker = marker;
+		if (lastSourceMarker)
+			sourceViewerEditor.getSession().removeMarker(lastSourceMarker);
+		lastSourceMarker = marker;
 
 
-		sourceViewerEditor.resize(true);
+		console.log("going to line:\t"+ lineNo)
 		sourceViewerEditor.gotoLine(lineNo, 0, true);
+		
+//		sourceViewerEditor.resize(true);
 	} else {
-		sourceViewerEditor.getSession().removeMarker(myVisualizer.lastSourceMarker);
+		if (lastSourceMarker) {
+			console.log("remove marder for line -1")
+			console.log("myVisualizer.lastSourceMarker:\t"+ lastSourceMarker)
+			sourceViewerEditor.getSession().removeMarker(lastSourceMarker);
+			sourceViewerEditor.gotoLine(-1, 0, true);
+		}
 	}	
 }
 

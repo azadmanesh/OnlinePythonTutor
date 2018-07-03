@@ -14,12 +14,19 @@ public class InlinedTest {
 	
 	@Test
 	public void test() {
-		String s = "hihhhhhh";
-		
-		if (s.startsWith("hi")) {
-			s = "sdfsf";
+		int aa = 12;
+		int val = 123;
+		if (aa > 1) {
+			val = f(12);
 		}
-		
+	}
+	
+	int f(int a) {
+		if (a>34) {
+			return a + 1;
+		} else {
+			return a - 1;
+		}
 	}
 	
 }
