@@ -1349,6 +1349,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .append('table')
     .attr('class' , 'pyCodeOutputTable')
     .attr('id', 'pyCodeOutput')
+    .style('margin-top', '20px')
     .selectAll('tr')
     .data(this.codeOutputLines)
     .enter().append('tr')
