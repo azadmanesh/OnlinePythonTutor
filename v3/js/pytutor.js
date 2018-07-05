@@ -1313,6 +1313,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     n.breakpointHere = false;
     n.ast = myViz.curTrace[i].ast;
     n.controllers = myViz.curTrace[i].controllers;
+    n.controller_depth = myViz.curTrace[i].controller_depth;
 
     $.each(this.curTrace, function(j, elt) {
       if (elt.line == n.lineNumber) {
@@ -1429,7 +1430,6 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     }
   })
   .on('click', function(d, i){
-    console.log(i);
     
     var astCode = d.code.slice(d.start_index, d.end_index);
     $('#criterionValue').text(astCode + (astCode == d.code ? '' : ' in ' + d.code ) +', Event Time:\t' + (d.time + 1));
@@ -5550,7 +5550,7 @@ function showFullContext() {
 function addContentAssist(data, trace) {
 	var originalText = data.text
 	var map = findSynthesizedSourceMappings(originalText)
-	var indentedText= addIndentation(originalText, data.controllers, map); 
+	var indentedText= addIndentation(originalText, data.controller_depth, map); 
 	var modifiedStr = htmlspecialchars(indentedText) 
 
 	var zindex = data.ast.length;
@@ -5575,7 +5575,7 @@ function insertAstNodeDiv(d, str, map, zindex) {
   
  
   var tooltipSpan = $('<span>')
-                    .attr('id', 'ast_'+d.bcTime)
+                    .attr('id', 'astTooltipText_'+d.bcTime)
                     .attr('class', 'astTooltipText')
                     .text(d.value);
     
@@ -5589,23 +5589,23 @@ function insertAstNodeDiv(d, str, map, zindex) {
 	return [str.slice(0, map[d.start_index]), astSpan.prop('outerHTML'), posix].join('');
 } 
 
-function addIndentation(str, ctrls, map) {
+function addIndentation(str, depth, map) {
 	var indent;
 	if (indentRealMax == 0) {
 		indent = 0;
-		indentRealMax = ctrls.length;
+		indentRealMax = depth;
 		indentMap = new Object();
-		indentMap[ctrls.length] = indent;
-	} else if (ctrls.length > indentRealMax) {
+		indentMap[depth] = indent;
+	} else if (depth > indentRealMax) {
 		indent = indentMap[indentRealMax] + 1;
-		indentRealMax = ctrls.length;
+		indentRealMax = depth;
 		indentMap[indentRealMax] = indent;
-	} else if (ctrls.length <= indentRealMax) {
-		if (indentMap[ctrls.length]) {
-			indent = indentMap[ctrls.length];
+	} else if (depth <= indentRealMax) {
+		if (indentMap[depth]) {
+			indent = indentMap[depth];
 		} else {
 			for (var v in indentMap) {
-				if (v > ctrls.length) {
+				if (v > depth) {
 					if (indentMap[v] > 0) {
 						indent= indentMap[v] - 1;
 					}else {
@@ -5682,37 +5682,43 @@ function resetSourceDiv(myVisualizer, curEntry) {
 	}
 	
 	if (source != 'UNTRACED') {
-		
+
 
 		var sourceContent = myVisualizer.sourceCache[source];
 		if ( sourceContent == null) {
 			readSourceContent(source, myVisualizer);
-			
+
 		} else {
 			sourceEditorSetValue(sourceContent);
 		}
-	}
-	
-	if (lineNo != -1) {
-		var Range = ace.require('ace/range').Range;
-		var marker = sourceViewerEditor.session.addMarker(new Range(lineNo - 1, 0, lineNo - 1, 2000), "sourceLineChosen", "fullLine", true);
-		if (lastSourceMarker)
-			sourceViewerEditor.getSession().removeMarker(lastSourceMarker);
-		lastSourceMarker = marker;
 
 
-		console.log("going to line:\t"+ lineNo)
-		sourceViewerEditor.gotoLine(lineNo, 0, true);
-		
-//		sourceViewerEditor.resize(true);
-	} else {
+		if (lineNo != -1) {
+			var Range = ace.require('ace/range').Range;
+			var marker = sourceViewerEditor.session.addMarker(new Range(lineNo - 1, 0, lineNo - 1, 2000), "sourceLineChosen", "fullLine", true);
+			if (lastSourceMarker)
+				sourceViewerEditor.getSession().removeMarker(lastSourceMarker);
+			lastSourceMarker = marker;
+
+
+			console.log("going to line:\t"+ lineNo)
+			sourceViewerEditor.gotoLine(lineNo, 0, true);
+
+//			sourceViewerEditor.resize(true);
+		} else {
+			if (lastSourceMarker) {
+				console.log("remove marder for line -1")
+				console.log("myVisualizer.lastSourceMarker:\t"+ lastSourceMarker)
+				sourceViewerEditor.getSession().removeMarker(lastSourceMarker);
+			}
+		}	
+	}else {
 		if (lastSourceMarker) {
 			console.log("remove marder for line -1")
 			console.log("myVisualizer.lastSourceMarker:\t"+ lastSourceMarker)
 			sourceViewerEditor.getSession().removeMarker(lastSourceMarker);
-			sourceViewerEditor.gotoLine(-1, 0, true);
 		}
-	}	
+	}
 }
 
 function readSourceContent(source, myVisualizer) {

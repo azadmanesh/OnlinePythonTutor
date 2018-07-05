@@ -1,6 +1,8 @@
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 /*
  * Do not rename the class!
  * Do not rename the method!
@@ -11,24 +13,17 @@ public class InlinedTest {
 	int a;
 	float b;
 	InlinedTest c;
+	HashMap<CharSequence, CharSequence> map = new HashMap<>();
 	
 	@Test
 	public void test() {
-		int aa = 12;
-		int val = 123;
-		if (aa > 1) {
-			val = f(12);
-		}
+		c = new InlinedTest();
+		CharSequence cs1 = new StringBuffer("abc");
+		CharSequence cs2 = new StringBuffer("def");
+		map.put(cs1, cs2);
+		
+		CharSequence cs3 = map.get(cs1);
 	}
-	
-	int f(int a) {
-		if (a>34) {
-			return a + 1;
-		} else {
-			return a - 1;
-		}
-	}
-	
 }
 
 
