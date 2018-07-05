@@ -249,7 +249,9 @@ def get_src():
     
     prefixes = [
                 'src/test/java',
-                'src/main/java'
+                'src/main/java', 
+                'source',
+                'tests',
                 ];
     
     src_name = request.query.source_name;
