@@ -5601,7 +5601,7 @@ function addIndentation(str, depth, map) {
 		indentRealMax = depth;
 		indentMap[indentRealMax] = indent;
 	} else if (depth <= indentRealMax) {
-		if (indentMap[depth]) {
+		if (indentMap[depth] >= 0) {
 			indent = indentMap[depth];
 		} else {
 			for (var v in indentMap) {
