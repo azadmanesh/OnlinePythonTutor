@@ -5756,7 +5756,6 @@ function readSourceContent(source, myVisualizer) {
 	}
 }
 
-
 function showFullHistory() {
 	myVisualizer.curTrace = uncompressToFullTrace(myVisualizer.comTrace);
 	myVisualizer.precomputeCurTraceLayouts();

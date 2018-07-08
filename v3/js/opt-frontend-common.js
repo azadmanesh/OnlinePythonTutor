@@ -866,7 +866,17 @@ var num414Tries = 0; // hacky global
 function genericOptFrontendReady() {
   initTogetherJS(); // initialize early
 
-
+  
+//  $('#fullHistoryCheck').click(function() {
+//	  if (this.checked) {
+//		  $("#slicePredicateDiv *").attr("disabled", "disabled").off('click');
+//		  $("#slicePredicateDiv").css('background-color', 'grey')
+//	  } else {
+//		  $("#slicePredicateDiv *").removeAttr('disabled');
+//		  $("#slicePredicateDiv").css('background-color', 'white')
+//	  }
+//  })
+  
   // be friendly to the browser's forward and back buttons
   // thanks to http://benalman.com/projects/jquery-bbq-plugin/
   $(window).bind("hashchange", function(e) {
@@ -2007,6 +2017,7 @@ function executeQuery(codeToExec,
 			project_name : inputType == 'inlineTestPane' ? '' : defects4jProjectName,
 			bug_no : inputType == 'inlineTestPane' ? '' : defects4jBugNo,
 			fvb : inputType == 'inlineTestPane' ? '' : defects4jFvb,
+			full_history : $('fullHistoryCheck').is(":checked"),
 			slice_predicate_type : $('#slicePredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',
 			slice_predicate: slicePredicate,
 			query_predicate_type : $('#queryPredicateTypeCheck').is(":checked") ? 'boolType' : 'predicateType',

@@ -13,6 +13,7 @@ import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Control;
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.DC;
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Thin;
+import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Full;
 
 public abstract class QueryPredicatePrototype {
 	

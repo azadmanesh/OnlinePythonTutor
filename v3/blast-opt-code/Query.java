@@ -19,7 +19,12 @@ import ch.usi.inf.sape.tracer.analyzer.slicing.Traversal;
 
 public class Query implements BlastOptQueryAnalyzer {
 
-	public enum PredicateShortName {Data(SlicePredicate.DATA), Control(SlicePredicate.CONTROL), DC(SlicePredicate.DATAwithCONTROL), Thin(SlicePredicate.THIN);
+	public enum PredicateShortName {Data(SlicePredicate.DATA), 
+		Control(SlicePredicate.CONTROL), 
+		DC(SlicePredicate.DATAwithCONTROL), 
+		Thin(SlicePredicate.THIN), 
+		Full(SlicePredicate.FullHistory);
+		
 		Predicate predicate;
 
 		PredicateShortName(Predicate p) {
@@ -40,7 +45,8 @@ public class Query implements BlastOptQueryAnalyzer {
 		final Predicate slicePredicate = /*s...*/.find();
 		final Predicate queryPredicate = /*q...*/.find();
 		
-		Slice slice = new Slice(criterion, slicePredicate);
+		System.out.println("Criterion set to :\t" + criterion);
+		Slice slice = new Slice(criterion, bcEvents, slicePredicate);
 		Navigator dfsNav = new DfsNavigator(slice, Focuser.EARLIEST_FIRST);
 		
 		Navigator postFilterNav = new PostFilterNavigator(dfsNav, queryPredicate);
