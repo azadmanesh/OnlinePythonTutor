@@ -1,5 +1,6 @@
 package ch.usi.inf.sape.blastopt.controller.analyzer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.usi.inf.sape.tracer.analyzer.*;
@@ -23,6 +24,7 @@ public abstract class QueryBooleanPredicatePrototype {
 			EventI orgEvent;
 			Value currVal;
 			MemoryLocation currValLoc; 
+			Value defVal;
 			
 			@Override
 			public boolean test(Dependency dependency) {
@@ -32,8 +34,99 @@ public abstract class QueryBooleanPredicatePrototype {
 				currVal = binding != null ? binding.getValue() : null;
 				currEvent = dependency.dependent();
 				orgEvent = dependency.dependee();
+				for (Binding<?> def : currEvent.getDefs()) {
+					for (Binding<?> uses4def : currEvent.getUsesForDef(def)) {
+						if (uses4def == binding) { 
+							defVal = def.getValue();
+							break;
+						}
+					}
+				}
 				
-				return /*...*/;
+				try {
+					return /*...*/;
+				} catch(Throwable t) {
+					return false;
+				}
+				
+			}
+			
+			Value[] rhs() {
+				Binding<?>[] uses = currEvent.getUses();
+				Value[] values = new Value[uses.length];
+				for (int i = 0; i < values.length; i++) {
+					Value value = uses[i].getValue();
+				}
+				return values;
+			}
+			
+			int[] integer(Value[] vals) {
+				List<Integer> res = new ArrayList<>();
+				for (int i = 0; i < vals.length; i++) {
+					Value val = vals[i];
+					if (val.getType() == MemoryLocationInfo.Type.INT) {
+						res.add(Integer.parseInt(val.getValueString()));
+					}
+				}
+				
+				int[] array = new int[res.size()];
+				for (int i = 0; i < array.length; i++) {
+					array[i] = res.get(i);
+				}
+				
+				return array;
+			}
+			
+			int[] gt0(int[] ts) {
+				List<Integer> res = new ArrayList<>();
+				for (int i = 0; i < ts.length; i++) {
+					int t = ts[i];
+					if (t > 0) {
+						res.add(t);
+					}
+				}
+				
+				int[] array = new int[res.size()];
+				for (int i = 0; i < array.length; i++) {
+					array[i] = res.get(i);
+				}
+				
+				return array;
+			}
+			
+			int[] lt0(int[] ts) {
+				List<Integer> res = new ArrayList<>();
+				for (int i = 0; i < ts.length; i++) {
+					int t = ts[i];
+					if (t < 0) {
+						res.add(t);
+					}
+				}
+				
+				int[] array = new int[res.size()];
+				for (int i = 0; i < array.length; i++) {
+					array[i] = res.get(i);
+				}
+				
+				return array;
+			}
+			
+			int size(int[] vals) {
+				return vals.length;
+			}
+			
+			int size(Object[] vals) {
+				return vals.length;
+			}
+
+			
+			int integer(Value value) {
+				//TODO: add logic for java.lang.Integer
+				if (value.getType() != MemoryLocationInfo.Type.INT) { 
+					throw new IllegalStateException();
+				}
+				
+				return Integer.parseInt(value.getValueString());
 			}
 			
 			boolean isInvokingMethod(String methodName) {

@@ -2012,7 +2012,8 @@ function executeQuery(codeToExec,
 		
 		$.get(backendScript, {
 			user_query : backendScript,
-			criterion: criterionBcIndex,
+			criterion_bc_idx: criterionBcIndex,
+			criterion_ae_idx: criterionAeIndex,
 			input_type : inputType,
 			project_name : inputType == 'inlineTestPane' ? '' : defects4jProjectName,
 			bug_no : inputType == 'inlineTestPane' ? '' : defects4jBugNo,
@@ -2221,6 +2222,7 @@ function resetQuerySection() {
 	$('#criterionValue').text('');
 	$('#queryErrors').text('');
 	criterionBcIndex = -1;
+	criterionAeIndex = -1;
 }
 
 // Compress updateHistory before encoding and sending to

@@ -186,8 +186,15 @@ def exec_query():
     query_predicate_prototype_file.close()
     
     criterion_prototype_file = open(query_files_path + '/' + criterion_prototype_file_name, 'r')
-    criterion_param_value = request.query.criterion
-    criterion_concrete_text = criterion_prototype_file.read().replace('/*...*/', criterion_param_value, 1)
+    criterion_absIdx_value = request.query.criterion_ae_idx
+    criterion_bcIdx_value = request.query.criterion_bc_idx
+    criterion_concrete_text = criterion_prototype_file.read();
+    print "criterion_absIdx_value" + criterion_absIdx_value
+    print "criterion_bcIdx_value" + criterion_bcIdx_value
+    
+    criterion_concrete_text = criterion_concrete_text.replace('/*aeidx...*/', criterion_absIdx_value, 1)
+    criterion_concrete_text = criterion_concrete_text.replace('/*bcidx...*/', criterion_bcIdx_value, 1)
+    
     criterion_concrete_file = open(query_destination + '/' + criterion_prototype_file_name, 'w')
     criterion_concrete_file.write(criterion_concrete_text);
     criterion_concrete_file.close()

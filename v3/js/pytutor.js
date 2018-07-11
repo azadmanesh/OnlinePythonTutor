@@ -1314,6 +1314,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     n.ast = myViz.curTrace[i].ast;
     n.controllers = myViz.curTrace[i].controllers;
     n.controller_depth = myViz.curTrace[i].controller_depth;
+    n.aeTime = myViz.curTrace[i].ae_time;
 
     $.each(this.curTrace, function(j, elt) {
       if (elt.line == n.lineNumber) {
@@ -1416,6 +1417,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     $.each(d.ast, function(j, dd){
       dd.code =d.text;
       dd.time = i;
+      dd.aeTime = d.aeTime;
       asts.push(dd)
     } )
   })
@@ -1434,6 +1436,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     var astCode = d.code.slice(d.start_index, d.end_index);
     $('#criterionValue').text(astCode + (astCode == d.code ? '' : ' in ' + d.code ) +', Event Time:\t' + (d.time + 1));
     criterionBcIndex =  d.bcTime;
+    criterionAeIndex = d.aeTime;
     
     d3.event.stopPropagation();
   })
