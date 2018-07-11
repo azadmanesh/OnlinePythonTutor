@@ -1493,6 +1493,7 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 	  criterionAeIndex = aeId;
 	  criterionBcIndex = -1;
 	  
+	  $('#criterionValue').text('Event Time:\t' + lineNo);
 	  myVisualizer.jmpToSelected(lineNo-1)
 	  }
   );  

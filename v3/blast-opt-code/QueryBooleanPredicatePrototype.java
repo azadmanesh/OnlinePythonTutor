@@ -45,7 +45,7 @@ public abstract class QueryBooleanPredicatePrototype {
 				}
 				
 				try {
-					return /*...*/;
+					/*...*/
 				} catch(Throwable t) {
 					t.printStackTrace();
 					return false;
