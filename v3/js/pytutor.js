@@ -1138,6 +1138,15 @@ ExecutionVisualizer.prototype.findNextBreakpoint = function() {
   }
 }
 
+ExecutionVisualizer.prototype.jmpToSelected = function(lineNo) {
+	var myViz = this;
+
+	highlightLine(myViz.curInstr + 1, lineNo + 1, highlightedLineColor);
+
+	myViz.curInstr = lineNo;
+	myViz.updateOutput(true);
+	return true;	
+}
 
 // returns true if action successfully taken
 ExecutionVisualizer.prototype.stepForward = function() {
@@ -1467,6 +1476,15 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 	  
   })
   
+  this.domRoot.find('.cod')
+  .click(function() {
+	  var id = $(this).prop('id');
+	  var lineNo = id.slice(id.indexOf('cod') + 3);
+	  console.log('clicked line:\t' + lineNo);
+	  myVisualizer.jmpToSelected(lineNo-1)
+	  }
+  );  
+  
   // this.domRootD3.selectAll('.cod')
   // .data(this.codeOutputLines)
   // .selectAll('.astSpan')
@@ -1594,47 +1612,47 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
   this.controllers = {"set":controllers, 'maxDepth' : maxDepth}
   
 		  
-  myViz.domRootD3.select('#pyCodeOutput')
-  .select('tr')
-  .insert('td', 'td.cod')
-  .attr('rowspan', this.codeOutputLines.length)
-  .attr('id', 'contextColumn')
-  
-  myViz.domRootD3.select('#contextColumn')
-  .append('div')
-  .attr('class', 'contextContentsDiv')
-  .selectAll('div')
-  .data(controllers)
-  .enter().append('div')
-  .attr('class','contextRowDiv')
-  .selectAll('span')
-  .data(function(d, i){return d;})
-  .enter()
-  .append("span")
-   .attr('class', function (d , i) {
-	   return 'has-tooltip'
-   })
-   .style('width', function (d , colIndex){
-	   return (100 / maxDepth) + '%';
-   }
-   )
-   .style('background-color', function(d , i) {
-	   if (d.invoke) {
-		   return '#2a404d'
-	   } else {
-		   return 'grey'
-	   }
-   })
-   .text(function (d , i) {
-		return d.code; 
-   })
-  .append('span')		   /*Add tooltip text */
-  .attr('class','tooltip-wrapper')
-  .append('span')
-  .attr('class','tooltip')
-	.html(function(d,i){ 
-		  return d.code; 
-	})
+//  myViz.domRootD3.select('#pyCodeOutput')
+//  .select('tr')
+//  .insert('td', 'td.cod')
+//  .attr('rowspan', this.codeOutputLines.length)
+//  .attr('id', 'contextColumn')
+//  
+//  myViz.domRootD3.select('#contextColumn')
+//  .append('div')
+//  .attr('class', 'contextContentsDiv')
+//  .selectAll('div')
+//  .data(controllers)
+//  .enter().append('div')
+//  .attr('class','contextRowDiv')
+//  .selectAll('span')
+//  .data(function(d, i){return d;})
+//  .enter()
+//  .append("span")
+//   .attr('class', function (d , i) {
+//	   return 'has-tooltip'
+//   })
+//   .style('width', function (d , colIndex){
+//	   return (100 / maxDepth) + '%';
+//   }
+//   )
+//   .style('background-color', function(d , i) {
+//	   if (d.invoke) {
+//		   return '#2a404d'
+//	   } else {
+//		   return 'grey'
+//	   }
+//   })
+//   .text(function (d , i) {
+//		return d.code; 
+//   })
+//  .append('span')		   /*Add tooltip text */
+//  .attr('class','tooltip-wrapper')
+//  .append('span')
+//  .attr('class','tooltip')
+//	.html(function(d,i){ 
+//		  return d.code; 
+//	})
 	
 		  
   // create a left-most gutter td that spans ALL rows ...
