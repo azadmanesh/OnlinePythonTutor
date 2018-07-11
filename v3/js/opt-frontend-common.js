@@ -1993,7 +1993,7 @@ function executeQuery(codeToExec,
 	var queryPredicate = queryPredicateEditorGetValue();
 	var errorMsgs = '';
 	
-	if ((typeof criterionBcIndex == 'undefined') || criterionBcIndex == -1) {
+	if ((typeof criterionAeIndex == 'undefined') || criterionAeIndex == -1) {
 		errorMsgs+= 'No criterion set!<br/>';
 	} 
 	
@@ -2002,7 +2002,7 @@ function executeQuery(codeToExec,
 	} 
 	
 	if (queryPredicate == '') {
-		errorMsgs+= 'No query predicate set!<br/>';
+		errorMsgs+= 'No query predicate set!<sbr/>';
 	} 
 	
 	if (errorMsgs !== ''){

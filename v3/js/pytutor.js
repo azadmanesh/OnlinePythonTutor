@@ -1367,13 +1367,15 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .attr('class', 'codeOutputRow')
     .selectAll('td')
     .data(function(d, i){
-    	return [d, d] /* map full data item down both columns */;
+    	return [d, d, d] /* map full data item down both columns */;
     })
     .enter()
     .append("td")
     .attr('class', function(d, i) {
       if (i == 0) {
     	  return 'lineNo';
+      } else if (i==1) {
+    	  return 'aeRow';
       } else {
     	  return 'cod';
       }
@@ -1381,6 +1383,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .attr('id', function(d, i) {
       if (i == 0) {
         return 'lineNo' + d.lineNumber;
+      } else if (i==1) {
+    	  return 'aeId' + d.aeTime;
       } else {
         return myViz.generateID('cod' + d.lineNumber); // make globally unique (within the page)
       }
@@ -1388,6 +1392,8 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
     .html(function(d, i) {
       if (i == 0) {
         return d.lineNumber;
+      } else if (i==1) {
+    	  return '<input type = "button" style="background-color:lightgrey"/>';
       } else {
         return addContentAssist(d, myViz.curTrace);
       }
@@ -1476,30 +1482,36 @@ ExecutionVisualizer.prototype.renderPyCodeOutput = function() {
 	  
   })
   
-  this.domRoot.find('.cod')
+  this.domRoot.find('.aeRow')
   .click(function() {
+	  var codId = $(this).siblings(".cod").prop('id');
+	  var lineNo = codId.slice(codId.indexOf('cod') + 3)
+	  
 	  var id = $(this).prop('id');
-	  var lineNo = id.slice(id.indexOf('cod') + 3);
-	  console.log('clicked line:\t' + lineNo);
+	  var aeId = id.slice(id.indexOf('aeId') + 4);
+	  
+	  criterionAeIndex = aeId;
+	  criterionBcIndex = -1;
+	  
 	  myVisualizer.jmpToSelected(lineNo-1)
 	  }
   );  
   
-  // this.domRootD3.selectAll('.cod')
-  // .data(this.codeOutputLines)
-  // .selectAll('.astSpan')
-  // .data(function(d,i){
-  //   var target; 
-  //   var id = $(this).prop('id')
-  //   for(var i = 0; i<d.ast.length; i++) {          
-  //     if (d.ast[i].bcTime == id.slice(id.indexOf('_') + 1)) {
-  //       target = i;
-  //     } 
-  //   }
-  //   return [d.ast[target]]})
-  // .on('click', function(d,i) {
-  //   console.log(d);
-  // })
+//   this.domRootD3.selectAll('.cod')
+//   .data(this.codeOutputLines)
+//   .selectAll('.astSpan')
+//   .data(function(d,i){
+//     var target; 
+//     var id = $(this).prop('id')
+//     for(var i = 0; i<d.ast.length; i++) {          
+//       if (d.ast[i].bcTime == id.slice(id.indexOf('_') + 1)) {
+//         target = i;
+//       } 
+//     }
+//     return [d.ast[target]]})
+//   .on('click', function(d,i) {
+//     console.log(d);
+//   })
 
 
   
