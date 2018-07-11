@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.usi.inf.sape.tracer.analyzer.*;
+import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractEventI;
 import ch.usi.inf.sape.tracer.analyzer.slicing.*;
 import ch.usi.inf.sape.tracer.analyzer.bytecodeops.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.*;
@@ -20,8 +21,8 @@ public abstract class QueryBooleanPredicatePrototype {
 	
 	public static Predicate find() {
 		return new Predicate() {
-			EventI currEvent;
-			EventI orgEvent;
+			AbstractEventI currEvent;
+			AbstractEventI orgEvent;
 			Value currVal;
 			MemoryLocation currValLoc; 
 			Value defVal;
@@ -46,6 +47,7 @@ public abstract class QueryBooleanPredicatePrototype {
 				try {
 					return /*...*/;
 				} catch(Throwable t) {
+					t.printStackTrace();
 					return false;
 				}
 				
@@ -130,22 +132,15 @@ public abstract class QueryBooleanPredicatePrototype {
 			}
 			
 			boolean isInvokingMethod(String methodName) {
-				return isInvokingMethod(currEvent, methodName);
+				return currEvent.getEventClassCode() == EventConstants.INVOKEARGS_EVENT &&
+						((INVOKEARGS_Operation) currEvent.getAbstractionCriterion()).getCalleeFrame().getMethod().getName().equals(methodName);
 			}
 			
 			boolean isInvocationOn(int id) {
-				return isInvocationOn(currEvent, id);
-			}
-			
-			boolean isInvokingMethod(EventI currEvent, String methodName) {
-				return currEvent.getEventClassCode() == EventConstants.INVOKEARGS_EVENT &&
-						((INVOKEARGS_Operation) currEvent.getPureEvent()).getCalleeFrame().getMethod().getName().equals(methodName);
-			}
-			
-			boolean isInvocationOn(EventI currEvent, int id) {
 				return currEvent.getEventClassCode() == EventConstants.INVOKEARGS_EVENT && 
-						((INVOKEARGS_Operation)currEvent.getPureEvent()).getReceiver().getId() == id;
+						((INVOKEARGS_Operation)currEvent.getAbstractionCriterion()).getReceiver().getId() == id;
 			}
+
 		};
 	}
 
