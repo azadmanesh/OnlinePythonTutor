@@ -204,7 +204,7 @@ def exec_query():
     target_query_prototype_file = open(query_files_path + '/' + query_file_name, 'r')
     target_query_file_text = target_query_prototype_file.read() 
     target_query_concrete_text = target_query_file_text.replace('/*s...*/', slice_predicate_prototype, 1)
-    target_query_concrete_text = target_query_concrete_text.replace('/*q...*/', query_predicate_prototype, 1)
+#     target_query_concrete_text = target_query_concrete_text.replace('/*q...*/', query_predicate_prototype, 1)
     target_query_file_address = query_destination + '/' + query_file_name
     target_query_file = open(target_query_file_address, 'w')
     target_query_file.write(target_query_concrete_text);
@@ -214,7 +214,7 @@ def exec_query():
 #     copyfile(query_files_path+'/'+ query_file_name, targetQueryFile)
     classpath = blast_classpath + ':' + blast_opt_controller_classpath + ':' + currentRelativeTargetPath
     
-    retcode = call(["javac", "-g","-cp", classpath, "-source", "7", "-target", "7", target_query_file_address])
+    retcode = call(["javac", "-g","-cp", classpath, target_query_file_address])
     
     if retcode != 0:
         raise Exception("Compile error!")

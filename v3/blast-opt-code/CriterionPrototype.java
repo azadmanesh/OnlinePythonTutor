@@ -13,15 +13,15 @@ import ch.usi.inf.sape.tracer.analyzer.locations.*;
 
 public abstract class CriterionPrototype {
 	
-	public static AbstractEventI find(final Trace trace, AbstractHistory history) {
+	public static BytecodeEventI find(final Trace trace, AbstractHistory history) {
 		BytecodePureEvent[] bcEvents = trace.getAllBytecodeEvents();
 		List<AbstractPureEvent> absEvents = history.getAbstractEvents(); 
 
-		int absEventIndex =	/*aeidx...*/;
+		int absEventIndex = /*aeidx...*/;
 		int bcIndex = /*bcidx...*/;
 
 		AbstractPureEvent pureCriterion = absEvents.get(absEventIndex);
-		AbstractEventI criterion = pureCriterion;
+		BytecodeEventI criterion = pureCriterion.getAbstractionCriterion();
 
 		if (bcIndex != -1) {
 			BytecodeEventI bc = bcEvents[bcIndex];
@@ -36,7 +36,7 @@ public abstract class CriterionPrototype {
 			defIndex = bcValueVistor.getDefIdx();
 
 			if (defIndex != -1) {
-				criterion = pureCriterion.asSliceViewForDefs(bc.getDefs()[defIndex]);
+				criterion = bc.asSliceViewForDefs(bc.getDefs()[defIndex]);
 			}
 		}
 		return criterion; 

@@ -5698,10 +5698,11 @@ function resetSourceDiv(myVisualizer, curEntry) {
 		}
 		
 		if (curEntry.source_name == 'UNTRACED') {
-			if (myVisualizer.curTrace.length > 0) {
+			if (myVisualizer.curTrace.length > 1) {
 				source = myVisualizer.curTrace[1].source_name;
 				lineNo = -1;
 			} else {
+				source  = 'UNTRACED';
 				lineNo = -1;
 			}
 			
