@@ -1,7 +1,6 @@
 package ch.usi.inf.sape.blastopt.controller.analyzer;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 import ch.usi.inf.sape.blastopt.controller.json.BytecodeValueVisitor;
 import ch.usi.inf.sape.tracer.analyzer.EventI;
@@ -13,6 +12,7 @@ import ch.usi.inf.sape.tracer.analyzer.bytecodeops.BytecodePureEvent;
 import ch.usi.inf.sape.tracer.analyzer.slicing.AbstractSliceAction;
 import ch.usi.inf.sape.tracer.analyzer.slicing.AbstractSlicedEvent;
 import ch.usi.inf.sape.tracer.analyzer.slicing.AccumulationSortedAction;
+import ch.usi.inf.sape.tracer.analyzer.slicing.BytecodeSlicedEvent;
 import ch.usi.inf.sape.tracer.analyzer.slicing.DfsNavigator;
 import ch.usi.inf.sape.tracer.analyzer.slicing.Focuser;
 import ch.usi.inf.sape.tracer.analyzer.slicing.Navigator;
@@ -24,7 +24,7 @@ import ch.usi.inf.sape.tracer.analyzer.slicing.Slice;
 import ch.usi.inf.sape.tracer.analyzer.slicing.SlicePredicate;
 import ch.usi.inf.sape.tracer.analyzer.slicing.SliceStepAction;
 import ch.usi.inf.sape.tracer.analyzer.slicing.Traversal;
-import java.util.*;
+
 
 public class Query implements BlastOptQueryAnalyzer {
 
@@ -58,15 +58,16 @@ public class Query implements BlastOptQueryAnalyzer {
 		Navigator dfsNav = new DfsNavigator(slice, Focuser.EARLIEST_FIRST);
 		
 		
-		SliceStepAction<AbstractSlicedEvent[]> abstractSlicedCollectAction = new AbstractSliceAction(history);
+		AbstractSliceAction abstractSlicedCollectAction = new AbstractSliceAction(history);
 		AbstractSlicedEvent[] slicedEvents = Traversal.traverse(dfsNav, abstractSlicedCollectAction);
+		BytecodeSlicedEvent[] slicedBcEvents = abstractSlicedCollectAction.getSlicedBytecodes();
 		
 		System.out.println("[1 of 3]\tSliced events:\t");
 		for (AbstractSlicedEvent e : slicedEvents) {
 			System.out.println(e);
 		}
 		
-		QueryBooleanPredicatePrototype query = new QueryBooleanPredicatePrototype(Arrays.asList(slicedEvents));
+		QueryBooleanPredicatePrototype query = new QueryBooleanPredicatePrototype(Arrays.asList(slicedEvents), Arrays.asList(slicedBcEvents), history);
 		
 		System.out.println("[2 of 3]\tRunning user query...");
 		List<?> l = query.find();

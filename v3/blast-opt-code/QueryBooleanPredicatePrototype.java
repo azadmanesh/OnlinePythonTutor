@@ -8,10 +8,13 @@ import java.util.Set;
 
 import ch.usi.inf.sape.tracer.analyzer.*;
 import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractEventI;
+import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractionUtils.AbstractHistory;
 import ch.usi.inf.sape.tracer.analyzer.slicing.*;
 import ch.usi.inf.sape.tracer.analyzer.bytecodeops.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocation.LocationCategory;
+import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocationInfo.Type;
+
 import java.util.stream.*;
 
 import ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName;
@@ -24,9 +27,13 @@ import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName
 public class QueryBooleanPredicatePrototype {
 	
 	private List<AbstractSlicedEvent> events;
+	private List<BytecodeSlicedEvent> slicedBcEvents;
+	private AbstractHistory history;
 	
-	public QueryBooleanPredicatePrototype(List<AbstractSlicedEvent> events) {
+	public QueryBooleanPredicatePrototype(List<AbstractSlicedEvent> events, List<BytecodeSlicedEvent> slicedBcEvents, AbstractHistory history) {
 		this.events = events;
+		this.slicedBcEvents = slicedBcEvents;
+		this.history = history;
 	}
 	
 	public List<?> find() {
@@ -66,8 +73,16 @@ public class QueryBooleanPredicatePrototype {
 		return values;
 	}
 	
+	Binding<?> lhs(EventI e) {
+		return e.getDefs()[0];
+	}
+	
 	Binding<?> def(AbstractSlicedEvent e) {
 		return e.getDefs()[0];
+	}
+	
+	List<BytecodeSlicedEvent> ops() {
+		return this.slicedBcEvents;
 	}
 
 	List<BytecodeEventI> ops(AbstractSlicedEvent e) {
@@ -77,7 +92,11 @@ public class QueryBooleanPredicatePrototype {
 	int intValue(Binding<?> val) {
 		return val.getValue().intValue();
 	}
-
+	
+	boolean isInt(Binding<?> val) {
+		return val.getValue().getType() == Type.INT;
+	}
+	
 	List<Binding<?>> rhs(EventI e) {
 		Binding<?>[] uses = e.getUses();
 		List<Binding<?>> values = new ArrayList<>();
