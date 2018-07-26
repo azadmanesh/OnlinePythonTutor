@@ -2,8 +2,9 @@ package ch.usi.inf.sape.blastopt.controller.analyzer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 import ch.usi.inf.sape.tracer.analyzer.*;
 import ch.usi.inf.sape.tracer.analyzer.abstractops.AbstractEventI;
@@ -11,6 +12,7 @@ import ch.usi.inf.sape.tracer.analyzer.slicing.*;
 import ch.usi.inf.sape.tracer.analyzer.bytecodeops.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.*;
 import ch.usi.inf.sape.tracer.analyzer.locations.MemoryLocation.LocationCategory;
+import java.util.stream.*;
 
 import ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName;
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Data;
@@ -39,31 +41,55 @@ public class QueryBooleanPredicatePrototype {
 	}
 	
 	List<AbstractSlicedEvent> events() {
-		List<AbstractSlicedEvent> l = new ArrayList<>();
-		l.add(events.get(0));
-		return l;
+		return events;
+	}
+	
+	Set<Binding<?>> rhs() {
+		Set<Binding<?>> values = new HashSet<>();
+		for (AbstractSlicedEvent e : events) {
+			Binding<?>[] uses = e.getUses();
+			for (int i = 0; i < uses.length; i++) {
+				values.add(uses[i]);
+			}
+		}
+		return values;
+	}
+	
+	Set<Binding<?>> lhs() {
+		Set<Binding<?>> values = new HashSet<>();
+		for (AbstractSlicedEvent e : events) {
+			Binding<?>[] defs = e.getDefs();
+			for (int i = 0; i < defs.length; i++) {
+				values.add(defs[i]);
+			}
+		}
+		return values;
+	}
+	
+	Binding<?> def(AbstractSlicedEvent e) {
+		return e.getDefs()[0];
 	}
 
-	Value[] rhs() {
-//		Binding<?>[] uses = currEvent.getUses();
-//		List<Value> values = new ArrayList<>();
-//		for (int i = 0; i < uses.length; i++) {
-//			if (uses[i].getMemoryLocation().getCategory() == LocationCategory.STACK_SLOT) {
-//				continue;
-//			}else {
-//				values.add(uses[i].getValue());
-//			}
-//		}
-//		return values.toArray(new Value[values.size()]);
-		return null;
+	List<BytecodeEventI> ops(AbstractSlicedEvent e) {
+		return Arrays.asList(e.getBytecodes());
+	}
+	
+	int intValue(Binding<?> val) {
+		return val.getValue().intValue();
 	}
 
-	List<BytecodeEventI> ops() {
-//		return Arrays.asList(currEvent.getBytecodes());
-		return null;
+	List<Binding<?>> rhs(EventI e) {
+		Binding<?>[] uses = e.getUses();
+		List<Binding<?>> values = new ArrayList<>();
+		for (int i = 0; i < uses.length; i++) {
+				values.add(uses[i]);
+		}
+		return values;
 	}
 
-
+	MemoryLocation memLocMap(Binding<?> b) {
+		return b.getMemoryLocation();
+	}
 
 	int[] integer(Value[] vals) {
 		List<Integer> res = new ArrayList<>();

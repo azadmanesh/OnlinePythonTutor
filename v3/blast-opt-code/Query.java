@@ -24,6 +24,7 @@ import ch.usi.inf.sape.tracer.analyzer.slicing.Slice;
 import ch.usi.inf.sape.tracer.analyzer.slicing.SlicePredicate;
 import ch.usi.inf.sape.tracer.analyzer.slicing.SliceStepAction;
 import ch.usi.inf.sape.tracer.analyzer.slicing.Traversal;
+import java.util.*;
 
 public class Query implements BlastOptQueryAnalyzer {
 
@@ -60,16 +61,23 @@ public class Query implements BlastOptQueryAnalyzer {
 		SliceStepAction<AbstractSlicedEvent[]> abstractSlicedCollectAction = new AbstractSliceAction(history);
 		AbstractSlicedEvent[] slicedEvents = Traversal.traverse(dfsNav, abstractSlicedCollectAction);
 		
-		System.out.println("Sliced events:\t");
+		System.out.println("[1 of 3]\tSliced events:\t");
 		for (AbstractSlicedEvent e : slicedEvents) {
 			System.out.println(e);
 		}
 		
 		QueryBooleanPredicatePrototype query = new QueryBooleanPredicatePrototype(Arrays.asList(slicedEvents));
 		
-		AbstractEventI[] filteredEvents = PostAnalysisFilter.filter(slicedEvents, query.find());
+		System.out.println("[2 of 3]\tRunning user query...");
+		List<?> l = query.find();
+		for (Object o : l) {
+			System.out.println(o);
+		}
 		
-		System.out.println("filtered events:\t");
+		System.out.println("[3 of 3]\tAppying final filter w.r.t. user query results...");
+		AbstractEventI[] filteredEvents = PostAnalysisFilter.filter(slicedEvents, l);
+		
+		System.out.println("Filtered events:\t");
 		for (AbstractEventI e : filteredEvents) {
 			System.out.println(e);
 		}
