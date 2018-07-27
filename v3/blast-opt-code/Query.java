@@ -59,12 +59,24 @@ public class Query implements BlastOptQueryAnalyzer {
 		
 		
 		AbstractSliceAction abstractSlicedCollectAction = new AbstractSliceAction(history);
+		
+		System.out.println("[1 of 3]\tDoing Slice on Trace ...");
 		AbstractSlicedEvent[] slicedEvents = Traversal.traverse(dfsNav, abstractSlicedCollectAction);
 		BytecodeSlicedEvent[] slicedBcEvents = abstractSlicedCollectAction.getSlicedBytecodes();
 		
-		System.out.println("[1 of 3]\tSliced events:\t");
+		System.out.println("[Done] trace slice!");
+		System.out.println("Sliced Bytecode Events:\t");
+		for (BytecodeSlicedEvent e : slicedBcEvents) {
+			System.out.println(e);
+		}
+		
+		System.out.println("Sliced Abstract Events:\t");
 		for (AbstractSlicedEvent e : slicedEvents) {
 			System.out.println(e);
+			System.out.println("Sliced Bytecode Events for ase:\t");
+			for (BytecodeEventI bc : e.getBytecodes()) {
+				System.out.println(bc);
+			}
 		}
 		
 		QueryBooleanPredicatePrototype query = new QueryBooleanPredicatePrototype(Arrays.asList(slicedEvents), Arrays.asList(slicedBcEvents), history);
