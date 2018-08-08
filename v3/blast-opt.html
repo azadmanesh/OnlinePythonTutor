@@ -200,28 +200,22 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 					</tr>
 					<tr>
 						<td id='slicePredicateRow' >
-							<div><b>Slice Predicate</b> Enter one of the three options:
-							<br/> 1- A boolean expression as the condition on dependencies
-							<br/>
-							<img src="dependency.png" alt="dependency image" id="dependencyImg"/>
-							<br/> 2- One of the pre-defined predicates: {Data, Control, DC, Thin}
-							<br/> 3- Perform boolean operations on the former two options using the Predicate API
-							</div>
+							<div><b>Slice Predicate</b> </div>
 							<div id="slicePredicateDiv"></div>
 						</td>
 					</tr>
 					<tr>
 						<td id='queryPredicateRow' >
-							<div><b>Query Predicate</b> A boolean expression as the POST-condition on dependencies</div>
+							<div><b>Query Predicate</b></div>
 							<div id="queryPredicateDiv"></div>
 						</td>
 					</tr>
 					<tr>
 						<td id='queryBtnRow' >
-							<span style="border:1px solid black">
-							<input type="checkbox" id="slicePredicateTypeCheck"> Boolean S-Predicate</input>
+							<span style="border:1px solid black" style="visibility: hidden">
+							<input type="checkbox" id="slicePredicateTypeCheck" > Boolean S-Predicate</input>
 							</span>
-							<span style="border:1px solid black">
+							<span style="border:1px solid black" style="visibility: hidden">
 							 <input type="checkbox" id="queryPredicateTypeCheck" checked > Boolean Q-Predicate</input>
 							 </span>
 							<button id="queryBtn" type="button">Query Execution</button>

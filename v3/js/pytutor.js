@@ -165,10 +165,11 @@ function ExecutionVisualizer(domRootID, dat, params) {
   var arrowLinesDef = (this.params.arrowLines !== undefined);
   var highlightLinesDef = (this.params.highlightLines !== undefined);
 
+  
   if (!arrowLinesDef && !highlightLinesDef) {
       // neither is set
       this.params.highlightLines = false;
-      this.params.arrowLines = true;
+      this.params.arrowLines = false;
   }
   else if (arrowLinesDef && highlightLinesDef) {
       // both are set, so just use their set values
@@ -179,7 +180,7 @@ function ExecutionVisualizer(domRootID, dat, params) {
   }
   else {
       // only highlightLines set
-      this.params.arrowLines = !(this.params.highlightLines);
+      this.params.arrowLines = false;
   }
 
   this.compactFuncLabels = this.params.compactFuncLabels;
@@ -426,8 +427,6 @@ ExecutionVisualizer.prototype.render = function() {
        <div id="editCodeLinkDiv">\
 	   <a id="editBtn">Edit code</a>\
        </div>\
-       <div id="legendDiv"/>\
-       <div id="executionSliderDocs"><font color="#e93f34">NEW!</font> Click on a line of code to set a breakpoint. Then use the Forward and Back buttons to jump there.</div>\
        <div id="executionSlider"/>\
        <div id="executionSliderFooter"/>\
        <div id="vcrControls">\
@@ -2017,7 +2016,7 @@ ExecutionVisualizer.prototype.updateOutputFull = function(smoothTransition) {
   else {
     vcrControls.find("#curInstr").html("Step " +
                                        String(this.curInstr + 1) +
-                                       " of " + String(totalInstrs-1));
+                                       " of " + String(totalInstrs));
   }
 
 

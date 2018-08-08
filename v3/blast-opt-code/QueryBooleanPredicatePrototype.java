@@ -74,7 +74,11 @@ public class QueryBooleanPredicatePrototype {
 	}
 	
 	Binding<?> lhs(EventI e) {
-		return e.getDefs()[0];
+		if (e.getDefs().length > 0) {
+			return e.getDefs()[0];
+		} else {
+			return null;
+		}
 	}
 	
 	Binding<?> def(AbstractSlicedEvent e) {

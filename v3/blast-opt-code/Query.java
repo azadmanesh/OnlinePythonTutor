@@ -32,6 +32,7 @@ public class Query implements BlastOptQueryAnalyzer {
 									Control(SlicePredicate.CONTROL), 
 									DC(SlicePredicate.DATAwithCONTROL), 
 									Thin(SlicePredicate.THIN), 
+									RFull(SlicePredicate.FullRevHistory),
 									Full(SlicePredicate.FullHistory);
 		Predicate predicate;
 
@@ -46,8 +47,7 @@ public class Query implements BlastOptQueryAnalyzer {
 
 	@Override
 	public AbstractEventI[] analyze(Trace trace, 
-								AbstractHistory history,
-								BytecodePureEvent[] bcEvents) {
+								AbstractHistory history) {
 		
 		final BytecodeEventI criterion = CriterionPrototype.find(trace, history);
 		final Predicate slicePredicate = /*s...*/.find();
@@ -65,35 +65,35 @@ public class Query implements BlastOptQueryAnalyzer {
 		BytecodeSlicedEvent[] slicedBcEvents = abstractSlicedCollectAction.getSlicedBytecodes();
 		
 		System.out.println("[Done] trace slice!");
-		System.out.println("Sliced Bytecode Events:\t");
-		for (BytecodeSlicedEvent e : slicedBcEvents) {
-			System.out.println(e);
-		}
+//		System.out.println("Sliced Bytecode Events:\t");
+//		for (BytecodeSlicedEvent e : slicedBcEvents) {
+//			System.out.println(e);
+//		}
 		
-		System.out.println("Sliced Abstract Events:\t");
-		for (AbstractSlicedEvent e : slicedEvents) {
-			System.out.println(e);
-			System.out.println("Sliced Bytecode Events for ase:\t");
-			for (BytecodeEventI bc : e.getBytecodes()) {
-				System.out.println(bc);
-			}
-		}
+//		System.out.println("Sliced Abstract Events:\t");
+//		for (AbstractSlicedEvent e : slicedEvents) {
+//			System.out.println(e);
+//			System.out.println("Sliced Bytecode Events for ase:\t");
+//			for (BytecodeEventI bc : e.getBytecodes()) {
+//				System.out.println(bc);
+//			}
+//		}
 		
 		QueryBooleanPredicatePrototype query = new QueryBooleanPredicatePrototype(Arrays.asList(slicedEvents), Arrays.asList(slicedBcEvents), history);
 		
 		System.out.println("[2 of 3]\tRunning user query...");
 		List<?> l = query.find();
-		for (Object o : l) {
-			System.out.println(o);
-		}
+//		for (Object o : l) {
+//			System.out.println(o);
+//		}
 		
 		System.out.println("[3 of 3]\tAppying final filter w.r.t. user query results...");
 		AbstractEventI[] filteredEvents = PostAnalysisFilter.filter(slicedEvents, l);
 		
-		System.out.println("Filtered events:\t");
-		for (AbstractEventI e : filteredEvents) {
-			System.out.println(e);
-		}
+//		System.out.println("Filtered events:\t");
+//		for (AbstractEventI e : filteredEvents) {
+//			System.out.println(e);
+//		}
 		
 		return filteredEvents;
 		

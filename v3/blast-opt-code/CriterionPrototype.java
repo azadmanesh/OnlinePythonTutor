@@ -14,7 +14,7 @@ import ch.usi.inf.sape.tracer.analyzer.locations.*;
 public abstract class CriterionPrototype {
 	
 	public static BytecodeEventI find(final Trace trace, AbstractHistory history) {
-		BytecodePureEvent[] bcEvents = trace.getAllBytecodeEvents();
+		List<BytecodePureEvent> bcEvents = trace.getAllBytecodeEvents();
 		List<AbstractPureEvent> absEvents = history.getAbstractEvents(); 
 
 		int absEventIndex = /*aeidx...*/;
@@ -24,7 +24,7 @@ public abstract class CriterionPrototype {
 		BytecodeEventI criterion = pureCriterion.getAbstractionCriterion();
 
 		if (bcIndex != -1) {
-			BytecodeEventI bc = bcEvents[bcIndex];
+			BytecodeEventI bc = bcEvents.get(bcIndex);
 			BytecodeValueVisitor bcValueVistor = new BytecodeValueVisitor();
 			int defIndex = -1;
 			try {

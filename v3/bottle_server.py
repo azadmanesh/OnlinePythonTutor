@@ -255,6 +255,7 @@ def exec_query():
 def get_src():
     
     prefixes = [
+                'src',
                 'src/test/java',
                 'src/main/java', 
                 'source',

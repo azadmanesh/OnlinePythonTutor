@@ -2763,7 +2763,7 @@ function initSourceViewer(height) {
 		  maxLines: 26,
 		  readOnly: true});
 
-	  $('#sourceCodeDiv').css('width', '550px');
+	  $('#sourceCodeDiv').css('width', '1000px');
 	  $('#sourceCodeDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
 //	  $('#sourceCodeDiv').css('border', '1px solid black');
 	  $('#sourceCodeDiv').css('background-color', '#E1E1E1');
@@ -2800,7 +2800,7 @@ function initSlicePredicateAceEditor(height) {
 	  // auto-grow height as fit
 	  slicePredicateEditor.setOptions({minLines: 7, maxLines: 7});
 
-	  $('#slicePredicateDiv').css('width', '550px');
+	  $('#slicePredicateDiv').css('width', '450px');
 	  $('#slicePredicateDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
 	  $('#slicePredicateDiv').css('border', '1px solid black');
 	  
@@ -2834,9 +2834,9 @@ function initQueryPredicateAceEditor(height) {
 	  queryPredicateEditor.$blockScrolling = Infinity; // kludgy to shut up weird warnings
 
 	  // auto-grow height as fit
-	  queryPredicateEditor.setOptions({minLines: 9, maxLines: 9});
+	  queryPredicateEditor.setOptions({minLines: 14, maxLines: 14});
 
-	  $('#queryPredicateDiv').css('width', '550px');
+	  $('#queryPredicateDiv').css('width', '450px');
 	  $('#queryPredicateDiv').css('height', height + 'px'); // VERY IMPORTANT so that it works on I.E., ugh!
 	  $('#queryPredicateDiv').css('border', '1px solid black');
 	  

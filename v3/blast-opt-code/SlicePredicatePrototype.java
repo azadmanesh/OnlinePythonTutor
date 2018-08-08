@@ -14,6 +14,7 @@ import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.DC;
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Thin;
 import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.Full;
+import static ch.usi.inf.sape.blastopt.controller.analyzer.Q1.PredicateShortName.RFull;
 
 public abstract class SlicePredicatePrototype{
 
